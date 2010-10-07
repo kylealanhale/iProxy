@@ -285,7 +285,7 @@ void srelay_exit();
 
     [pool drain];
 
-    self.proxySocksRunning = NO;
+//    self.proxySocksRunning = NO;
 }
 
 - (void) httpURLAction:(id)sender
