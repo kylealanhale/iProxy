@@ -1,5 +1,5 @@
 //
-//  PMUIController.h
+//  PMSUIController.h
 //  iProxy
 //
 //  Created by Jérôme Lebel on 18/09/10.
@@ -8,18 +8,18 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class iProxyMacSetupAppDelegate;
+@class PMSAppDelegate;
 
-@interface PMUIController : NSObject
+@interface PMSUIController : NSObject
 {
-	IBOutlet iProxyMacSetupAppDelegate *appDelegate;
+	IBOutlet PMSAppDelegate *appDelegate;
     IBOutlet NSPopUpButton *proxyPopUpButton;
     IBOutlet NSButton *automaticButton;
     IBOutlet NSProgressIndicator *progressIndicator;
     IBOutlet NSButton *startButton;
 }
 
-@property(readonly)iProxyMacSetupAppDelegate *appDelegate;
+@property(readonly)PMSAppDelegate *appDelegate;
 
 - (void)updateProgressIndicator;
 - (void)updateProxyPopUpButton;

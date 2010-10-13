@@ -1,15 +1,15 @@
 //
-//  PMUIController.m
+//  PMSUIController.m
 //  iProxy
 //
 //  Created by Jérôme Lebel on 18/09/10.
 //  Copyright 2010 __MyCompanyName__. All rights reserved.
 //
 
-#import "PMUIController.h"
-#import "iProxyMacSetupAppDelegate.h"
+#import "PMSUIController.h"
+#import "PMSAppDelegate.h"
 
-@implementation PMUIController
+@implementation PMSUIController
 
 @synthesize appDelegate;
 

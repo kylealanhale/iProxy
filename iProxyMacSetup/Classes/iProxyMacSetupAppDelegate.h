@@ -1,5 +1,5 @@
 //
-//  iProxyMacSetupAppDelegate.h
+//  PMSAppDelegate.h
 //  iProxyMacSetup
 //
 //  Created by Jérôme Lebel on 18/09/10.
@@ -17,7 +17,7 @@
 #define PROXY_DEVICE_KEY @"device"
 #define PROXY_RESOLVING_KEY @"resolving"
 
-@interface iProxyMacSetupAppDelegate : NSObject <NSApplicationDelegate, NSNetServiceBrowserDelegate, NSNetServiceDelegate>
+@interface PMSAppDelegate : NSObject <NSApplicationDelegate, NSNetServiceBrowserDelegate, NSNetServiceDelegate>
 {
 	NSMutableArray *proxyServiceList;
     NSMutableDictionary *deviceList;

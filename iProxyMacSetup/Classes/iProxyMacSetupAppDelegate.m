@@ -1,24 +1,24 @@
 //
-//  iProxyMacSetupAppDelegate.m
+//  PMSAppDelegate.m
 //  iProxyMacSetup
 //
 //  Created by Jérôme Lebel on 18/09/10.
 //  Copyright 2010 __MyCompanyName__. All rights reserved.
 //
 
-#import "iProxyMacSetupAppDelegate.h"
+#import "PMSAppDelegate.h"
 
 #define NETWORKSETUP_PATH @"/usr/sbin/networksetup"
 #define ROUTE_PATH @"/sbin/route"
 
-@interface iProxyMacSetupAppDelegate ()
+@interface PMSAppDelegate ()
 
 - (NSString *)_getDeviceNameForIP:(NSString *)ip;
 - (void)fetchDeviceList;
 
 @end
 
-@implementation iProxyMacSetupAppDelegate
+@implementation PMSAppDelegate
 
 @synthesize browsing, resolvingServiceCount, proxyServiceList, proxyEnabled;
 
