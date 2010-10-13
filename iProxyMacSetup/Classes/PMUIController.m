@@ -92,7 +92,6 @@
 {
     NSDictionary *proxy;
 	
-    [self updateProxyPopUpButton];
     proxy = [appDelegate.proxyServiceList objectAtIndex:[proxyPopUpButton indexOfSelectedItem]];
 	if (appDelegate.proxyEnabled) {
     	[appDelegate disableCurrentProxy];
