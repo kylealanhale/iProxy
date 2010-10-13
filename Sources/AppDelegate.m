@@ -16,6 +16,8 @@
 
 #import "AppDelegate.h"
 #import "MainViewController.h"
+#import "HTTPProxyServer.h"
+#import "SocksProxyServer.h"
 
 @interface UIApplication (PrivateAPI)
 - (void)_terminateWithStatus:(int)status;
@@ -95,7 +97,7 @@
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-	if (!statusViewController.proxyHttpRunning && !statusViewController.proxySocksRunning) {
+	if (([HTTPProxyServer sharedHTTPProxyServer].state == SERVER_STATE_STOPPED || [HTTPProxyServer sharedHTTPProxyServer].state == SERVER_STATE_STOPPING) && ([SocksProxyServer sharedSocksProxyServer].state == SERVER_STATE_STOPPED || [SocksProxyServer sharedSocksProxyServer].state == SERVER_STATE_STOPPING)) {
     	[[UIApplication sharedApplication] _terminateWithStatus:0];
     }
 }

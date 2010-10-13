@@ -48,7 +48,6 @@
 @property (nonatomic, retain) UILabel *socksPacLabel;
 @property (nonatomic, retain) UIView *connectView;
 @property (nonatomic, retain) UIView *runningView;
-@property (nonatomic, retain) NSString *ip;
 
 @end
 

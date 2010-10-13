@@ -36,7 +36,6 @@
 @synthesize socksPacLabel;
 @synthesize connectView;
 @synthesize runningView;
-@synthesize ip;
 
 - (void) viewDidLoad
 {
@@ -67,14 +66,16 @@
 
 - (void) ping
 {
-	self.ip = [[NSProcessInfo processInfo] hostName];
-    if (self.ip != nil) {
+	NSString *hostName;
+    
+    hostName = [[NSProcessInfo processInfo] hostName];
+    if (hostName != nil) {
         
-        httpAddressLabel.text = [NSString stringWithFormat:@"%@:%d", self.ip, HTTP_PROXY_PORT];
-        httpPacLabel.text = [NSString stringWithFormat:@"http://%@:%d/http.pac", self.ip, [HTTPServer sharedHTTPServer].servicePort];
+        httpAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, HTTP_PROXY_PORT];
+        httpPacLabel.text = [NSString stringWithFormat:@"http://%@:%d/http.pac", hostName, [HTTPServer sharedHTTPServer].servicePort];
 
-        socksAddressLabel.text = [NSString stringWithFormat:@"%@:%d", self.ip, SOCKS_PROXY_PORT];
-        socksPacLabel.text = [NSString stringWithFormat:@"http://%@:%d/socks.pac", self.ip, [HTTPServer sharedHTTPServer].servicePort];
+        socksAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, SOCKS_PROXY_PORT];
+        socksPacLabel.text = [NSString stringWithFormat:@"http://%@:%d/socks.pac", hostName, [HTTPServer sharedHTTPServer].servicePort];
 
         if (httpSwitch.on) {
             [[HTTPProxyServer sharedHTTPProxyServer] start];
