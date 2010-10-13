@@ -22,6 +22,10 @@
 #import "SocksProxyServer.h"
 #import "HTTPProxyServer.h"
 
+// defaults keys
+#define KEY_SOCKS_ON    @"socks.on"
+#define KEY_HTTP_ON     @"http.on"
+
 @interface MainViewController ()
 - (void) ping;
 @end
@@ -71,10 +75,10 @@
     hostName = [[NSProcessInfo processInfo] hostName];
     if (hostName != nil) {
         
-        httpAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, HTTP_PROXY_PORT];
+        httpAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, [HTTPProxyServer sharedHTTPProxyServer].servicePort];
         httpPacLabel.text = [NSString stringWithFormat:@"http://%@:%d/http.pac", hostName, [HTTPServer sharedHTTPServer].servicePort];
 
-        socksAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, SOCKS_PROXY_PORT];
+        socksAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, [SocksProxyServer sharedSocksProxyServer].servicePort];
         socksPacLabel.text = [NSString stringWithFormat:@"http://%@:%d/socks.pac", hostName, [HTTPServer sharedHTTPServer].servicePort];
 
         if (httpSwitch.on) {

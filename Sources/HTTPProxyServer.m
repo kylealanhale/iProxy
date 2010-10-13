@@ -7,6 +7,7 @@
 //
 
 #import "HTTPProxyServer.h"
+#import "SharedHeader.h"
 
 int polipo_main(int argc, char **argv);
 void polipo_exit();
@@ -23,10 +24,14 @@ void polipo_exit();
     return shared;
 }
 
-- (void)dealloc
+- (NSString	*)serviceDomain
 {
-	[httpProxyNetService release];
-    [super dealloc];
+	return HTTP_PROXY_DOMAIN;
+}
+
+- (int)servicePort
+{
+	return HTTP_PROXY_PORT;
 }
 
 - (void)start
@@ -34,11 +39,9 @@ void polipo_exit();
 	if (_state == SERVER_STATE_STOPPED) {
     	[self willChangeValueForKey:@"state"];
     	_state = SERVER_STATE_STARTING;
-        httpProxyNetService = [[NSNetService alloc] initWithDomain:@"" type:@"_iproxyhttpproxy._tcp." name:@"" port:HTTP_PROXY_PORT];
-        httpProxyNetService.delegate = self;
-        [httpProxyNetService publish];
         [NSThread detachNewThreadSelector:@selector(running) toTarget:self withObject:nil];
         [self didChangeValueForKey:@"state"];
+        [super start];
     }
 }
 
@@ -47,11 +50,9 @@ void polipo_exit();
 	if (_state == SERVER_STATE_RUNNING) {
     	[self willChangeValueForKey:@"state"];
     	_state = SERVER_STATE_STOPPING;
-        [httpProxyNetService stop];
-        [httpProxyNetService release];
-        httpProxyNetService = nil;
         polipo_exit();
         [self didChangeValueForKey:@"state"];
+        [super stop];
     }
 }
 
@@ -83,7 +84,7 @@ void polipo_exit();
         "-c",
         (char*)[configuration UTF8String],
         "proxyAddress=0.0.0.0",
-        (char*)[[NSString stringWithFormat:@"proxyPort=%d", HTTP_PROXY_PORT] UTF8String],
+        (char*)[[NSString stringWithFormat:@"proxyPort=%d", self.servicePort] UTF8String],
     };
 
     polipo_main(5, args);

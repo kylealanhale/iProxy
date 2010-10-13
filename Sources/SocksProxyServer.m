@@ -7,6 +7,7 @@
 //
 
 #import "SocksProxyServer.h"
+#import "SharedHeader.h"
 
 int srelay_main(int ac, char **av);
 void srelay_exit();
@@ -25,7 +26,7 @@ void srelay_exit();
 
 - (NSString *)serviceDomaine
 {
-	return @"_iproxysocksproxy._tcp.";
+	return SOCKS_PROXY_DOMAIN;
 }
 
 - (int)servicePort

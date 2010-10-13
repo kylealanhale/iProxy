@@ -11,7 +11,6 @@
 
 @interface HTTPProxyServer : GenericServer <NSNetServiceDelegate>
 {
-    NSNetService *httpProxyNetService;
 }
 
 + (HTTPProxyServer *)sharedHTTPProxyServer;

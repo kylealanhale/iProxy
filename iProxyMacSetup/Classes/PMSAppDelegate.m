@@ -7,6 +7,7 @@
 //
 
 #import "PMSAppDelegate.h"
+#import "SharedHeader.h"
 
 #define NETWORKSETUP_PATH @"/usr/sbin/networksetup"
 #define ROUTE_PATH @"/sbin/route"
@@ -226,7 +227,7 @@ NSString *parseDevice(NSString *line)
      
     serviceBrowser = [[NSNetServiceBrowser alloc] init];
     [serviceBrowser setDelegate:self];
-    [serviceBrowser searchForServicesOfType:@"_iproxysocksproxy._tcp" inDomain:@""];
+    [serviceBrowser searchForServicesOfType:SOCKS_PROXY_DOMAIN inDomain:@""];
     [self _setBrowsing:YES];
 }
 

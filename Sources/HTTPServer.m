@@ -15,10 +15,9 @@
 #import "HTTPServer.h"
 #import <sys/socket.h>
 #import <netinet/in.h>
-#if TARGET_OS_IPHONE
 #import <CFNetwork/CFNetwork.h>
-#endif
 #import "HTTPResponseHandler.h"
+#import "SharedHeader.h"
 
 NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateChanged";
 
@@ -71,7 +70,7 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
 
 - (NSString *)serviceDomaine
 {
-	return @"_iproxyhttpserver._tcp.";
+	return HTTP_SERVER_DOMAIN;
 }
 
 - (int)servicePort

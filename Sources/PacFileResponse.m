@@ -15,6 +15,9 @@
 #import "PacFileResponse.h"
 #import "HTTPServer.h"
 
+#import "HTTPProxyServer.h"
+#import "SocksProxyServer.h"
+
 @implementation PacFileResponse
 
 //
@@ -67,13 +70,13 @@
     if ([@"/http.pac" isEqualToString:requestPath] && currentIP) {
         fileData = [[NSString stringWithFormat:
             @"function FindProxyForURL(url, host) { return \"PROXY %@:%d\"; }",
-            currentIP, HTTP_PROXY_PORT] dataUsingEncoding:NSUTF8StringEncoding];
+            currentIP, [HTTPProxyServer sharedHTTPProxyServer].servicePort] dataUsingEncoding:NSUTF8StringEncoding];
     }
     
     if ([@"/socks.pac" isEqualToString:requestPath] && currentIP) {
         fileData = [[NSString stringWithFormat:
             @"function FindProxyForURL(url, host) { return \"SOCKS %@:%d\"; }",
-            currentIP, SOCKS_PROXY_PORT] dataUsingEncoding:NSUTF8StringEncoding];
+            currentIP, [SocksProxyServer sharedSocksProxyServer].servicePort] dataUsingEncoding:NSUTF8StringEncoding];
     }
     
     if (fileData) {
