@@ -48,9 +48,6 @@
 @property (nonatomic, retain) UILabel *socksPacLabel;
 @property (nonatomic, retain) UIView *connectView;
 @property (nonatomic, retain) UIView *runningView;
-@property (assign) BOOL proxyHttpRunning;
-@property (assign) BOOL proxySocksRunning;
-@property (assign) BOOL httpRunning;
 @property (nonatomic, retain) NSString *ip;
 
 @end

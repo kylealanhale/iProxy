@@ -36,18 +36,12 @@
 @synthesize socksPacLabel;
 @synthesize connectView;
 @synthesize runningView;
-@synthesize proxyHttpRunning;
-@synthesize proxySocksRunning;
-@synthesize httpRunning;
 @synthesize ip;
 
 - (void) viewDidLoad
 {
     // connectView.layer.cornerRadius = 15;
     // runningView.layer.cornerRadius = 15;
-
-    proxyHttpRunning = NO;
-    proxySocksRunning = NO;
 
     httpSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey: KEY_HTTP_ON];
     socksSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey: KEY_SOCKS_ON];
