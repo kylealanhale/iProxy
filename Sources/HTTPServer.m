@@ -13,7 +13,6 @@
 //
 
 #import "HTTPServer.h"
-#import "SynthesizeSingleton.h"
 #import <sys/socket.h>
 #import <netinet/in.h>
 #if TARGET_OS_IPHONE
@@ -29,15 +28,21 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
 //
 @interface HTTPServer ()
 @property (nonatomic, readwrite, retain) NSError *lastError;
-@property (readwrite, assign) HTTPServerState state;
 @end
 
 @implementation HTTPServer
 
 @synthesize lastError;
-@synthesize state;
 
-SYNTHESIZE_SINGLETON_FOR_CLASS(HTTPServer);
++ (id)sharedHTTPServer
+{
+	static HTTPServer *shared = nil;
+    
+    if (!shared) {
+    	shared = [[HTTPServer alloc] init];
+    }
+    return shared;
+}
 
 //
 // init
@@ -52,7 +57,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(HTTPServer);
 	self = [super init];
 	if (self != nil)
 	{
-		self.state = SERVER_STATE_IDLE;
+		_state = SERVER_STATE_STOPPED;
 		responseHandlers = [[NSMutableSet alloc] init];
 		incomingRequests =
 			CFDictionaryCreateMutable(
@@ -64,18 +69,14 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(HTTPServer);
 	return self;
 }
 
--(void)startBonjourServices
+- (NSString *)serviceDomaine
 {
-    netService = [[NSNetService alloc] initWithDomain:@"" type:@"_iproxyhttpserver._tcp." name:@"" port:self.httpServerPort];
-    netService.delegate = self;
-    [netService publish];
+	return @"_iproxyhttpserver._tcp.";
 }
 
--(void)stopBonjourServices
+- (int)servicePort
 {
-    [netService stop];
-    [netService release];
-    netService = nil;
+	return HTTP_SERVER_PORT;
 }
 
 //
@@ -99,7 +100,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(HTTPServer);
 	
 	[self stop];
 	
-	self.state = SERVER_STATE_IDLE;
+	_state = SERVER_STATE_STOPPED;
 	NSLog(@"HTTPServer error: %@", self.lastError);
 }
 
@@ -134,14 +135,14 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(HTTPServer);
 // Parameters:
 //    newState - the new state for the server
 //
-- (void)setState:(HTTPServerState)newState
+- (void)setState:(ServerState)newState
 {
-	if (state == newState)
+	if (_state == newState)
 	{
 		return;
 	}
 
-	state = newState;
+	_state = newState;
 	
 	[[NSNotificationCenter defaultCenter]
 		postNotificationName:HTTPServerNotificationStateChanged
@@ -155,55 +156,57 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(HTTPServer);
 //
 - (void)start
 {
-	self.lastError = nil;
-	self.state = SERVER_STATE_STARTING;
+	if (_state == SERVER_STATE_STOPPED) {
+        self.lastError = nil;
+        _state = SERVER_STATE_STARTING;
 
-	socket = CFSocketCreate(kCFAllocatorDefault, PF_INET, SOCK_STREAM,
-		IPPROTO_TCP, 0, NULL, NULL);
-	if (!socket)
-	{
-		[self errorWithName:@"Unable to create socket."];
-		return;
-	}
+        socket = CFSocketCreate(kCFAllocatorDefault, PF_INET, SOCK_STREAM,
+            IPPROTO_TCP, 0, NULL, NULL);
+        if (!socket)
+        {
+            [self errorWithName:@"Unable to create socket."];
+            return;
+        }
 
-	int reuse = true;
-	int fileDescriptor = CFSocketGetNative(socket);
-	if (setsockopt(fileDescriptor, SOL_SOCKET, SO_REUSEADDR,
-		(void *)&reuse, sizeof(int)) != 0)
-	{
-		[self errorWithName:@"Unable to set socket options."];
-		return;
-	}
-	
-	struct sockaddr_in address;
-	memset(&address, 0, sizeof(address));
-	address.sin_len = sizeof(address);
-	address.sin_family = AF_INET;
-	address.sin_addr.s_addr = htonl(INADDR_ANY);
-	address.sin_port = htons(self.httpServerPort);
-	CFDataRef addressData =
-		CFDataCreate(NULL, (const UInt8 *)&address, sizeof(address));
-	[(id)addressData autorelease];
-	
-	if (CFSocketSetAddress(socket, addressData) != kCFSocketSuccess)
-	{
-		[self errorWithName:@"Unable to bind socket to address."];
-		return;
-	}
+        int reuse = true;
+        int fileDescriptor = CFSocketGetNative(socket);
+        if (setsockopt(fileDescriptor, SOL_SOCKET, SO_REUSEADDR,
+            (void *)&reuse, sizeof(int)) != 0)
+        {
+            [self errorWithName:@"Unable to set socket options."];
+            return;
+        }
+        
+        struct sockaddr_in address;
+        memset(&address, 0, sizeof(address));
+        address.sin_len = sizeof(address);
+        address.sin_family = AF_INET;
+        address.sin_addr.s_addr = htonl(INADDR_ANY);
+        address.sin_port = htons(self.servicePort);
+        CFDataRef addressData =
+            CFDataCreate(NULL, (const UInt8 *)&address, sizeof(address));
+        [(id)addressData autorelease];
+        
+        if (CFSocketSetAddress(socket, addressData) != kCFSocketSuccess)
+        {
+            [self errorWithName:@"Unable to bind socket to address."];
+            return;
+        }
 
-	listeningHandle = [[NSFileHandle alloc]
-		initWithFileDescriptor:fileDescriptor
-		closeOnDealloc:YES];
+        listeningHandle = [[NSFileHandle alloc]
+            initWithFileDescriptor:fileDescriptor
+            closeOnDealloc:YES];
 
-	[[NSNotificationCenter defaultCenter]
-		addObserver:self
-		selector:@selector(receiveIncomingConnectionNotification:)
-		name:NSFileHandleConnectionAcceptedNotification
-		object:nil];
-	[listeningHandle acceptConnectionInBackgroundAndNotify];
-	
-	self.state = SERVER_STATE_RUNNING;
-    [self startBonjourServices];
+        [[NSNotificationCenter defaultCenter]
+            addObserver:self
+            selector:@selector(receiveIncomingConnectionNotification:)
+            name:NSFileHandleConnectionAcceptedNotification
+            object:nil];
+        [listeningHandle acceptConnectionInBackgroundAndNotify];
+        
+        _state = SERVER_STATE_RUNNING;
+        [super start];
+    }
 }
 
 //
@@ -240,34 +243,36 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(HTTPServer);
 //
 - (void)stop
 {
-	self.state = SERVER_STATE_STOPPING;
+	if (_state == SERVER_STATE_RUNNING) {
+        _state = SERVER_STATE_STOPPING;
 
-	[[NSNotificationCenter defaultCenter]
-		removeObserver:self
-		name:NSFileHandleConnectionAcceptedNotification
-		object:nil];
+        [[NSNotificationCenter defaultCenter]
+            removeObserver:self
+            name:NSFileHandleConnectionAcceptedNotification
+            object:nil];
 
-	[responseHandlers removeAllObjects];
+        [responseHandlers removeAllObjects];
 
-	[listeningHandle closeFile];
-	[listeningHandle release];
-	listeningHandle = nil;
-	
-	for (NSFileHandle *incomingFileHandle in
-		[[(NSDictionary *)incomingRequests copy] autorelease])
-	{
-		[self stopReceivingForFileHandle:incomingFileHandle close:YES];
-	}
-	
-	if (socket)
-	{
-		CFSocketInvalidate(socket);
-		CFRelease(socket);
-		socket = nil;
-	}
+        [listeningHandle closeFile];
+        [listeningHandle release];
+        listeningHandle = nil;
+        
+        for (NSFileHandle *incomingFileHandle in
+            [[(NSDictionary *)incomingRequests copy] autorelease])
+        {
+            [self stopReceivingForFileHandle:incomingFileHandle close:YES];
+        }
+        
+        if (socket)
+        {
+            CFSocketInvalidate(socket);
+            CFRelease(socket);
+            socket = nil;
+        }
 
-	self.state = SERVER_STATE_IDLE;
-    [self stopBonjourServices];
+        _state = SERVER_STATE_STOPPED;
+        [super stop];
+    }
 }
 
 //
@@ -374,11 +379,6 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(HTTPServer);
 {
 	[aHandler endResponse];
 	[responseHandlers removeObject:aHandler];
-}
-
-- (UInt32)httpServerPort
-{
-	return HTTP_SERVER_PORT;
 }
 
 @end

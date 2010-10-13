@@ -29,28 +29,10 @@
 
     IBOutlet UIView *connectView;
     IBOutlet UIView *runningView;
-
-    BOOL proxyHttpRunning;
-    BOOL proxySocksRunning;
-    BOOL httpRunning;
 	
 	NSString *emailBody;
 	NSString *emailURL;
-
-    NSString *ip;
-    
-    NSNetService *socksProxyNetService;
-    NSNetService *httpProxyNetService;
 }
-
-- (void) proxyHttpStart;
-- (void) proxyHttpStop;
-
-- (void) proxySocksStart;
-- (void) proxySocksStop;
-
-- (void) httpStart;
-- (void) httpStop;
 
 - (IBAction) switchedHttp:(id)sender;
 - (IBAction) switchedSocks:(id)sender;

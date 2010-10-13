@@ -12,36 +12,21 @@
 //  appreciated but not required.
 //
 
-#if TARGET_OS_IPHONE
-#import <UIKit/UIKit.h>
-#else
-#import <Cocoa/Cocoa.h>
-#endif
-
-typedef enum
-{
-	SERVER_STATE_IDLE,
-	SERVER_STATE_STARTING,
-	SERVER_STATE_RUNNING,
-	SERVER_STATE_STOPPING
-} HTTPServerState;
+#import <Foundation/Foundation.h>
+#import "GenericServer.h"
 
 @class HTTPResponseHandler;
 
-@interface HTTPServer : NSObject <NSNetServiceDelegate>
+@interface HTTPServer : GenericServer <NSNetServiceDelegate>
 {
 	NSError *lastError;
 	NSFileHandle *listeningHandle;
 	CFSocketRef socket;
-	HTTPServerState state;
 	CFMutableDictionaryRef incomingRequests;
 	NSMutableSet *responseHandlers;
-    NSNetService *netService;
 }
 
 @property (nonatomic, readonly, retain) NSError *lastError;
-@property (readonly, assign) HTTPServerState state;
-@property (readonly) UInt32 httpServerPort;
 
 + (HTTPServer *)sharedHTTPServer;
 

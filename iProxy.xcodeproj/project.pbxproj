@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		020BC9CE124ADBD000E2E1F2 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 020BC9CD124ADBD000E2E1F2 /* MobileCoreServices.framework */; };
+		02501CC4126667EF00CE5CA9 /* GenericServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 02501CC3126667EF00CE5CA9 /* GenericServer.m */; };
+		02501CC71266680900CE5CA9 /* HTTPProxyServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 02501CC61266680900CE5CA9 /* HTTPProxyServer.m */; };
+		02501CCA1266681800CE5CA9 /* SocksProxyServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 02501CC91266681800CE5CA9 /* SocksProxyServer.m */; };
 		0267229D12444EA000A2EACF /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0267229C12444EA000A2EACF /* Cocoa.framework */; };
 		0267243E1245646C00A2EACF /* PMUIController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0267243D1245646C00A2EACF /* PMUIController.m */; };
 		0274FA8C12444D8300173784 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0274FA8A12444D8300173784 /* InfoPlist.strings */; };
@@ -84,6 +87,12 @@
 
 /* Begin PBXFileReference section */
 		020BC9CD124ADBD000E2E1F2 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		02501CC2126667EF00CE5CA9 /* GenericServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericServer.h; path = Sources/GenericServer.h; sourceTree = "<group>"; };
+		02501CC3126667EF00CE5CA9 /* GenericServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GenericServer.m; path = Sources/GenericServer.m; sourceTree = "<group>"; };
+		02501CC51266680900CE5CA9 /* HTTPProxyServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTPProxyServer.h; path = Sources/HTTPProxyServer.h; sourceTree = "<group>"; };
+		02501CC61266680900CE5CA9 /* HTTPProxyServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HTTPProxyServer.m; path = Sources/HTTPProxyServer.m; sourceTree = "<group>"; };
+		02501CC81266681800CE5CA9 /* SocksProxyServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SocksProxyServer.h; path = Sources/SocksProxyServer.h; sourceTree = "<group>"; };
+		02501CC91266681800CE5CA9 /* SocksProxyServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SocksProxyServer.m; path = Sources/SocksProxyServer.m; sourceTree = "<group>"; };
 		0267229C12444EA000A2EACF /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		0267243C1245646C00A2EACF /* PMUIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMUIController.h; sourceTree = "<group>"; };
 		0267243D1245646C00A2EACF /* PMUIController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMUIController.m; sourceTree = "<group>"; };
@@ -189,7 +198,6 @@
 		9D83D36311B9AF5C00A9922F /* HTTPResponseHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HTTPResponseHandler.m; path = Sources/HTTPResponseHandler.m; sourceTree = "<group>"; };
 		9D83D36411B9AF5C00A9922F /* HTTPServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTPServer.h; path = Sources/HTTPServer.h; sourceTree = "<group>"; };
 		9D83D36511B9AF5C00A9922F /* HTTPServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HTTPServer.m; path = Sources/HTTPServer.m; sourceTree = "<group>"; };
-		9D83D36611B9AF5C00A9922F /* SynthesizeSingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SynthesizeSingleton.h; path = Sources/SynthesizeSingleton.h; sourceTree = "<group>"; };
 		9D94CB7F110E727700F8C260 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Default.png; path = Resources/Default.png; sourceTree = "<group>"; };
 		9DDA4C2B124E460D00BF30F3 /* InfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InfoViewController.h; path = Sources/InfoViewController.h; sourceTree = "<group>"; };
 		9DDA4C2C124E460D00BF30F3 /* InfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InfoViewController.m; path = Sources/InfoViewController.m; sourceTree = "<group>"; };
@@ -326,7 +334,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		3A18D67F119DC6F700C56A7A /* WebServer */ = {
+		3A18D67F119DC6F700C56A7A /* Server */ = {
 			isa = PBXGroup;
 			children = (
 				9D83D36011B9AF5C00A9922F /* PacFileResponse.h */,
@@ -335,9 +343,14 @@
 				9D83D36311B9AF5C00A9922F /* HTTPResponseHandler.m */,
 				9D83D36411B9AF5C00A9922F /* HTTPServer.h */,
 				9D83D36511B9AF5C00A9922F /* HTTPServer.m */,
-				9D83D36611B9AF5C00A9922F /* SynthesizeSingleton.h */,
+				02501CC2126667EF00CE5CA9 /* GenericServer.h */,
+				02501CC3126667EF00CE5CA9 /* GenericServer.m */,
+				02501CC51266680900CE5CA9 /* HTTPProxyServer.h */,
+				02501CC61266680900CE5CA9 /* HTTPProxyServer.m */,
+				02501CC81266681800CE5CA9 /* SocksProxyServer.h */,
+				02501CC91266681800CE5CA9 /* SocksProxyServer.m */,
 			);
-			name = WebServer;
+			name = Server;
 			sourceTree = "<group>";
 		};
 		9D3ECC5F1244F6A1002B5F7E /* Icons */ = {
@@ -359,7 +372,7 @@
 			isa = PBXGroup;
 			children = (
 				9DF66D6412482AF70012D66D /* Additions */,
-				3A18D67F119DC6F700C56A7A /* WebServer */,
+				3A18D67F119DC6F700C56A7A /* Server */,
 				9DDA4C62124E4AD200BF30F3 /* ViewControllers */,
 				9D63173310FEAC8B0041EE37 /* AppDelegate.h */,
 				9D63173410FEAC8B0041EE37 /* AppDelegate.m */,
@@ -649,6 +662,9 @@
 				9D7AC14E124BD80C00A31FE2 /* util.c in Sources */,
 				9DDA4C2E124E460D00BF30F3 /* InfoViewController.m in Sources */,
 				9D79C2BF124E7173008F7F98 /* NSStringAdditions.m in Sources */,
+				02501CC4126667EF00CE5CA9 /* GenericServer.m in Sources */,
+				02501CC71266680900CE5CA9 /* HTTPProxyServer.m in Sources */,
+				02501CCA1266681800CE5CA9 /* SocksProxyServer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

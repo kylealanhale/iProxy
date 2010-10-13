@@ -19,12 +19,8 @@
 #import "HTTPServer.h"
 #import "PacFileResponse.h"
 #import <MobileCoreServices/MobileCoreServices.h>
-
-int polipo_main(int argc, char **argv);
-void polipo_exit();
-
-int srelay_main(int ac, char **av);
-void srelay_exit();
+#import "SocksProxyServer.h"
+#import "HTTPProxyServer.h"
 
 @interface MainViewController ()
 - (void) ping;
@@ -81,20 +77,20 @@ void srelay_exit();
     if (self.ip != nil) {
         
         httpAddressLabel.text = [NSString stringWithFormat:@"%@:%d", self.ip, HTTP_PROXY_PORT];
-        httpPacLabel.text = [NSString stringWithFormat:@"http://%@:%d/http.pac", self.ip, [HTTPServer sharedHTTPServer].httpServerPort];
+        httpPacLabel.text = [NSString stringWithFormat:@"http://%@:%d/http.pac", self.ip, [HTTPServer sharedHTTPServer].servicePort];
 
         socksAddressLabel.text = [NSString stringWithFormat:@"%@:%d", self.ip, SOCKS_PROXY_PORT];
-        socksPacLabel.text = [NSString stringWithFormat:@"http://%@:%d/socks.pac", self.ip, [HTTPServer sharedHTTPServer].httpServerPort];
+        socksPacLabel.text = [NSString stringWithFormat:@"http://%@:%d/socks.pac", self.ip, [HTTPServer sharedHTTPServer].servicePort];
 
         if (httpSwitch.on) {
-            [self proxyHttpStart];
+            [[HTTPProxyServer sharedHTTPProxyServer] start];
 
             httpAddressLabel.alpha = 1.0;
             httpPacLabel.alpha = 1.0;
             httpPacButton.enabled = YES;
 
         } else {
-            [self proxyHttpStop];
+            [[HTTPProxyServer sharedHTTPProxyServer] stop];
 
             httpAddressLabel.alpha = 0.1;
             httpPacLabel.alpha = 0.1;
@@ -102,14 +98,14 @@ void srelay_exit();
         }
 
         if (socksSwitch.on) {
-            [self proxySocksStart];
+            [[SocksProxyServer sharedSocksProxyServer] start];
 
             socksAddressLabel.alpha = 1.0;
             socksPacLabel.alpha = 1.0;
             socksPacButton.enabled = YES;
 
         } else {
-            [self proxySocksStop];
+            [[SocksProxyServer sharedSocksProxyServer] stop];
 
             socksAddressLabel.alpha = 0.1;
             socksPacLabel.alpha = 0.1;
@@ -117,18 +113,18 @@ void srelay_exit();
         }
         
         if (httpSwitch.on || socksSwitch.on) {
-            [self httpStart];
+            [[HTTPServer sharedHTTPServer] start];
         } else {
-            [self httpStop];
+            [[HTTPServer sharedHTTPServer] stop];
         }
 
         [self.view addTaggedSubview:runningView];
 
     } else {
 
-        [self httpStop];
-        [self proxyHttpStop];
-        [self proxySocksStop];
+        [[HTTPServer sharedHTTPServer] stop];
+        [[HTTPProxyServer sharedHTTPProxyServer] stop];
+        [[SocksProxyServer sharedSocksProxyServer] stop];
         
         [self.view addTaggedSubview:connectView];
 
@@ -154,139 +150,7 @@ void srelay_exit();
     [viewController release];
 }
 
-#pragma mark http server
-
-- (void) httpStart
-{
-    if (self.httpRunning) {
-        return;
-    }
-
-    NSLog(@"http server start");
-
-    [[HTTPServer sharedHTTPServer] start];
-
-    self.httpRunning = YES;
-}
-
-- (void) httpStop
-{
-    if (!self.httpRunning) {
-        return;
-    }
-
-    NSLog(@"http server stop");
-
-    [[HTTPServer sharedHTTPServer] stop];
-
-    self.httpRunning = NO;
-}
-
-
-#pragma mark http proxy
-
-- (void) proxyHttpStart
-{
-    if (self.proxyHttpRunning) {
-        return;
-    }
-
-    httpProxyNetService = [[NSNetService alloc] initWithDomain:@"" type:@"_iproxyhttpproxy._tcp." name:@"" port:HTTP_PROXY_PORT];
-    httpProxyNetService.delegate = self;
-    [httpProxyNetService publish];
-    [NSThread detachNewThreadSelector:@selector(proxyHttpRun) toTarget:self withObject:nil];
-}
-
-- (void) proxyHttpStop
-{
-    if (!self.proxyHttpRunning) {
-        return;
-    }
-
-    [httpProxyNetService stop];
-    [httpProxyNetService release];
-    httpProxyNetService = nil;
-    polipo_exit();
-}
-
-- (void) proxyHttpRun
-{
-    self.proxyHttpRunning = YES;
-
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
-    NSLog(@"http proxy start");
-
-    NSString *configuration = [[NSBundle mainBundle] pathForResource:@"polipo" ofType:@"config"];
-
-    char *args[5] = {
-        "test",
-        "-c",
-        (char*)[configuration UTF8String],
-        "proxyAddress=0.0.0.0",
-        (char*)[[NSString stringWithFormat:@"proxyPort=%d", HTTP_PROXY_PORT] UTF8String],
-    };
-
-    polipo_main(5, args);
-
-    NSLog(@"http proxy stop");
-
-    [pool drain];
-
-    self.proxyHttpRunning = NO;
-}
-
 #pragma mark socks proxy
-
-- (void) proxySocksStart
-{
-    if (self.proxySocksRunning) {
-        return;
-    }
-
-    socksProxyNetService = [[NSNetService alloc] initWithDomain:@"" type:@"_iproxysocksproxy._tcp." name:@"" port:SOCKS_PROXY_PORT];
-    socksProxyNetService.delegate = self;
-    [socksProxyNetService publish];
-    [NSThread detachNewThreadSelector:@selector(proxySocksRun) toTarget:self withObject:nil];
-}
-
-- (void) proxySocksStop
-{
-    if (!self.proxySocksRunning) {
-        return;
-    }
-
-    [socksProxyNetService stop];
-    [socksProxyNetService release];
-    socksProxyNetService = nil;
-    srelay_exit();
-}
-
-- (void) proxySocksRun
-{
-    self.proxySocksRunning = YES;
-
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
-    NSLog(@"socks proxy start");
-
-    NSString *connect = [NSString stringWithFormat:@":%d", SOCKS_PROXY_PORT];
-
-    char *args[4] = {
-        "srelay",
-        "-i",
-        (char*)[connect UTF8String],
-        "-f",
-    };
-
-    srelay_main(4, args);
-
-    NSLog(@"socks proxy stop");
-
-    [pool drain];
-
-//    self.proxySocksRunning = NO;
-}
 
 - (void) httpURLAction:(id)sender
 {
