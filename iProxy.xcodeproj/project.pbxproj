@@ -21,6 +21,7 @@
 		0274FA9012444D8F00173784 /* PMSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0274FA8F12444D8F00173784 /* PMSAppDelegate.m */; };
 		0274FA9212444D9B00173784 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0274FA9112444D9B00173784 /* main.m */; };
 		0275613E124AD4AD00B64593 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0275613D124AD4AD00B64593 /* MessageUI.framework */; };
+		02ED14C21266836A00595AA0 /* UIColorAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 02ED14C11266836A00595AA0 /* UIColorAdditions.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
@@ -105,6 +106,8 @@
 		0274FA9112444D9B00173784 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		0275613D124AD4AD00B64593 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		02ED13FD12667DFF00595AA0 /* SharedHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedHeader.h; sourceTree = "<group>"; };
+		02ED14C01266836A00595AA0 /* UIColorAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIColorAdditions.h; path = Sources/UIColorAdditions.h; sourceTree = "<group>"; };
+		02ED14C11266836A00595AA0 /* UIColorAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIColorAdditions.m; path = Sources/UIColorAdditions.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* iProxy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iProxy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -487,6 +490,8 @@
 				9DF66D6612482B170012D66D /* UIDeviceAdditions.m */,
 				9DF66DAE124830AF0012D66D /* UIViewAdditions.h */,
 				9DF66DAF124830AF0012D66D /* UIViewAdditions.m */,
+				02ED14C01266836A00595AA0 /* UIColorAdditions.h */,
+				02ED14C11266836A00595AA0 /* UIColorAdditions.m */,
 			);
 			name = Additions;
 			sourceTree = "<group>";
@@ -667,6 +672,7 @@
 				02501CC4126667EF00CE5CA9 /* GenericServer.m in Sources */,
 				02501CC71266680900CE5CA9 /* HTTPProxyServer.m in Sources */,
 				02501CCA1266681800CE5CA9 /* SocksProxyServer.m in Sources */,
+				02ED14C21266836A00595AA0 /* UIColorAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

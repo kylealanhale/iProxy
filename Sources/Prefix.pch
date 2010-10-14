@@ -8,7 +8,3 @@
 #define HAVE_UINT32_T
 #define HAVE_SOCKLEN_T
 #define USE_THREAD 1
-
-// color macros
-#define RGB(r,g,b) [UIColor colorWithRed:(float)r/0xff green:(float)g/0xff blue:(float)b/0xff alpha:1.0]
-#define RGBA(r,g,b,a) [UIColor colorWithRed:(float)r/0xff green:(float)g/0xff blue:(float)b/0xff alpha:a]

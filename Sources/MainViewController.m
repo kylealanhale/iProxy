@@ -21,6 +21,7 @@
 #import "SocksProxyServer.h"
 #import "HTTPProxyServer.h"
 #import "UIViewAdditions.h"
+#import "UIColorAdditions.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <QuartzCore/QuartzCore.h>
 
@@ -57,8 +58,8 @@
     CAGradientLayer *gradient = [CAGradientLayer layer];
     gradient.frame = self.view.bounds;
     gradient.colors = [NSArray arrayWithObjects:
-        (id)[RGB(241,231,165) CGColor],
-        (id)[RGB(208,180,35) CGColor],
+        (id)[[UIColor colorWithRGB:241, 231, 165] CGColor],
+        (id)[[UIColor colorWithRGB:208, 180, 35] CGColor],
         nil];
     [self.view.layer insertSublayer:gradient atIndex:0];
 
