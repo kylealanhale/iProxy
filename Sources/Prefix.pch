@@ -1,6 +1,7 @@
 
 // polipo
 #define HAS_STDINT_H
+#define NO_FANCY_RESOLVER
 
 // srelay
 #define HAVE_SOCKADDR_DL_STRUCT
