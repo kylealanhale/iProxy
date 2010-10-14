@@ -12,12 +12,8 @@
 //  appreciated but not required.
 //
 
-#if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 #import <CFNetwork/CFNetwork.h>
-#else
-#import <Cocoa/Cocoa.h>
-#endif
 
 @class HTTPServer;
 

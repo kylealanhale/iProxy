@@ -21,6 +21,8 @@
 #define URL_DONATE  @"https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=tcurdt%40vafer.org&item_name=Thanks%20for%20iProxy&currency_code=EUR&lc=US"
 
 #import "InfoViewController.h"
+#import "NSStringAdditions.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation InfoViewController
 

@@ -18,9 +18,11 @@
 #import "InfoViewController.h"
 #import "HTTPServer.h"
 #import "PacFileResponse.h"
-#import <MobileCoreServices/MobileCoreServices.h>
 #import "SocksProxyServer.h"
 #import "HTTPProxyServer.h"
+#import "UIViewAdditions.h"
+#import <MobileCoreServices/MobileCoreServices.h>
+#import <QuartzCore/QuartzCore.h>
 
 // defaults keys
 #define KEY_SOCKS_ON    @"socks.on"
