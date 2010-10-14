@@ -16,7 +16,7 @@ void polipo_exit();
 
 + (HTTPProxyServer *)sharedHTTPProxyServer
 {
-	HTTPProxyServer *shared = nil;
+	static HTTPProxyServer *shared = nil;
     
     if (!shared) {
     	shared = [[HTTPProxyServer alloc] init];
