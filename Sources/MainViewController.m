@@ -29,8 +29,9 @@
 #define KEY_SOCKS_ON    @"socks.on"
 #define KEY_HTTP_ON     @"http.on"
 
-@interface MainViewController ()
-- (void) ping;
+@interface MainViewController()
+- (void)updateHTTPProxy;
+- (void)updateSocksProxy;
 @end
 
 @implementation MainViewController
@@ -44,8 +45,9 @@
 @synthesize connectView;
 @synthesize runningView;
 
-- (void) viewDidLoad
+- (void) viewWillAppear:(BOOL)animated
 {
+	NSString *hostName;
     // connectView.layer.cornerRadius = 15;
     // runningView.layer.cornerRadius = 15;
 
@@ -62,85 +64,90 @@
         (id)[[UIColor colorWithRGB:208, 180, 35] CGColor],
         nil];
     [self.view.layer insertSublayer:gradient atIndex:0];
+    
+    hostName = [[NSProcessInfo processInfo] hostName];
+    httpAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, [HTTPProxyServer sharedHTTPProxyServer].servicePort];
+    httpPacLabel.text = [NSString stringWithFormat:@"http://%@:%d/http.pac", hostName, [HTTPServer sharedHTTPServer].servicePort];
 
-    [NSTimer scheduledTimerWithTimeInterval:1
-        target:self
-        selector:@selector(ping)
-        userInfo:nil 
-        repeats:YES];
-    [self ping];
+    socksAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, [SocksProxyServer sharedSocksProxyServer].servicePort];
+    socksPacLabel.text = [NSString stringWithFormat:@"http://%@:%d/socks.pac", hostName, [HTTPServer sharedHTTPServer].servicePort];
+    [self.view addTaggedSubview:runningView];
+
+    [self updateHTTPProxy];
+    [self updateSocksProxy];
 }
 
 - (void) ping
 {
-	NSString *hostName;
-    
-    hostName = [[NSProcessInfo processInfo] hostName];
-    if (hostName != nil) {
-        
-        httpAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, [HTTPProxyServer sharedHTTPProxyServer].servicePort];
-        httpPacLabel.text = [NSString stringWithFormat:@"http://%@:%d/http.pac", hostName, [HTTPServer sharedHTTPServer].servicePort];
+//    [self.view addTaggedSubview:runningView];
+//
+//    } else {
+//
+//        [[HTTPServer sharedHTTPServer] stop];
+//        [[HTTPProxyServer sharedHTTPProxyServer] stop];
+//        [[SocksProxyServer sharedSocksProxyServer] stop];
+//        
+//        [self.view addTaggedSubview:connectView];
+//
+//    }
+}
 
-        socksAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, [SocksProxyServer sharedSocksProxyServer].servicePort];
-        socksPacLabel.text = [NSString stringWithFormat:@"http://%@:%d/socks.pac", hostName, [HTTPServer sharedHTTPServer].servicePort];
+- (void)updateHTTPProxy
+{
+    if (httpSwitch.on) {
+        [[HTTPProxyServer sharedHTTPProxyServer] start];
 
-        if (httpSwitch.on) {
-            [[HTTPProxyServer sharedHTTPProxyServer] start];
-
-            httpAddressLabel.alpha = 1.0;
-            httpPacLabel.alpha = 1.0;
-            httpPacButton.enabled = YES;
-
-        } else {
-            [[HTTPProxyServer sharedHTTPProxyServer] stop];
-
-            httpAddressLabel.alpha = 0.1;
-            httpPacLabel.alpha = 0.1;
-            httpPacButton.enabled = NO;
-        }
-
-        if (socksSwitch.on) {
-            [[SocksProxyServer sharedSocksProxyServer] start];
-
-            socksAddressLabel.alpha = 1.0;
-            socksPacLabel.alpha = 1.0;
-            socksPacButton.enabled = YES;
-
-        } else {
-            [[SocksProxyServer sharedSocksProxyServer] stop];
-
-            socksAddressLabel.alpha = 0.1;
-            socksPacLabel.alpha = 0.1;
-            socksPacButton.enabled = NO;
-        }
-        
-        if (httpSwitch.on || socksSwitch.on) {
-            [[HTTPServer sharedHTTPServer] start];
-        } else {
-            [[HTTPServer sharedHTTPServer] stop];
-        }
-
-        [self.view addTaggedSubview:runningView];
+        httpAddressLabel.alpha = 1.0;
+        httpPacLabel.alpha = 1.0;
+        httpPacButton.enabled = YES;
 
     } else {
-
-        [[HTTPServer sharedHTTPServer] stop];
         [[HTTPProxyServer sharedHTTPProxyServer] stop];
-        [[SocksProxyServer sharedSocksProxyServer] stop];
-        
-        [self.view addTaggedSubview:connectView];
 
+        httpAddressLabel.alpha = 0.1;
+        httpPacLabel.alpha = 0.1;
+        httpPacButton.enabled = NO;
+    }
+    if (httpSwitch.on || socksSwitch.on) {
+        [[HTTPServer sharedHTTPServer] start];
+    } else {
+        [[HTTPServer sharedHTTPServer] stop];
+    }
+}
+
+- (void)updateSocksProxy
+{
+    if (socksSwitch.on) {
+        [[SocksProxyServer sharedSocksProxyServer] start];
+
+        socksAddressLabel.alpha = 1.0;
+        socksPacLabel.alpha = 1.0;
+        socksPacButton.enabled = YES;
+
+    } else {
+        [[SocksProxyServer sharedSocksProxyServer] stop];
+
+        socksAddressLabel.alpha = 0.1;
+        socksPacLabel.alpha = 0.1;
+        socksPacButton.enabled = NO;
+    }
+    if (httpSwitch.on || socksSwitch.on) {
+        [[HTTPServer sharedHTTPServer] start];
+    } else {
+        [[HTTPServer sharedHTTPServer] stop];
     }
 }
 
 - (IBAction) switchedHttp:(id)sender
 {
     [[NSUserDefaults standardUserDefaults] setBool: httpSwitch.on forKey: KEY_HTTP_ON];
+    [self updateHTTPProxy];
 }
 
 - (IBAction) switchedSocks:(id)sender
 {
     [[NSUserDefaults standardUserDefaults] setBool: socksSwitch.on forKey: KEY_SOCKS_ON];
+    [self updateSocksProxy];
 }
 
 - (IBAction) showInfo
