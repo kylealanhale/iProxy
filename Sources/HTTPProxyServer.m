@@ -75,7 +75,6 @@ void polipo_exit();
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	
     [self performSelectorOnMainThread:@selector(started) withObject:nil waitUntilDone:YES];
-    NSLog(@"http proxy start");
 
     NSString *configuration = [[NSBundle mainBundle] pathForResource:@"polipo" ofType:@"config"];
 
@@ -88,8 +87,6 @@ void polipo_exit();
     };
 
     polipo_main(5, args);
-
-    NSLog(@"http proxy stop");
 
     [self performSelectorOnMainThread:@selector(stopped) withObject:nil waitUntilDone:YES];
     [pool drain];
