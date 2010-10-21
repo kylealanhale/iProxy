@@ -77,21 +77,6 @@
     [self updateSocksProxy];
 }
 
-- (void) ping
-{
-//    [self.view addTaggedSubview:runningView];
-//
-//    } else {
-//
-//        [[HTTPServer sharedHTTPServer] stop];
-//        [[HTTPProxyServer sharedHTTPProxyServer] stop];
-//        [[SocksProxyServer sharedSocksProxyServer] stop];
-//        
-//        [self.view addTaggedSubview:connectView];
-//
-//    }
-}
-
 - (void)updateHTTPProxy
 {
     if (httpSwitch.on) {
