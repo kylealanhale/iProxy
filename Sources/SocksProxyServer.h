@@ -10,8 +10,11 @@
 
 @interface SocksProxyServer : SocketServer <NSNetServiceDelegate>
 {
+	NSUInteger _connexionCount;
 }
 
 + (SocksProxyServer *)sharedSocksProxyServer;
+
+@property(readonly) NSUInteger connexionCount;
 
 @end

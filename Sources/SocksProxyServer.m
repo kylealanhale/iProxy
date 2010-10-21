@@ -15,6 +15,8 @@ void relay(int cs, int ss);
 
 @implementation SocksProxyServer
 
+@synthesize connexionCount = _connexionCount;
+
 + (id)sharedSocksProxyServer
 {
 	static SocksProxyServer *shared = nil;
@@ -35,6 +37,13 @@ void relay(int cs, int ss);
 	return SOCKS_PROXY_PORT;
 }
 
+- (void)_didCloseConnexion
+{
+	[self willChangeValueForKey:@"connexionCount"];
+    _connexionCount--;
+    [self didChangeValueForKey:@"connexionCount"];
+}
+
 - (void)processIncomingConnection:(NSFileHandle *)fileHandle
 {
 	NSAutoreleasePool *pool;
@@ -47,6 +56,7 @@ void relay(int cs, int ss);
 	    relay(clientSocket, serverSocket);
 	    close(serverSocket);
     }
+    [self performSelectorOnMainThread:@selector(_didCloseConnexion) withObject:nil waitUntilDone:NO];
     [fileHandle closeFile];
     [fileHandle release];
     [pool drain];
@@ -54,6 +64,9 @@ void relay(int cs, int ss);
 
 - (void)receiveIncomingConnectionNotification:(NSNotification *)notification
 {
+	[self willChangeValueForKey:@"connexionCount"];
+    _connexionCount++;
+    [self didChangeValueForKey:@"connexionCount"];
 	[NSThread detachNewThreadSelector:@selector(processIncomingConnection:) toTarget:self withObject:[[[notification userInfo] objectForKey:NSFileHandleNotificationFileHandleItem] retain]];
 	[[notification object] acceptConnectionInBackgroundAndNotify];
 }

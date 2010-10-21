@@ -26,6 +26,8 @@
     IBOutlet UILabel *socksAddressLabel;
     IBOutlet UILabel *socksPacLabel;
     IBOutlet UIButton *socksPacButton;
+    IBOutlet UILabel *socksConnextionCountLabel;
+    NSTimer *socksProxyInfoTimer;
 
     IBOutlet UIView *connectView;
     IBOutlet UIView *runningView;
@@ -46,6 +48,7 @@
 @property (nonatomic, retain) UISwitch *socksSwitch;
 @property (nonatomic, retain) UILabel *socksAddressLabel;
 @property (nonatomic, retain) UILabel *socksPacLabel;
+@property (nonatomic, retain) UILabel *socksConnextionCountLabel;
 @property (nonatomic, retain) UIView *connectView;
 @property (nonatomic, retain) UIView *runningView;
 

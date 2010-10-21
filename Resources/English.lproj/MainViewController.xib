@@ -256,6 +256,28 @@
 						</object>
 						<reference key="IBUINormalTitleShadowColor" ref="488757955"/>
 					</object>
+					<object class="IBUILabel" id="38672287">
+						<reference key="NSNextResponder" ref="968621707"/>
+						<int key="NSvFlags">292</int>
+						<string key="NSFrame">{{258, 325}, {42, 15}}</string>
+						<reference key="NSSuperview" ref="968621707"/>
+						<bool key="IBUIOpaque">NO</bool>
+						<bool key="IBUIClipsSubviews">YES</bool>
+						<int key="IBUIContentMode">7</int>
+						<bool key="IBUIUserInteractionEnabled">NO</bool>
+						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+						<string key="IBUIText"/>
+						<object class="NSFont" key="IBUIFont" id="462143412">
+							<string key="NSName">Helvetica</string>
+							<double key="NSSize">12</double>
+							<int key="NSfFlags">16</int>
+						</object>
+						<reference key="IBUITextColor" ref="1053088554"/>
+						<reference key="IBUIHighlightedColor" ref="763196868"/>
+						<int key="IBUIBaselineAdjustment">1</int>
+						<float key="IBUIMinimumFontSize">8</float>
+						<int key="IBUITextAlignment">2</int>
+					</object>
 				</object>
 				<string key="NSFrameSize">{320, 360}</string>
 				<reference key="NSSuperview"/>
@@ -335,11 +357,7 @@ ayBvciBjcmVhdGUgYW4gYWQtaG9jIG5ldHdvcmsgZm9yIHRoZW0uA</string>
 						<bool key="IBUIEditable">NO</bool>
 						<string key="IBUIText">No tethering but still better than getting ripped off.</string>
 						<reference key="IBUITextColor" ref="763196868"/>
-						<object class="NSFont" key="IBUIFont">
-							<string key="NSName">Helvetica</string>
-							<double key="NSSize">12</double>
-							<int key="NSfFlags">16</int>
-						</object>
+						<reference key="IBUIFont" ref="462143412"/>
 						<object class="IBUITextInputTraits" key="IBUITextInputTraits">
 							<int key="IBUIAutocapitalizationType">2</int>
 							<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -526,6 +544,14 @@ ayBvciBjcmVhdGUgYW4gYWQtaG9jIG5ldHdvcmsgZm9yIHRoZW0uA</string>
 					</object>
 					<int key="connectionID">69</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">socksConnextionCountLabel</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="38672287"/>
+					</object>
+					<int key="connectionID">71</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -605,6 +631,7 @@ ayBvciBjcmVhdGUgYW4gYWQtaG9jIG5ldHdvcmsgZm9yIHRoZW0uA</string>
 							<reference ref="608282906"/>
 							<reference ref="529301683"/>
 							<reference ref="939138619"/>
+							<reference ref="38672287"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">RunningView</string>
@@ -664,6 +691,11 @@ ayBvciBjcmVhdGUgYW4gYWQtaG9jIG5ldHdvcmsgZm9yIHRoZW0uA</string>
 						<reference key="object" ref="939138619"/>
 						<reference key="parent" ref="968621707"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">70</int>
+						<reference key="object" ref="38672287"/>
+						<reference key="parent" ref="968621707"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -710,6 +742,8 @@ ayBvciBjcmVhdGUgYW4gYWQtaG9jIG5ldHdvcmsgZm9yIHRoZW0uA</string>
 					<string>64.IBViewBoundsToFrameTransform</string>
 					<string>65.IBPluginDependency</string>
 					<string>65.IBViewBoundsToFrameTransform</string>
+					<string>70.IBPluginDependency</string>
+					<string>70.IBViewBoundsToFrameTransform</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -723,7 +757,7 @@ ayBvciBjcmVhdGUgYW4gYWQtaG9jIG5ldHdvcmsgZm9yIHRoZW0uA</string>
 					<object class="NSAffineTransform">
 						<bytes key="NSTransformStruct">P4AAAL+AAABDjQAAw9sAAA</bytes>
 					</object>
-					<string>{{683, 395}, {320, 360}}</string>
+					<string>{{660, 476}, {320, 360}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<object class="NSAffineTransform"/>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -775,7 +809,7 @@ ayBvciBjcmVhdGUgYW4gYWQtaG9jIG5ldHdvcmsgZm9yIHRoZW0uA</string>
 					<object class="NSAffineTransform">
 						<bytes key="NSTransformStruct">P4AAAL+AAABB+AAAwzAAAA</bytes>
 					</object>
-					<string>{{767, 146}, {320, 480}}</string>
+					<string>{{692, 146}, {320, 480}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<object class="NSAffineTransform">
@@ -784,6 +818,10 @@ ayBvciBjcmVhdGUgYW4gYWQtaG9jIG5ldHdvcmsgZm9yIHRoZW0uA</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<object class="NSAffineTransform">
 						<bytes key="NSTransformStruct">P4AAAL+AAABBqAAAw52AAA</bytes>
+					</object>
+					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+					<object class="NSAffineTransform">
+						<bytes key="NSTransformStruct">P4AAAL+AAABDgQAAw6YAAA</bytes>
 					</object>
 				</object>
 			</object>
@@ -803,7 +841,7 @@ ayBvciBjcmVhdGUgYW4gYWQtaG9jIG5ldHdvcmsgZm9yIHRoZW0uA</string>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">69</int>
+			<int key="maxID">71</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -875,6 +913,7 @@ ayBvciBjcmVhdGUgYW4gYWQtaG9jIG5ldHdvcmsgZm9yIHRoZW0uA</string>
 							<string>httpSwitch</string>
 							<string>runningView</string>
 							<string>socksAddressLabel</string>
+							<string>socksConnextionCountLabel</string>
 							<string>socksPacButton</string>
 							<string>socksPacLabel</string>
 							<string>socksSwitch</string>
@@ -887,6 +926,7 @@ ayBvciBjcmVhdGUgYW4gYWQtaG9jIG5ldHdvcmsgZm9yIHRoZW0uA</string>
 							<string>UILabel</string>
 							<string>UISwitch</string>
 							<string>UIView</string>
+							<string>UILabel</string>
 							<string>UILabel</string>
 							<string>UIButton</string>
 							<string>UILabel</string>
@@ -904,6 +944,7 @@ ayBvciBjcmVhdGUgYW4gYWQtaG9jIG5ldHdvcmsgZm9yIHRoZW0uA</string>
 							<string>httpSwitch</string>
 							<string>runningView</string>
 							<string>socksAddressLabel</string>
+							<string>socksConnextionCountLabel</string>
 							<string>socksPacButton</string>
 							<string>socksPacLabel</string>
 							<string>socksSwitch</string>
@@ -936,6 +977,10 @@ ayBvciBjcmVhdGUgYW4gYWQtaG9jIG5ldHdvcmsgZm9yIHRoZW0uA</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">socksAddressLabel</string>
+								<string key="candidateClassName">UILabel</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">socksConnextionCountLabel</string>
 								<string key="candidateClassName">UILabel</string>
 							</object>
 							<object class="IBToOneOutletInfo">
@@ -1221,7 +1266,7 @@ ayBvciBjcmVhdGUgYW4gYWQtaG9jIG5ldHdvcmsgZm9yIHRoZW0uA</string>
 			<integer value="3100" key="NS.object.0"/>
 		</object>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
-		<string key="IBDocument.LastKnownRelativeProjectPath">../iProxy.xcodeproj</string>
+		<string key="IBDocument.LastKnownRelativeProjectPath">../../iProxy.xcodeproj</string>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 		<object class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
 			<string key="NS.key.0">Icon-72-transparent.png</string>

@@ -44,6 +44,7 @@
 @synthesize socksPacLabel;
 @synthesize connectView;
 @synthesize runningView;
+@synthesize socksConnextionCountLabel;
 
 - (void) viewWillAppear:(BOOL)animated
 {
@@ -72,9 +73,25 @@
     socksAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, [SocksProxyServer sharedSocksProxyServer].servicePort];
     socksPacLabel.text = [NSString stringWithFormat:@"http://%@:%d/socks.pac", hostName, [HTTPServer sharedHTTPServer].servicePort];
     [self.view addTaggedSubview:runningView];
-
+	
+    [[SocksProxyServer sharedSocksProxyServer] addObserver:self forKeyPath:@"connexionCount" options:NSKeyValueObservingOptionNew context:nil];
     [self updateHTTPProxy];
     [self updateSocksProxy];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+	if (object == [SocksProxyServer sharedSocksProxyServer] && [keyPath isEqualToString:@"connexionCount"]) {
+    	if (!socksProxyInfoTimer) {
+        	socksProxyInfoTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(updateSocksProxyInfo) userInfo:nil repeats:NO];
+        }
+    }
+}
+
+- (void)updateSocksProxyInfo
+{
+    socksConnextionCountLabel.text = [NSString stringWithFormat:@"%d", [SocksProxyServer sharedSocksProxyServer].connexionCount];
+    socksProxyInfoTimer = nil;
 }
 
 - (void)updateHTTPProxy
@@ -115,6 +132,9 @@
         socksAddressLabel.alpha = 0.1;
         socksPacLabel.alpha = 0.1;
         socksPacButton.enabled = NO;
+        socksConnextionCountLabel.text = @"";
+        [socksProxyInfoTimer invalidate];
+        socksProxyInfoTimer = nil;
     }
     if (httpSwitch.on || socksSwitch.on) {
         [[HTTPServer sharedHTTPServer] start];
