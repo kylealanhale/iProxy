@@ -21,17 +21,7 @@
 
 NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateChanged";
 
-//
-// Internal methods and properties:
-//	The "lastError" and "state" are only writable by the server itself.
-//
-@interface HTTPServer ()
-@property (nonatomic, readwrite, retain) NSError *lastError;
-@end
-
 @implementation HTTPServer
-
-@synthesize lastError;
 
 + (id)sharedHTTPServer
 {
@@ -43,29 +33,19 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
     return shared;
 }
 
-//
-// init
-//
-// Set the initial state and allocate the responseHandlers and incomingRequests
-// collections.
-//
-// returns the initialized server object.
-//
 - (id)init
 {
 	self = [super init];
-	if (self != nil)
-	{
-		_state = SERVER_STATE_STOPPED;
-		responseHandlers = [[NSMutableSet alloc] init];
-		incomingRequests =
-			CFDictionaryCreateMutable(
-				kCFAllocatorDefault,
-				0,
-				&kCFTypeDictionaryKeyCallBacks,
-				&kCFTypeDictionaryValueCallBacks);
-	}
+    if (self) {
+		incomingRequests = [[NSMutableDictionary alloc] init];
+    }
 	return self;
+}
+
+- (void)dealloc
+{
+	[incomingRequests release];
+    [super dealloc];
 }
 
 - (NSString *)serviceDomaine
@@ -78,199 +58,21 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
 	return HTTP_SERVER_PORT;
 }
 
-//
-// setLastError:
-//
-// Custom setter method. Stops the server and 
-//
-// Parameters:
-//    anError - the new error value (nil to clear)
-//
-- (void)setLastError:(NSError *)anError
+- (void)_stopReceivingForFileHandle:(NSFileHandle *)incomingFileHandle close:(BOOL)closeFileHandle
 {
-	[anError retain];
-	[lastError release];
-	lastError = anError;
-	
-	if (lastError == nil)
-	{
-		return;
-	}
-	
-	[self stop];
-	
-	_state = SERVER_STATE_STOPPED;
-	NSLog(@"HTTPServer error: %@", self.lastError);
-}
-
-//
-// errorWithName:
-//
-// Stops the server and sets the last error to "errorName", localized using the
-// HTTPServerErrors.strings file (if present).
-//
-// Parameters:
-//    errorName - the description used for the error
-//
-- (void)errorWithName:(NSString *)errorName
-{
-	self.lastError = [NSError
-		errorWithDomain:@"HTTPServerError"
-		code:0
-		userInfo:
-			[NSDictionary dictionaryWithObject:
-				NSLocalizedStringFromTable(
-					errorName,
-					@"",
-					@"HTTPServerErrors")
-				forKey:NSLocalizedDescriptionKey]];	
-}
-
-//
-// setState:
-//
-// Changes the server state and posts a notification (if the state changes).
-//
-// Parameters:
-//    newState - the new state for the server
-//
-- (void)setState:(ServerState)newState
-{
-	if (_state == newState)
-	{
-		return;
-	}
-
-	_state = newState;
-	
-	[[NSNotificationCenter defaultCenter]
-		postNotificationName:HTTPServerNotificationStateChanged
-		object:self];
-}
-
-//
-// start
-//
-// Creates the socket and starts listening for connections on it.
-//
-- (void)start
-{
-	if (_state == SERVER_STATE_STOPPED) {
-        self.lastError = nil;
-        _state = SERVER_STATE_STARTING;
-
-        socket = CFSocketCreate(kCFAllocatorDefault, PF_INET, SOCK_STREAM,
-            IPPROTO_TCP, 0, NULL, NULL);
-        if (!socket)
-        {
-            [self errorWithName:@"Unable to create socket."];
-            return;
-        }
-
-        int reuse = true;
-        int fileDescriptor = CFSocketGetNative(socket);
-        if (setsockopt(fileDescriptor, SOL_SOCKET, SO_REUSEADDR,
-            (void *)&reuse, sizeof(int)) != 0)
-        {
-            [self errorWithName:@"Unable to set socket options."];
-            return;
-        }
-        
-        struct sockaddr_in address;
-        memset(&address, 0, sizeof(address));
-        address.sin_len = sizeof(address);
-        address.sin_family = AF_INET;
-        address.sin_addr.s_addr = htonl(INADDR_ANY);
-        address.sin_port = htons(self.servicePort);
-        CFDataRef addressData =
-            CFDataCreate(NULL, (const UInt8 *)&address, sizeof(address));
-        [(id)addressData autorelease];
-        
-        if (CFSocketSetAddress(socket, addressData) != kCFSocketSuccess)
-        {
-            [self errorWithName:@"Unable to bind socket to address."];
-            return;
-        }
-
-        listeningHandle = [[NSFileHandle alloc]
-            initWithFileDescriptor:fileDescriptor
-            closeOnDealloc:YES];
-
-        [[NSNotificationCenter defaultCenter]
-            addObserver:self
-            selector:@selector(receiveIncomingConnectionNotification:)
-            name:NSFileHandleConnectionAcceptedNotification
-            object:nil];
-        [listeningHandle acceptConnectionInBackgroundAndNotify];
-        
-        _state = SERVER_STATE_RUNNING;
-        [super start];
-    }
-}
-
-//
-// stopReceivingForFileHandle:close:
-//
-// If a file handle is accumulating the header for a new connection, this
-// method will close the handle, stop listening to it and release the
-// accumulated memory.
-//
-// Parameters:
-//    incomingFileHandle - the file handle for the incoming request
-//    closeFileHandle - if YES, the file handle will be closed, if no it is
-//		assumed that an HTTPResponseHandler will close it when done.
-//
-- (void)stopReceivingForFileHandle:(NSFileHandle *)incomingFileHandle
-	close:(BOOL)closeFileHandle
-{
-	if (closeFileHandle)
-	{
+	if (closeFileHandle) {
 		[incomingFileHandle closeFile];
 	}
 	
-	[[NSNotificationCenter defaultCenter]
-		removeObserver:self
-		name:NSFileHandleDataAvailableNotification
-		object:incomingFileHandle];
-	CFDictionaryRemoveValue(incomingRequests, incomingFileHandle);
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleDataAvailableNotification object:incomingFileHandle];
+	[incomingRequests removeObjectForKey:incomingFileHandle];
 }
 
-//
-// stop
-//
-// Stops the server.
-//
-- (void)stop
+- (void)_closeSocket
 {
-	if (_state == SERVER_STATE_RUNNING) {
-        _state = SERVER_STATE_STOPPING;
-
-        [[NSNotificationCenter defaultCenter]
-            removeObserver:self
-            name:NSFileHandleConnectionAcceptedNotification
-            object:nil];
-
-        [responseHandlers removeAllObjects];
-
-        [listeningHandle closeFile];
-        [listeningHandle release];
-        listeningHandle = nil;
-        
-        for (NSFileHandle *incomingFileHandle in
-            [[(NSDictionary *)incomingRequests copy] autorelease])
-        {
-            [self stopReceivingForFileHandle:incomingFileHandle close:YES];
-        }
-        
-        if (socket)
-        {
-            CFSocketInvalidate(socket);
-            CFRelease(socket);
-            socket = nil;
-        }
-
-        _state = SERVER_STATE_STOPPED;
-        [super stop];
+	[super _closeSocket];
+    for (NSFileHandle *incomingFileHandle in incomingRequests) {
+        [self _stopReceivingForFileHandle:incomingFileHandle close:YES];
     }
 }
 
@@ -287,15 +89,14 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
 - (void)receiveIncomingConnectionNotification:(NSNotification *)notification
 {
 	NSDictionary *userInfo = [notification userInfo];
-	NSFileHandle *incomingFileHandle =
-		[userInfo objectForKey:NSFileHandleNotificationFileHandleItem];
+	NSFileHandle *incomingFileHandle = [userInfo objectForKey:NSFileHandleNotificationFileHandleItem];
 
-    if(incomingFileHandle)
-	{
-		CFDictionaryAddValue(
-			incomingRequests,
-			incomingFileHandle,
-			[(id)CFHTTPMessageCreateEmpty(kCFAllocatorDefault, TRUE) autorelease]);
+    if(incomingFileHandle) {
+    	CFHTTPMessageRef message;
+        
+        message = CFHTTPMessageCreateEmpty(kCFAllocatorDefault, TRUE);
+		[incomingRequests setObject:(id)message forKey:incomingFileHandle];
+        CFRelease(message);
 		
 		[[NSNotificationCenter defaultCenter]
 			addObserver:self
@@ -305,8 +106,7 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
 		
         [incomingFileHandle waitForDataInBackgroundAndNotify];
     }
-
-	[listeningHandle acceptConnectionInBackgroundAndNotify];
+	[[notification object] acceptConnectionInBackgroundAndNotify];
 }
 
 //
@@ -325,31 +125,23 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
 	NSFileHandle *incomingFileHandle = [notification object];
 	NSData *data = [incomingFileHandle availableData];
 	
-	if ([data length] == 0)
-	{
-		[self stopReceivingForFileHandle:incomingFileHandle close:NO];
+	if ([data length] == 0) {
+		[self _stopReceivingForFileHandle:incomingFileHandle close:NO];
 		return;
 	}
 
-	CFHTTPMessageRef incomingRequest =
-		(CFHTTPMessageRef)CFDictionaryGetValue(incomingRequests, incomingFileHandle);
-	if (!incomingRequest)
-	{
-		[self stopReceivingForFileHandle:incomingFileHandle close:YES];
+	CFHTTPMessageRef incomingRequest = (CFHTTPMessageRef)[incomingRequests objectForKey:incomingFileHandle];
+	if (!incomingRequest) {
+		[self _stopReceivingForFileHandle:incomingFileHandle close:YES];
 		return;
 	}
 	
-	if (!CFHTTPMessageAppendBytes(
-		incomingRequest,
-		[data bytes],
-		[data length]))
-	{
-		[self stopReceivingForFileHandle:incomingFileHandle close:YES];
+	if (!CFHTTPMessageAppendBytes(incomingRequest, [data bytes], [data length])) {
+		[self _stopReceivingForFileHandle:incomingFileHandle close:YES];
 		return;
 	}
 
-	if(CFHTTPMessageIsHeaderComplete(incomingRequest))
-	{
+	if(CFHTTPMessageIsHeaderComplete(incomingRequest)) {
 		HTTPResponseHandler *handler =
 			[HTTPResponseHandler
 				handlerForRequest:incomingRequest
@@ -357,7 +149,7 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
 				server:self];
 		
 		[responseHandlers addObject:handler];
-		[self stopReceivingForFileHandle:incomingFileHandle close:NO];
+		[self _stopReceivingForFileHandle:incomingFileHandle close:NO];
 
 		[handler startResponse];	
 		return;

@@ -99,6 +99,7 @@
         
         @try
         {
+        NSLog(@"write data to %p", fileHandle);
             [fileHandle writeData:(NSData *)headerData];
             [fileHandle writeData:fileData];
         }
@@ -122,6 +123,7 @@
         
         @try
         {
+        NSLog(@"write data to %p", fileHandle);
             [fileHandle writeData:(NSData *)headerData];
         }
         @catch (NSException *exception)

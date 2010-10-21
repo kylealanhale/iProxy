@@ -8,7 +8,7 @@
 
 #import "GenericServer.h"
 
-@interface SocksProxyServer : GenericServer <NSNetServiceDelegate>
+@interface SocksProxyServer : SocketServer <NSNetServiceDelegate>
 {
 }
 

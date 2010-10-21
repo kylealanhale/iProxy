@@ -17,21 +17,12 @@
 
 @class HTTPResponseHandler;
 
-@interface HTTPServer : GenericServer <NSNetServiceDelegate>
+@interface HTTPServer : SocketServer <NSNetServiceDelegate>
 {
-	NSError *lastError;
-	NSFileHandle *listeningHandle;
-	CFSocketRef socket;
-	CFMutableDictionaryRef incomingRequests;
-	NSMutableSet *responseHandlers;
+	NSMutableDictionary *incomingRequests;
 }
 
-@property (nonatomic, readonly, retain) NSError *lastError;
-
 + (HTTPServer *)sharedHTTPServer;
-
-- (void)start;
-- (void)stop;
 
 - (void)closeHandler:(HTTPResponseHandler *)aHandler;
 

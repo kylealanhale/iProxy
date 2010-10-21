@@ -8,9 +8,10 @@
 
 #import "SocksProxyServer.h"
 #import "SharedHeader.h"
+#include <unistd.h>
 
-int srelay_main(int ac, char **av);
-void srelay_exit();
+int proto_socks(int sock);
+void relay(int cs, int ss);
 
 @implementation SocksProxyServer
 
@@ -34,36 +35,27 @@ void srelay_exit();
 	return SOCKS_PROXY_PORT;
 }
 
-- (void)start
+- (void)processIncomingConnection:(NSFileHandle *)fileHandle
 {
-	if (_state == SERVER_STATE_STOPPED) {
-	    NSString *connect = [NSString stringWithFormat:@":%d", self.servicePort];
-        
-        char *args[4] = {
-            "srelay",
-            "-i",
-            (char*)[connect UTF8String],
-            "-f",
-        };
-
-        srelay_main(4, args);
-        
-        [self willChangeValueForKey:@"state"];
-        _state = SERVER_STATE_RUNNING;
-        [self didChangeValueForKey:@"state"];
-        [super start];
+	NSAutoreleasePool *pool;
+    int clientSocket, serverSocket;
+    
+    pool = [[NSAutoreleasePool alloc] init];
+    clientSocket = [fileHandle fileDescriptor];
+    serverSocket = proto_socks(clientSocket);
+    if (serverSocket != -1) {
+	    relay(clientSocket, serverSocket);
+	    close(serverSocket);
     }
+    [fileHandle closeFile];
+    [fileHandle release];
+    [pool drain];
 }
 
-- (void)stop
+- (void)receiveIncomingConnectionNotification:(NSNotification *)notification
 {
-	if (_state == SERVER_STATE_RUNNING) {
-        srelay_exit();
-        [self willChangeValueForKey:@"state"];
-        _state = SERVER_STATE_STOPPED;
-        [self didChangeValueForKey:@"state"];
-        [super stop];
-    }
+	[NSThread detachNewThreadSelector:@selector(processIncomingConnection:) toTarget:self withObject:[[[notification userInfo] objectForKey:NSFileHandleNotificationFileHandleItem] retain]];
+	[[notification object] acceptConnectionInBackgroundAndNotify];
 }
 
 @end

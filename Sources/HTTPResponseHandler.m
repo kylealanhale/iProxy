@@ -267,6 +267,7 @@ static NSMutableArray *registeredHandlers = nil;
 	CFDataRef headerData = CFHTTPMessageCopySerializedMessage(response);
 	@try
 	{
+    NSLog(@"write data to %p", fileHandle);
 		[fileHandle writeData:(NSData *)headerData];
 	}
 	@catch (NSException *exception)

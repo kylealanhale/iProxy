@@ -34,62 +34,13 @@ void polipo_exit();
 	return HTTP_PROXY_PORT;
 }
 
-- (void)start
+- (void)receiveIncomingConnectionNotification:(NSNotification *)notification
 {
-	if (_state == SERVER_STATE_STOPPED) {
-    	[self willChangeValueForKey:@"state"];
-    	_state = SERVER_STATE_STARTING;
-        [NSThread detachNewThreadSelector:@selector(running) toTarget:self withObject:nil];
-        [self didChangeValueForKey:@"state"];
-        [super start];
-    }
-}
-
-- (void)stop
-{
-	if (_state == SERVER_STATE_RUNNING) {
-    	[self willChangeValueForKey:@"state"];
-    	_state = SERVER_STATE_STOPPING;
-        polipo_exit();
-        [self didChangeValueForKey:@"state"];
-        [super stop];
-    }
-}
-
-- (void)started
-{
-    [self willChangeValueForKey:@"state"];
-    _state = SERVER_STATE_RUNNING;
-    [self didChangeValueForKey:@"state"];
-}
-
-- (void)stopped
-{
-    [self willChangeValueForKey:@"state"];
-    _state = SERVER_STATE_STOPPED;
-    [self didChangeValueForKey:@"state"];
-}
-
-- (void)running
-{
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	
-    [self performSelectorOnMainThread:@selector(started) withObject:nil waitUntilDone:YES];
-
-    NSString *configuration = [[NSBundle mainBundle] pathForResource:@"polipo" ofType:@"config"];
-
-    char *args[5] = {
-        "test",
-        "-c",
-        (char*)[configuration UTF8String],
-        "proxyAddress=0.0.0.0",
-        (char*)[[NSString stringWithFormat:@"proxyPort=%d", self.servicePort] UTF8String],
-    };
-
-    polipo_main(5, args);
-
-    [self performSelectorOnMainThread:@selector(stopped) withObject:nil waitUntilDone:YES];
-    [pool drain];
+	NSDictionary *userInfo = [notification userInfo];
+	NSFileHandle *incomingFileHandle = [userInfo objectForKey:NSFileHandleNotificationFileHandleItem];
+    
+    [incomingFileHandle fileDescriptor];
+	[[notification object] acceptConnectionInBackgroundAndNotify];
 }
 
 @end

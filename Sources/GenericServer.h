@@ -27,7 +27,22 @@ typedef enum
 @property (readonly, getter = serviceDomain) NSString *serviceDomain;
 @property (readonly, getter = servicePort) int servicePort;
 
-- (void)start;
+- (BOOL)start;
 - (void)stop;
+
+@end
+
+
+@interface SocketServer : GenericServer
+{
+	NSError *_lastError;
+	NSFileHandle *listeningHandle;
+	CFSocketRef socket;
+	NSMutableSet *responseHandlers;
+}
+
+- (NSError *)lastError;
+- (void)_setLastErrorWithMessage:(NSString *)message;
+- (void)_closeSocket;
 
 @end
