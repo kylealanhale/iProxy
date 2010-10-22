@@ -12,6 +12,7 @@
 
 int proto_socks(int sock);
 void relay(int cs, int ss);
+extern u_long idle_timeout;
 
 @implementation SocksProxyServer
 
@@ -32,6 +33,7 @@ void relay(int cs, int ss);
 	self = [super init];
     if (self) {
     	connexions = [[NSMutableArray alloc] init];
+        idle_timeout = 1; // set a socket timeout of 1 minutes
     }
     return self;
 }
