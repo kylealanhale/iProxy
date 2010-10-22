@@ -46,9 +46,9 @@ void relay(int cs, int ss);
 	return SOCKS_PROXY_PORT;
 }
 
-- (void)stop
+- (void)_stopping
 {
-    [super stop];
+    [super _stopping];
 	for (NSFileHandle *handle in connexions) {
     	[handle closeFile];
     }

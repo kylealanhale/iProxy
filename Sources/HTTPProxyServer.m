@@ -34,13 +34,35 @@ void polipo_exit();
 	return HTTP_PROXY_PORT;
 }
 
-- (void)receiveIncomingConnectionNotification:(NSNotification *)notification
+- (BOOL)_starting
 {
-	NSDictionary *userInfo = [notification userInfo];
-	NSFileHandle *incomingFileHandle = [userInfo objectForKey:NSFileHandleNotificationFileHandleItem];
+    [NSThread detachNewThreadSelector:@selector(proxyHttpRun) toTarget:self withObject:nil];
+    return YES;
+}
+
+- (void)_stopping
+{
+    polipo_exit();
+}
+
+- (void) proxyHttpRun
+{
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
-    [incomingFileHandle fileDescriptor];
-	[[notification object] acceptConnectionInBackgroundAndNotify];
+    NSString *configuration = [[NSBundle mainBundle] pathForResource:@"polipo" ofType:@"config"];
+	[self performSelectorOnMainThread:@selector(_started) withObject:nil waitUntilDone:YES];
+    char *args[5] = {
+        "test",
+        "-c",
+        (char*)[configuration UTF8String],
+        "proxyAddress=0.0.0.0",
+        (char*)[[NSString stringWithFormat:@"proxyPort=%d", HTTP_PROXY_PORT] UTF8String],
+    };
+
+    polipo_main(5, args);
+	
+    [self performSelectorOnMainThread:@selector(_stopped) withObject:nil waitUntilDone:NO];
+    [pool drain];
 }
 
 @end

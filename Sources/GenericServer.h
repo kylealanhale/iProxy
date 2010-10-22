@@ -30,6 +30,11 @@ typedef enum
 - (BOOL)start;
 - (void)stop;
 
+- (void)_started;
+- (void)_failedStarting;
+- (void)_stopping;
+- (void)_stopped;
+
 @end
 
 

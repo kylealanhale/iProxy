@@ -42,19 +42,65 @@
 	return 0;
 }
 
-- (BOOL)start
+- (BOOL)_starting
+{
+	return YES;
+}
+
+- (void)_started
 {
     _netService = [[NSNetService alloc] initWithDomain:@"" type:self.serviceDomaine name:@"" port:self.servicePort];
     _netService.delegate = self;
     [_netService publish];
-    return YES;
+    [self willChangeValueForKey:@"state"];
+    _state = SERVER_STATE_RUNNING;
+    [self didChangeValueForKey:@"state"];
 }
 
-- (void)stop
+- (void)_failedStarting
+{
+    [self willChangeValueForKey:@"state"];
+    _state = SERVER_STATE_STOPPED;
+    [self didChangeValueForKey:@"state"];
+}
+
+- (BOOL)start
+{
+    BOOL starting = NO;
+	if (_state == SERVER_STATE_STOPPED) {
+        [self willChangeValueForKey:@"state"];
+        _state = SERVER_STATE_STARTING;
+        [self didChangeValueForKey:@"state"];
+        starting = [self _starting];
+        if (!starting) {
+        	[self _failedStarting];
+        }
+    }
+    return starting;
+}
+
+- (void)_stopping
+{
+}
+
+- (void)_stopped
 {
     [_netService stop];
     [_netService release];
     _netService = nil;
+    [self willChangeValueForKey:@"state"];
+    _state = SERVER_STATE_STOPPED;
+    [self didChangeValueForKey:@"state"];
+}
+
+- (void)stop
+{
+	if (_state == SERVER_STATE_RUNNING) {
+        [self willChangeValueForKey:@"state"];
+        _state = SERVER_STATE_STOPPING;
+        [self didChangeValueForKey:@"state"];
+        [self _stopping];
+    }
 }
 
 @end
@@ -148,30 +194,13 @@
     }
 }
 
-//
-// start
-//
-// Creates the socket and starts listening for connections on it.
-//
-- (BOOL)start
+- (BOOL)_starting
 {
-    BOOL started = YES;
-	if (_state == SERVER_STATE_STOPPED) {
-        
-        [self willChangeValueForKey:@"state"];
-        _state = SERVER_STATE_STARTING;
-        [self didChangeValueForKey:@"state"];
-		
-        started = [self _openSocket];
-        
-        [self willChangeValueForKey:@"state"];
-        if (started) {
-			_state = SERVER_STATE_RUNNING;
-        } else {
-        	_state = SERVER_STATE_STOPPED;
-        }
-        [self didChangeValueForKey:@"state"];
-        [super start];
+    BOOL started;
+    
+	started = [self _openSocket];
+    if (started) {
+    	[self _started];
     }
     return started;
 }
@@ -181,16 +210,10 @@
 //
 // Stops the server.
 //
-- (void)stop
+- (void)_stopping
 {
-	if (_state == SERVER_STATE_RUNNING) {
-        _state = SERVER_STATE_STOPPING;
-		
-        [self _closeSocket];
-
-        _state = SERVER_STATE_STOPPED;
-        [super stop];
-    }
+    [self _closeSocket];
+    [self _stopped];
 }
 
 //
