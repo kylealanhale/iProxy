@@ -71,7 +71,6 @@ void relay(int cs, int ss);
     pool = [[NSAutoreleasePool alloc] init];
     clientSocket = [fileHandle fileDescriptor];
     serverSocket = proto_socks(clientSocket);
-	NSLog(@"test %d %d", clientSocket, serverSocket);
     if (serverSocket != -1) {
 	    relay(clientSocket, serverSocket);
 	    close(serverSocket);
