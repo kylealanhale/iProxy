@@ -27,6 +27,15 @@ void relay(int cs, int ss);
     return shared;
 }
 
+- (id)init
+{
+	self = [super init];
+    if (self) {
+    	connexions = [[NSMutableArray alloc] init];
+    }
+    return self;
+}
+
 - (NSString *)serviceDomaine
 {
 	return SOCKS_PROXY_DOMAIN;
@@ -37,11 +46,21 @@ void relay(int cs, int ss);
 	return SOCKS_PROXY_PORT;
 }
 
-- (void)_didCloseConnexion
+- (void)stop
+{
+    [super stop];
+	for (NSFileHandle *handle in connexions) {
+    	[handle closeFile];
+    }
+    [connexions removeAllObjects];
+}
+
+- (void)_didCloseConnexion:(NSFileHandle *)fileHandle
 {
 	[self willChangeValueForKey:@"connexionCount"];
     _connexionCount--;
     [self didChangeValueForKey:@"connexionCount"];
+    [connexions removeObject:fileHandle];
 }
 
 - (void)processIncomingConnection:(NSFileHandle *)fileHandle
@@ -52,23 +71,27 @@ void relay(int cs, int ss);
     pool = [[NSAutoreleasePool alloc] init];
     clientSocket = [fileHandle fileDescriptor];
     serverSocket = proto_socks(clientSocket);
+	NSLog(@"test %d %d", clientSocket, serverSocket);
     if (serverSocket != -1) {
 	    relay(clientSocket, serverSocket);
 	    close(serverSocket);
     }
-    [self performSelectorOnMainThread:@selector(_didCloseConnexion) withObject:nil waitUntilDone:NO];
+    close(clientSocket);
     [fileHandle closeFile];
-    [fileHandle release];
+    [self performSelectorOnMainThread:@selector(_didCloseConnexion:) withObject:fileHandle waitUntilDone:NO];
     [pool drain];
 }
 
 - (void)receiveIncomingConnectionNotification:(NSNotification *)notification
 {
+	NSFileHandle *handle;
 	[self willChangeValueForKey:@"connexionCount"];
     _connexionCount++;
     [self didChangeValueForKey:@"connexionCount"];
-	[NSThread detachNewThreadSelector:@selector(processIncomingConnection:) toTarget:self withObject:[[[notification userInfo] objectForKey:NSFileHandleNotificationFileHandleItem] retain]];
+    handle = [[notification userInfo] objectForKey:NSFileHandleNotificationFileHandleItem];
+    [connexions addObject:handle];
 	[[notification object] acceptConnectionInBackgroundAndNotify];
+	[NSThread detachNewThreadSelector:@selector(processIncomingConnection:) toTarget:self withObject:handle];
 }
 
 @end

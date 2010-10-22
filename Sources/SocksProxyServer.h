@@ -11,6 +11,7 @@
 @interface SocksProxyServer : SocketServer <NSNetServiceDelegate>
 {
 	NSUInteger _connexionCount;
+    NSMutableArray *connexions;
 }
 
 + (SocksProxyServer *)sharedSocksProxyServer;
