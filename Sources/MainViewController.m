@@ -75,21 +75,42 @@
     [self.view addTaggedSubview:runningView];
 	
     [[SocksProxyServer sharedSocksProxyServer] addObserver:self forKeyPath:@"connexionCount" options:NSKeyValueObservingOptionNew context:nil];
+    [[SocksProxyServer sharedSocksProxyServer] addObserver:self forKeyPath:@"state" options:NSKeyValueObservingOptionNew context:nil];
+    [[HTTPProxyServer sharedHTTPProxyServer] addObserver:self forKeyPath:@"state" options:NSKeyValueObservingOptionNew context:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(scheduleSocksProxyInfoTimer) name:HTTPProxyServerNewBandwidthStatNotification object:nil];
     [self updateHTTPProxy];
     [self updateSocksProxy];
+}
+
+- (void)scheduleSocksProxyInfoTimer
+{
+    if (!socksProxyInfoTimer) {
+        socksProxyInfoTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(updateSocksProxyInfo) userInfo:nil repeats:NO];
+    }
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
 	if (object == [SocksProxyServer sharedSocksProxyServer] && [keyPath isEqualToString:@"connexionCount"]) {
-    	if (!socksProxyInfoTimer) {
-        	socksProxyInfoTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(updateSocksProxyInfo) userInfo:nil repeats:NO];
-        }
+    	[self scheduleSocksProxyInfoTimer];
     }
 }
 
+static NSDate *date = nil;
 - (void)updateSocksProxyInfo
 {
+	float upload = 0, download = 0;
+    NSDate *now = [NSDate date];
+    
+    [[SocksProxyServer sharedSocksProxyServer] getBandwidthStatWithUpload:&upload download:&download];
+    if (date) {
+    	NSTimeInterval lapse;
+        
+        lapse = [now timeIntervalSinceDate:date];
+	    NSLog(@"upload %f download %f", upload / lapse, download / lapse);
+    }
+    [date release];
+    date = [now retain];
     socksConnextionCountLabel.text = [NSString stringWithFormat:@"%d", [SocksProxyServer sharedSocksProxyServer].connexionCount];
     socksProxyInfoTimer = nil;
 }

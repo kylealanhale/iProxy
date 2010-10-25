@@ -21,6 +21,23 @@
 		0274FA9012444D8F00173784 /* PMSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0274FA8F12444D8F00173784 /* PMSAppDelegate.m */; };
 		0274FA9212444D9B00173784 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0274FA9112444D9B00173784 /* main.m */; };
 		0275613E124AD4AD00B64593 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0275613D124AD4AD00B64593 /* MessageUI.framework */; };
+		02E7545F1274E8C400D55958 /* auth-pwd.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754551274E8C400D55958 /* auth-pwd.c */; };
+		02E754601274E8C400D55958 /* get-bind.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754561274E8C400D55958 /* get-bind.c */; };
+		02E754611274E8C400D55958 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754571274E8C400D55958 /* init.c */; };
+		02E754631274E8C400D55958 /* readconf.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754591274E8C400D55958 /* readconf.c */; };
+		02E754641274E8C400D55958 /* relay.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E7545A1274E8C400D55958 /* relay.c */; };
+		02E754651274E8C400D55958 /* socks.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E7545B1274E8C400D55958 /* socks.c */; };
+		02E754661274E8C400D55958 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E7545D1274E8C400D55958 /* util.c */; };
+		02E754911274EC3000D55958 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754581274E8C400D55958 /* main.c */; };
+		02E754D012752A4C00D55958 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E7545D1274E8C400D55958 /* util.c */; };
+		02E754D112752A4E00D55958 /* socks.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E7545B1274E8C400D55958 /* socks.c */; };
+		02E754D212752A4F00D55958 /* relay.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E7545A1274E8C400D55958 /* relay.c */; };
+		02E754D312752A5000D55958 /* readconf.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754591274E8C400D55958 /* readconf.c */; };
+		02E754D412752A5100D55958 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754581274E8C400D55958 /* main.c */; };
+		02E754D512752A5200D55958 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754571274E8C400D55958 /* init.c */; };
+		02E754D612752A5400D55958 /* get-bind.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754561274E8C400D55958 /* get-bind.c */; };
+		02E754D712752A5500D55958 /* auth-pwd.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754551274E8C400D55958 /* auth-pwd.c */; };
+		02E754DC12752A9900D55958 /* srelay-tool-main.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754D912752A7400D55958 /* srelay-tool-main.c */; };
 		02ED14C21266836A00595AA0 /* UIColorAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 02ED14C11266836A00595AA0 /* UIColorAdditions.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -66,14 +83,6 @@
 		9D71D8041237A598008538A1 /* tunnel.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7E81237A598008538A1 /* tunnel.c */; };
 		9D71D8051237A598008538A1 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7EA1237A598008538A1 /* util.c */; };
 		9D79C2BF124E7173008F7F98 /* NSStringAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D79C2BE124E7173008F7F98 /* NSStringAdditions.m */; };
-		9D7AC136124BD80C00A31FE2 /* auth-pwd.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D7AC11A124BD80C00A31FE2 /* auth-pwd.c */; };
-		9D7AC13D124BD80C00A31FE2 /* get-bind.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D7AC121124BD80C00A31FE2 /* get-bind.c */; };
-		9D7AC13E124BD80C00A31FE2 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D7AC122124BD80C00A31FE2 /* init.c */; };
-		9D7AC141124BD80C00A31FE2 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D7AC125124BD80C00A31FE2 /* main.c */; };
-		9D7AC143124BD80C00A31FE2 /* readconf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D7AC127124BD80C00A31FE2 /* readconf.c */; };
-		9D7AC144124BD80C00A31FE2 /* relay.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D7AC128124BD80C00A31FE2 /* relay.c */; };
-		9D7AC14A124BD80C00A31FE2 /* socks.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D7AC12F124BD80C00A31FE2 /* socks.c */; };
-		9D7AC14E124BD80C00A31FE2 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D7AC134124BD80C00A31FE2 /* util.c */; };
 		9D83D36711B9AF5C00A9922F /* PacFileResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D83D36111B9AF5C00A9922F /* PacFileResponse.m */; };
 		9D83D36811B9AF5C00A9922F /* HTTPResponseHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D83D36311B9AF5C00A9922F /* HTTPResponseHandler.m */; };
 		9D83D36911B9AF5C00A9922F /* HTTPServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D83D36511B9AF5C00A9922F /* HTTPServer.m */; };
@@ -105,6 +114,18 @@
 		0274FA8F12444D8F00173784 /* PMSAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMSAppDelegate.m; sourceTree = "<group>"; };
 		0274FA9112444D9B00173784 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		0275613D124AD4AD00B64593 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		02E754551274E8C400D55958 /* auth-pwd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "auth-pwd.c"; sourceTree = "<group>"; };
+		02E754561274E8C400D55958 /* get-bind.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "get-bind.c"; sourceTree = "<group>"; };
+		02E754571274E8C400D55958 /* init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = init.c; sourceTree = "<group>"; };
+		02E754581274E8C400D55958 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		02E754591274E8C400D55958 /* readconf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = readconf.c; sourceTree = "<group>"; };
+		02E7545A1274E8C400D55958 /* relay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = relay.c; sourceTree = "<group>"; };
+		02E7545B1274E8C400D55958 /* socks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = socks.c; sourceTree = "<group>"; };
+		02E7545C1274E8C400D55958 /* srelay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = srelay.h; sourceTree = "<group>"; };
+		02E7545D1274E8C400D55958 /* util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = util.c; sourceTree = "<group>"; };
+		02E7545E1274E8C400D55958 /* v6defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = v6defs.h; sourceTree = "<group>"; };
+		02E7548E1274EC1A00D55958 /* route.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = route.h; path = Frameworks/route.h; sourceTree = "<group>"; };
+		02E754D912752A7400D55958 /* srelay-tool-main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "srelay-tool-main.c"; sourceTree = "<group>"; };
 		02ED13FD12667DFF00595AA0 /* SharedHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedHeader.h; sourceTree = "<group>"; };
 		02ED14C01266836A00595AA0 /* UIColorAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIColorAdditions.h; path = Sources/UIColorAdditions.h; sourceTree = "<group>"; };
 		02ED14C11266836A00595AA0 /* UIColorAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIColorAdditions.m; path = Sources/UIColorAdditions.m; sourceTree = "<group>"; };
@@ -186,16 +207,6 @@
 		9D71D7EB1237A598008538A1 /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = util.h; path = "Frameworks/polipo-20091115/util.h"; sourceTree = "<group>"; };
 		9D79C2BD124E7173008F7F98 /* NSStringAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSStringAdditions.h; path = Sources/NSStringAdditions.h; sourceTree = "<group>"; };
 		9D79C2BE124E7173008F7F98 /* NSStringAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSStringAdditions.m; path = Sources/NSStringAdditions.m; sourceTree = "<group>"; };
-		9D7AC11A124BD80C00A31FE2 /* auth-pwd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "auth-pwd.c"; sourceTree = "<group>"; };
-		9D7AC121124BD80C00A31FE2 /* get-bind.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "get-bind.c"; sourceTree = "<group>"; };
-		9D7AC122124BD80C00A31FE2 /* init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = init.c; sourceTree = "<group>"; };
-		9D7AC125124BD80C00A31FE2 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		9D7AC127124BD80C00A31FE2 /* readconf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = readconf.c; sourceTree = "<group>"; };
-		9D7AC128124BD80C00A31FE2 /* relay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = relay.c; sourceTree = "<group>"; };
-		9D7AC12F124BD80C00A31FE2 /* socks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = socks.c; sourceTree = "<group>"; };
-		9D7AC132124BD80C00A31FE2 /* srelay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = srelay.h; sourceTree = "<group>"; };
-		9D7AC134124BD80C00A31FE2 /* util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = util.c; sourceTree = "<group>"; };
-		9D7AC135124BD80C00A31FE2 /* v6defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = v6defs.h; sourceTree = "<group>"; };
 		9D83D36011B9AF5C00A9922F /* PacFileResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PacFileResponse.h; path = Sources/PacFileResponse.h; sourceTree = "<group>"; };
 		9D83D36111B9AF5C00A9922F /* PacFileResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PacFileResponse.m; path = Sources/PacFileResponse.m; sourceTree = "<group>"; };
 		9D83D36211B9AF5C00A9922F /* HTTPResponseHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTPResponseHandler.h; path = Sources/HTTPResponseHandler.h; sourceTree = "<group>"; };
@@ -221,6 +232,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				0267229D12444EA000A2EACF /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		02E754CB12752A3700D55958 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -271,6 +289,25 @@
 				0274FA6512444A5D00173784 /* iProxyMacSetup-Info.plist */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		02E7544F1274E8A500D55958 /* srelay */ = {
+			isa = PBXGroup;
+			children = (
+				02E754551274E8C400D55958 /* auth-pwd.c */,
+				02E754561274E8C400D55958 /* get-bind.c */,
+				02E754571274E8C400D55958 /* init.c */,
+				02E754581274E8C400D55958 /* main.c */,
+				02E754591274E8C400D55958 /* readconf.c */,
+				02E7545A1274E8C400D55958 /* relay.c */,
+				02E7545B1274E8C400D55958 /* socks.c */,
+				02E7545C1274E8C400D55958 /* srelay.h */,
+				02E7545D1274E8C400D55958 /* util.c */,
+				02E7545E1274E8C400D55958 /* v6defs.h */,
+				02E754D912752A7400D55958 /* srelay-tool-main.c */,
+			);
+			name = srelay;
+			path = Frameworks/srelay;
 			sourceTree = "<group>";
 		};
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
@@ -324,7 +361,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9D7AC119124BD80C00A31FE2 /* srelay */,
+				02E7548E1274EC1A00D55958 /* route.h */,
+				02E7544F1274E8A500D55958 /* srelay */,
 				9D71D7AD1237A53C008538A1 /* polipo */,
 				3A18D6B3119DC7E300C56A7A /* CFNetwork.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
@@ -442,24 +480,6 @@
 			name = polipo;
 			sourceTree = "<group>";
 		};
-		9D7AC119124BD80C00A31FE2 /* srelay */ = {
-			isa = PBXGroup;
-			children = (
-				9D7AC11A124BD80C00A31FE2 /* auth-pwd.c */,
-				9D7AC121124BD80C00A31FE2 /* get-bind.c */,
-				9D7AC122124BD80C00A31FE2 /* init.c */,
-				9D7AC125124BD80C00A31FE2 /* main.c */,
-				9D7AC127124BD80C00A31FE2 /* readconf.c */,
-				9D7AC128124BD80C00A31FE2 /* relay.c */,
-				9D7AC12F124BD80C00A31FE2 /* socks.c */,
-				9D7AC132124BD80C00A31FE2 /* srelay.h */,
-				9D7AC134124BD80C00A31FE2 /* util.c */,
-				9D7AC135124BD80C00A31FE2 /* v6defs.h */,
-			);
-			name = srelay;
-			path = "Frameworks/srelay-0.4.7p3";
-			sourceTree = "<group>";
-		};
 		9DDA4C62124E4AD200BF30F3 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -516,6 +536,21 @@
 			productReference = 0274FA6312444A5D00173784 /* iProxyMacSetup.app */;
 			productType = "com.apple.product-type.application";
 		};
+		02E754CC12752A3700D55958 /* srelay */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 02E754DB12752A7400D55958 /* Build configuration list for PBXNativeTarget "srelay" */;
+			buildPhases = (
+				02E754CA12752A3700D55958 /* Sources */,
+				02E754CB12752A3700D55958 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = srelay;
+			productName = srelay;
+			productType = "com.apple.product-type.tool";
+		};
 		1D6058900D05DD3D006BFB54 /* iProxy */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "iProxy" */;
@@ -555,6 +590,7 @@
 			targets = (
 				1D6058900D05DD3D006BFB54 /* iProxy */,
 				0274FA6212444A5D00173784 /* iProxyMacSetup */,
+				02E754CC12752A3700D55958 /* srelay */,
 			);
 		};
 /* End PBXProject section */
@@ -622,6 +658,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		02E754CA12752A3700D55958 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				02E754D012752A4C00D55958 /* util.c in Sources */,
+				02E754D112752A4E00D55958 /* socks.c in Sources */,
+				02E754D212752A4F00D55958 /* relay.c in Sources */,
+				02E754D312752A5000D55958 /* readconf.c in Sources */,
+				02E754D412752A5100D55958 /* main.c in Sources */,
+				02E754D512752A5200D55958 /* init.c in Sources */,
+				02E754D612752A5400D55958 /* get-bind.c in Sources */,
+				02E754D712752A5500D55958 /* auth-pwd.c in Sources */,
+				02E754DC12752A9900D55958 /* srelay-tool-main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1D60588E0D05DD3D006BFB54 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -659,20 +711,20 @@
 				9D71D8051237A598008538A1 /* util.c in Sources */,
 				9DF66D6712482B170012D66D /* UIDeviceAdditions.m in Sources */,
 				9DF66DB0124830AF0012D66D /* UIViewAdditions.m in Sources */,
-				9D7AC136124BD80C00A31FE2 /* auth-pwd.c in Sources */,
-				9D7AC13D124BD80C00A31FE2 /* get-bind.c in Sources */,
-				9D7AC13E124BD80C00A31FE2 /* init.c in Sources */,
-				9D7AC141124BD80C00A31FE2 /* main.c in Sources */,
-				9D7AC143124BD80C00A31FE2 /* readconf.c in Sources */,
-				9D7AC144124BD80C00A31FE2 /* relay.c in Sources */,
-				9D7AC14A124BD80C00A31FE2 /* socks.c in Sources */,
-				9D7AC14E124BD80C00A31FE2 /* util.c in Sources */,
 				9DDA4C2E124E460D00BF30F3 /* InfoViewController.m in Sources */,
 				9D79C2BF124E7173008F7F98 /* NSStringAdditions.m in Sources */,
 				02501CC4126667EF00CE5CA9 /* GenericServer.m in Sources */,
 				02501CC71266680900CE5CA9 /* HTTPProxyServer.m in Sources */,
 				02501CCA1266681800CE5CA9 /* SocksProxyServer.m in Sources */,
 				02ED14C21266836A00595AA0 /* UIColorAdditions.m in Sources */,
+				02E7545F1274E8C400D55958 /* auth-pwd.c in Sources */,
+				02E754601274E8C400D55958 /* get-bind.c in Sources */,
+				02E754611274E8C400D55958 /* init.c in Sources */,
+				02E754631274E8C400D55958 /* readconf.c in Sources */,
+				02E754641274E8C400D55958 /* relay.c in Sources */,
+				02E754651274E8C400D55958 /* socks.c in Sources */,
+				02E754661274E8C400D55958 /* util.c in Sources */,
+				02E754911274EC3000D55958 /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -792,6 +844,81 @@
 				PREBINDING = NO;
 				PRODUCT_NAME = iProxyMacSetup;
 				SDKROOT = macosx10.6;
+			};
+			name = "Ad-hoc";
+		};
+		02E754CD12752A3900D55958 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Sources/Prefix.pch;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = srelay;
+				SDKROOT = macosx10.6;
+				VALID_ARCHS = i386;
+			};
+			name = Debug;
+		};
+		02E754CE12752A3900D55958 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Sources/Prefix.pch;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = srelay;
+				SDKROOT = macosx10.6;
+				VALID_ARCHS = i386;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		02E754CF12752A3900D55958 /* Ad-hoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Sources/Prefix.pch;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = srelay;
+				SDKROOT = macosx10.6;
+				VALID_ARCHS = i386;
 			};
 			name = "Ad-hoc";
 		};
@@ -920,6 +1047,16 @@
 				0274FA6612444A5E00173784 /* Debug */,
 				0274FA6712444A5E00173784 /* Release */,
 				0274FA6812444A5E00173784 /* Ad-hoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		02E754DB12752A7400D55958 /* Build configuration list for PBXNativeTarget "srelay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				02E754CD12752A3900D55958 /* Debug */,
+				02E754CE12752A3900D55958 /* Release */,
+				02E754CF12752A3900D55958 /* Ad-hoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

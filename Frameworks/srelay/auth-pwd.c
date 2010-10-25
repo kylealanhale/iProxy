@@ -1,8 +1,8 @@
 /*
   auth-pwd.c
-  $Id: auth-pwd.c,v 1.10 2009/12/17 04:12:17 bulkstream Exp $
+  $Id: auth-pwd.c,v 1.13 2010/10/18 05:17:51 bulkstream Exp $
 
-Copyright (C) 2001-2009 Tomo.M (author).
+Copyright (C) 2001-2010 Tomo.M (author).
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -132,7 +132,7 @@ int auth_pwd_server(int s)
   return(code);   /* access granted or not */
 }
 
-int auth_pwd_client(int s, struct socks_req *req)
+int auth_pwd_client(int s, bin_addr *proxy)
 {
   u_char buf[640];
   int  r, ret, done;
@@ -148,7 +148,7 @@ int auth_pwd_client(int s, struct socks_req *req)
   }
 
   if ( fp != NULL ) {
-    r = readpasswd(fp, req, &up);
+    r = readpasswd(fp, proxy, &up);
     fclose(fp);
     if ( r == 0 ) { /* readpasswd gets match */
       if ( up.ulen >= 1 && up.ulen <= 255
@@ -251,12 +251,9 @@ int checkpasswd(char *user, char *pass)
   memset(spwd->sp_pwdp, 0, strlen(spwd->sp_pwdp));
 #endif
 
-#if defined(FREEBSD) || defined(SOLARIS)
   if (matched) {
     return(0);
   } else {
     return(-1);
   }
-#endif
-  return(0);
 }

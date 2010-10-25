@@ -1,8 +1,8 @@
 /*
   init.c
-  $Id: init.c,v 1.8 2009/12/09 04:07:53 bulkstream Exp $
+  $Id: init.c,v 1.9 2010/10/15 13:40:47 bulkstream Exp $
 
-Copyright (C) 2001-2009 Tomo.M (author).
+Copyright (C) 2001-2010 Tomo.M (author).
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -54,9 +54,6 @@ int serv_init(char *ifs)
   char   hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];
   char   tmp_str_serv_sock[NI_MAXHOST+NI_MAXSERV+1];
   const  int on = 1;
-
-str_serv_sock = malloc(sizeof(char *) * MAX_SOCKS);
-    serv_sock = malloc(sizeof(int) * MAX_SOCKS);
 
   if (ifs == NULL || *ifs == '\0') {
     str_serv_sock = malloc(sizeof(char *) * MAX_SOCKS);

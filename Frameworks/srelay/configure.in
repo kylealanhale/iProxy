@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-dnl $Id: configure.in,v 1.8 2009/08/30 13:06:32 bulkstream Exp $
+dnl $Id: configure.in,v 1.9 2010/10/15 13:40:47 bulkstream Exp $
 AC_INIT(main.c)
 AC_CONFIG_HEADER(config.h)
 AC_CANONICAL_TARGET
@@ -14,8 +14,8 @@ case "$build_os" in
 	AC_DEFINE(SOLARIS)
 	;;
   linux*)
-	case "$build_cpu" in
-	  i*86)
+	case "$host_cpu" in
+	  i*86|mips*|powerpc*|sparc*)
 	    OS=LINUX
 	    AC_DEFINE(LINUX)
 	    ;;

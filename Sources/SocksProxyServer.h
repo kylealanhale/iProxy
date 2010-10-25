@@ -8,14 +8,18 @@
 
 #import "GenericServer.h"
 
+#define HTTPProxyServerNewBandwidthStatNotification @"HTTPProxyServerNewBandwidthStatNotification"
+
 @interface SocksProxyServer : SocketServer <NSNetServiceDelegate>
 {
-	NSUInteger _connexionCount;
-    NSMutableArray *connexions;
+    UInt32 _currentStat;
+    UInt64 _upload;
+    UInt64 _download;
 }
 
 + (SocksProxyServer *)sharedSocksProxyServer;
 
-@property(readonly) NSUInteger connexionCount;
+- (void)_addBandwidthStatWithUpload:(UInt64)upload download:(UInt64)download;
+- (void)getBandwidthStatWithUpload:(float *)upload download:(float *)download;
 
 @end

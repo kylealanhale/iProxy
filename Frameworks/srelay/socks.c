@@ -1,8 +1,8 @@
 /*
   socks.c:
-  $Id: socks.c,v 1.18 2009/12/17 15:47:36 bulkstream Exp $
+  $Id: socks.c,v 1.23 2010/10/20 14:17:54 bulkstream Exp $
 
-Copyright (C) 2001-2009 Tomo.M (author).
+Copyright (C) 2001-2010 Tomo.M (author).
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,29 +33,6 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "srelay.h"
-
-#define S5REQ_CONN    1
-#define S5REQ_BIND    2
-#define S5REQ_UDPA    3
-
-#define S5AGRANTED    0
-#define S5EGENERAL    1
-#define S5ENOTALOW    2
-#define S5ENETURCH    3 
-#define S5EHOSURCH    4
-#define S5ECREFUSE    5
-#define S5ETTLEXPR    6
-#define S5EUNSUPRT    7
-#define S5EUSATYPE    8
-#define S5EINVADDR    9
-
-#define S4REQ_CONN    1
-#define S4REQ_BIND    2
-
-#define S4AGRANTED    90
-#define S4EGENERAL    91
-#define S4ECNIDENT    92
-#define S4EIVUSRID    93
 
 #define TIMEOUTSEC    30
 
@@ -104,82 +81,70 @@ struct req_host_info {
 };
 
 /* prototypes */
-int proto_socks4 __P((struct socks_req *));
-int proto_socks5 __P((struct socks_req *));
-int socks_direct_conn __P((struct socks_req *));
-int proxy_connect __P((struct socks_req *));
-int build_socks_request __P((struct socks_req *, u_char *, int));
-int connect_to_socks __P((struct socks_req *, int));
-int socks_proxy_reply __P((int, struct socks_req *));
+int proto_socks4 __P((SOCKS_STATE *));
+int proto_socks5 __P((SOCKS_STATE *));
+int socks_direct_conn __P((SOCKS_STATE *));
+int proxy_connect __P((SOCKS_STATE *));
+int build_socks_request __P((SOCKS_STATE *, u_char *, int));
+int connect_to_socks __P((SOCKS_STATE *, int));
+int socks_proxy_reply __P((int, SOCKS_STATE *));
 int socks_rep __P((int , int , int , struct sockaddr *));
 int build_socks_reply __P((int, int, struct sockaddr *, u_char *));
 int s5auth_s __P((int));
 int s5auth_s_rep __P((int, int));
-int s5auth_c __P((int, struct socks_req *));
-int connect_to_http __P((struct socks_req *));
-int forward_connect __P((struct socks_req *, int *));
-int bind_sock __P((int, struct socks_req *, struct addrinfo *));
+int s5auth_c __P((int, bin_addr *));
+int connect_to_http __P((SOCKS_STATE *));
+int forward_connect __P((SOCKS_STATE *));
+int bind_sock __P((int, SOCKS_STATE *, struct addrinfo *));
 int do_bind __P((int, struct addrinfo *, u_int16_t));
+#ifdef SO_BINDTODEVICE
+static int do_bindtodevice __P((int, char *));
+#endif
 
+int read_until_delim __P((int, char *, size_t, int));
 int get_line __P((int, char *, size_t));
-int lookup_tbl __P((struct socks_req *));
-int resolv_host __P((struct bin_addr *, u_int16_t, struct host_info *));
-int log_request __P((struct socks_req *));
+int get_str __P((int, char *, size_t));
+int lookup_tbl __P((SOCKS_STATE *));
+int resolv_host __P((bin_addr *, u_int16_t, struct host_info *));
+int log_request __P((SOCKS_STATE *));
 
 
 /*
   proto_socks:
                handle socks protocol.
 */
-int proto_socks(int sock)
+int proto_socks(SOCKS_STATE *state)
 {
   u_char buf[128];
   int r;
   int on = 1;
-  struct  socks_req req;
   size_t len;
 
-  memset(&req, 0, sizeof(req));
-  req.s = sock;
-  req.r = -1;   /* forward socket not connected. */
+  state->r = -1; /* forward socket not connected. */
 
-  /* find the interface that the socket is connected */
-  if (same_interface) {
-    len = sizeof(req.inaddr);
-    r = getsockname(sock, (struct sockaddr*)&req.inaddr, (socklen_t *)&len);
-    if (r == 0) {
-      switch (req.inaddr.ss_family) {
-      case AF_INET:
-	((struct sockaddr_in*) &req.inaddr)->sin_port = 0;
-	break;
-      case AF_INET6:
-	((struct sockaddr_in6*) &req.inaddr)->sin6_port = 0;
-	break;
-      }
-    }
-  }
-
-  r = timerd_read(sock, buf, sizeof(buf), TIMEOUTSEC, MSG_PEEK);
-  if ( r <= 0 ) {
-    close(sock);
+  r = timerd_read(state->s, buf, 1, TIMEOUTSEC, 0);
+  if ( r < 1 ) {  /* EOF or error */
+    close(state->s);
     return(-1);
   }
 
-  req.ver = buf[0];
-  switch (req.ver) {
+  state->ver = buf[0];
+  switch (state->ver) {
   case 4:
     if (method_num > 0) {
       /* this implies this server is working in V5 mode */
-      GEN_ERR_REP(sock, 4);
+      /* dummy read for flush socket buf */
+      r = timerd_read(state->s, buf, sizeof(buf), TIMEOUTSEC, 0);
+      GEN_ERR_REP(state->s, 4);
       msg_out(warn, "V4 request is not accepted.");
       r = -1;
     } else {
-      r = proto_socks4(&req);
+      r = proto_socks4(state);
     }
     break;
   case 5:
-    if ((r = s5auth_s(sock)) == 0) {
-      r = proto_socks5(&req);
+    if ((r = s5auth_s(state->s)) == 0) {
+      r = proto_socks5(state);
     }
     break;
   default:
@@ -187,29 +152,39 @@ int proto_socks(int sock)
   }
 
   if (r >= 0) {
-    req.tbl_ind = lookup_tbl(&req);
-    log_request(&req);
+    lookup_tbl(state);
+    log_request(state);
 
-    if (req.rtbl.rl_meth == DIRECT) {
-      r = socks_direct_conn(&req);
+    if (state->rtbl.rl_meth == DIRECT) {
+      r = socks_direct_conn(state);
     } else {
-      r = proxy_connect(&req);
+      r = proxy_connect(state);
     }
   }
 
-  if (r >= 0) {
-    setsockopt(req.r, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof on);
+  if (r >= 0 && state->r >= 0) {
+    setsockopt(state->r, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof on);
 #if defined(FREEBSD) || defined(MACOSX)
-    setsockopt(req.r, SOL_SOCKET, SO_REUSEPORT, (char *)&on, sizeof on);
+    setsockopt(state->r, SOL_SOCKET, SO_REUSEPORT, (char *)&on, sizeof on);
 #endif
-    setsockopt(req.r, IPPROTO_TCP, TCP_NODELAY, (char *)&on, sizeof on);
+    if (state->req != S5REQ_UDPA)
+      setsockopt(state->r, IPPROTO_TCP, TCP_NODELAY, (char *)&on, sizeof on);
 
-    return(req.r);   /* connected forwarding socket descriptor */
+    /* get upstream-side socket/peer name */
+    len = sizeof(struct sockaddr_storage);
+    getsockname(state->r, (struct sockaddr *)&state->li->mys.addr, (socklen_t *)&len);
+    state->li->mys.len = len;
+    len = sizeof(struct sockaddr_storage);
+    getpeername(state->r, (struct sockaddr *)&state->li->prs.addr, (socklen_t *)&len);
+    state->li->prs.len = len;
+
+    return(0);   /* 0: OK */
   }
-  if (req.r >= 0) {
-    close(req.r);
+  /* error */
+  if (state->r >= 0) {
+    close(state->r);
   }
-  req.r = -1;
+  state->r = -1;
   return(-1);  /* error */
 }
 
@@ -219,77 +194,60 @@ int proto_socks(int sock)
            handle socks v4/v4a protocol.
 	   get socks v4/v4a request from client.
 */
-int proto_socks4(struct socks_req *req)
+int proto_socks4(SOCKS_STATE *state)
 {
   u_char  buf[512];
-  int     r, len;
+  int     r;
 
-  r = timerd_read(req->s, buf, 1+1+2+4, TIMEOUTSEC, 0);
-  if (r < 1+1+2+4) {    /* cannot read request */
-    GEN_ERR_REP(req->s, 4);
+  r = timerd_read(state->s, buf+1, 1+2+4, TIMEOUTSEC, 0);
+  if (r < 1+2+4) {    /* cannot read request */
+    GEN_ERR_REP(state->s, 4);
     return(-1);
   }
-  if ( buf[0] != 0x04 ) {
-    /* wrong version request (why ?) */
-    GEN_ERR_REP(req->s, 4);
-    return(-1);
-  }
-  req->req = buf[1];
+
+  state->req = buf[1];
 
   /* check if request has socks4-a domain name format */
   if ( buf[4] == 0 && buf[5] == 0 &&
        buf[6] == 0 && buf[7] != 0 ) {
-    req->dest.atype = S4ATFQDN;
+    state->dest.atype = S4ATFQDN;
   } else {
-    req->dest.atype = S4ATIPV4;
+    state->dest.atype = S4ATIPV4;
   }
 
-  req->port = buf[2] * 0x100 + buf[3];
-
-  if (req->dest.atype == S4ATIPV4) {
-    memcpy(req->dest.v4_addr, &buf[4], 4);
-  }
+  /* port */
+  state->port = buf[2] * 0x100 + buf[3];
+  /* IP */
+  memcpy(state->dest.v4_addr, &buf[4], 4);
   
-  /* read client user name in request */
-  r = timerd_read(req->s, buf, sizeof(buf), TIMEOUTSEC, MSG_PEEK);
-  if ( r < 1 ) {
-    /* error or client sends EOF */
-    GEN_ERR_REP(req->s, 4);
-    return(-1);
-  }
-  /* buf could contains
+  /* rest of the req could be
           username '\0'
       or,
           username '\0' hostname '\0'
   */
-  r = strlen((char *)buf);        /* r should be 0 <= r <= 255 */
+
+  /* read client user name in request */
+  r = get_str(state->s, (char *)buf, sizeof(buf));
+
   if (r < 0 || r > 255) {
     /* invalid username length */
-    GEN_ERR_REP(req->s, 4);
+    GEN_ERR_REP(state->s, 4);
     return(-1);
   }
 
-  r = timerd_read(req->s, buf, r+1, TIMEOUTSEC, 0);
-  if ( r > 0 && r <= 255 ) {    /* r should be 1 <= r <= 255 */
-    len = r - 1;
-    req->u_len = len;
-    memcpy(req->user, buf, len);
-  } else {
-    /* read error or something */
-    GEN_ERR_REP(req->s, 4);
-    return(-1);
-  }
+  state->u_len = r;
+  memcpy(state->user, buf, r);
 
-  if ( req->dest.atype == S4ATFQDN ) {
+  if ( state->dest.atype == S4ATFQDN ) {
     /* request is socks4-A specific */
-    r = timerd_read(req->s, buf, sizeof buf, TIMEOUTSEC, 0);
+    r = get_str(state->s, (char *)buf, sizeof(buf));
+
     if ( r > 0 && r <= 256 ) {   /* r should be 1 <= r <= 256 */
-      len = r - 1;
-      req->dest.len_fqdn = len;
-      memcpy(req->dest.fqdn, buf, len);
+      state->dest.len_fqdn = r;
+      memcpy(state->dest.fqdn, buf, r);
     } else {
       /* read error or something */
-      GEN_ERR_REP(req->s, 4);
+      GEN_ERR_REP(state->s, 4);
       return(-1);
     }
   }
@@ -303,70 +261,77 @@ int proto_socks4(struct socks_req *req)
            handle socks v5 protocol.
 	   get socks v5 request from client.
 */
-int proto_socks5(struct socks_req *req)
+int proto_socks5(SOCKS_STATE *state)
 {
   u_char    buf[512];
   int     r, len;
 
-  /* peek first 5 bytes of request. */
-  r = timerd_read(req->s, buf, sizeof(buf), TIMEOUTSEC, MSG_PEEK);
-  if ( r < 5 ) {
+  /* read first 4 bytes of request. */
+  r = timerd_read(state->s, buf, 4, TIMEOUTSEC, 0);
+
+  if ( r < 4 ) {
     /* cannot read client request */
-    close(req->s);
+    close(state->s);
     return(-1);
   }
 
   if ( buf[0] != 0x05 ) {
     /* wrong version request */
-    GEN_ERR_REP(req->s, 5);
+    GEN_ERR_REP(state->s, 5);
     return(-1);
   }
 
-  req->req = buf[1];
-  req->dest.atype = buf[3];  /* address type field */
+  state->req = buf[1];
+  state->dest.atype = buf[3];  /* address type field */
 
-  switch(req->dest.atype) {
+  switch(state->dest.atype) {
   case S5ATIPV4:  /* IPv4 address */
-    r = timerd_read(req->s, buf, 4+4+2, TIMEOUTSEC, 0);
-    if (r < 4+4+2) {     /* cannot read request (why?) */
-      GEN_ERR_REP(req->s, 5);
+    r = timerd_read(state->s, buf+4, 4+2, TIMEOUTSEC, 0);
+    if (r < 4+2) {     /* cannot read request (why?) */
+      GEN_ERR_REP(state->s, 5);
       return(-1);
     }
-    memcpy(req->dest.v4_addr, &buf[4], sizeof(struct in_addr));
-    req->port = buf[8] * 0x100 + buf[9];
+    memcpy(state->dest.v4_addr, &buf[4], sizeof(struct in_addr));
+    state->port = buf[8] * 0x100 + buf[9];
     break;
 
   case S5ATIPV6:
-    r = timerd_read(req->s, buf, 4+16+2, TIMEOUTSEC, 0);
-    if (r < 4+16+2) {     /* cannot read request (why?) */
-      GEN_ERR_REP(req->s, 5);
+    r = timerd_read(state->s, buf+4, 16+2, TIMEOUTSEC, 0);
+    if (r < 16+2) {     /* cannot read request (why?) */
+      GEN_ERR_REP(state->s, 5);
       return(-1);
     }
-    memcpy(req->dest.v6_addr, &buf[4], sizeof(struct in6_addr));
-    req->port = buf[20] * 0x100 + buf[21];
+    memcpy(state->dest.v6_addr, &buf[4], sizeof(struct in6_addr));
+    state->port = buf[20] * 0x100 + buf[21];
     break;
 
   case S5ATFQDN:  /* string or FQDN */
+    r = timerd_read(state->s, buf+4, 1, TIMEOUTSEC, 0);
+    if (r < 1) {     /* cannot read request (why?) */
+      GEN_ERR_REP(state->s, 5);
+      return(-1);
+    }
+
     if ((len = buf[4]) < 0 || len > 255) {
       /* invalid length */
-      socks_rep(req->s, 5, S5EINVADDR, 0);
-      close(req->s);
+      socks_rep(state->s, 5, S5EINVADDR, 0);
+      close(state->s);
       return(-1);
     }
-    r = timerd_read(req->s, buf, 4+1+len+2, TIMEOUTSEC, 0);
-    if ( r < 4+1+len+2 ) {  /* cannot read request (why?) */
-      GEN_ERR_REP(req->s, 5);
+    r = timerd_read(state->s, buf+5, len+2, TIMEOUTSEC, 0);
+    if ( r < len+2 ) {  /* cannot read request (why?) */
+      GEN_ERR_REP(state->s, 5);
       return(-1);
     }
-    memcpy(req->dest.fqdn, &buf[5], len);
-    req->dest.len_fqdn = len;
-    req->port = buf[4+1+len] * 0x100 + buf[4+1+len+1];
+    memcpy(state->dest.fqdn, &buf[5], len);
+    state->dest.len_fqdn = len;
+    state->port = buf[5+len] * 0x100 + buf[5+len+1];
     break;
 
   default:
     /* unsupported address */
-    socks_rep(req->s, 5, S5EUSATYPE, 0);
-    close(req->s);
+    socks_rep(state->s, 5, S5EUSATYPE, 0);
+    close(state->s);
     return(-1);
   }
   return(0);
@@ -377,9 +342,9 @@ int proto_socks5(struct socks_req *req)
   socks_direct_conn:
       behave as socks server to connect/bind.
  */
-int socks_direct_conn(struct socks_req *req)
+int socks_direct_conn(SOCKS_STATE *state)
 {
-  int    cs, acs = 0;
+  int	 cs, acs;
   int    len;
   struct addrinfo ba;
   struct sockaddr_storage ss;
@@ -387,40 +352,41 @@ int socks_direct_conn(struct socks_req *req)
   int    save_errno = 0;
 
   /* process direct connect/bind to destination */
+  state->r = cs = acs = -1;
 
   /* process by_command request */
-  switch (req->req) {   /* request */
+  switch (state->req) {   /* request */
   case S5REQ_CONN:
-    cs = forward_connect(req, &save_errno);
-    if (cs >= 0) {
+    error = forward_connect(state);
+    if (error >= 0) {
       len = sizeof(ss);
-      if (getsockname(cs, (struct sockaddr *)&ss, (socklen_t *)&len) < 0) {
+      if (getsockname(state->r, (struct sockaddr *)&ss, (socklen_t *)&len) < 0) {
 	save_errno = errno;
-	close(cs);
-	cs = -1;
+	close(state->r);
+	state->r = -1;
       }
     }
-    if (cs < 0 || save_errno != 0) {
+    if (error < 0 || save_errno != 0) {
       /* any socket error */
-      switch (req->ver) {
+      switch (state->ver) {
       case 0x04:
-	GEN_ERR_REP(req->s, 4);
+	GEN_ERR_REP(state->s, 4);
 	break;
       case 0x05:
 	switch(save_errno) {
-	case ENETUNREACH:  socks_rep(req->s, 5, S5ENETURCH, 0); break;
-	case ECONNREFUSED: socks_rep(req->s, 5, S5ECREFUSE, 0); break;
+	case ENETUNREACH:  socks_rep(state->s, 5, S5ENETURCH, 0); break;
+	case ECONNREFUSED: socks_rep(state->s, 5, S5ECREFUSE, 0); break;
 #ifndef _POSIX_SOURCE
-	case EHOSTUNREACH: socks_rep(req->s, 5, S5EHOSURCH, 0); break;
+	case EHOSTUNREACH: socks_rep(state->s, 5, S5EHOSURCH, 0); break;
 #endif
-	case ETIMEDOUT:    socks_rep(req->s, 5, S5ETTLEXPR, 0); break; /* ??? */
-	default:           socks_rep(req->s, 5, S5EGENERAL, 0); break;
+	case ETIMEDOUT:    socks_rep(state->s, 5, S5ETTLEXPR, 0); break; /* ??? */
+	default:           socks_rep(state->s, 5, S5EGENERAL, 0); break;
 	}
 	break;
       default:
 	break;
       }
-      close(req->s);
+      close(state->s);
       return(-1);
     }
     break;
@@ -431,21 +397,28 @@ int socks_direct_conn(struct socks_req *req)
     ba.ai_addr = (struct sockaddr *)&ss;
     ba.ai_addrlen = sizeof(ss);
     /* just one address can be stored */
-    error = get_bind_addr(req, &ba);
+    error = get_bind_addr(&state->dest, &ba);
     if (error) {
-      GEN_ERR_REP(req->s, req->ver);
+      GEN_ERR_REP(state->s, state->ver);
       return(-1);
     }
-    acs = -1;
     acs = socket(ba.ai_family, ba.ai_socktype, ba.ai_protocol);
     if (acs < 0) {
       /* socket error */
-      GEN_ERR_REP(req->s, req->ver);
+      GEN_ERR_REP(state->s, state->ver);
       return(-1);
     }
 
-    if (bind_sock(acs, req, &ba) != 0) {
-      GEN_ERR_REP(req->s, req->ver);
+#ifdef SO_BINDTODEVICE
+    if (bindtodevice && do_bindtodevice(acs, bindtodevice) < 0) {
+      GEN_ERR_REP(state->s, state->ver);
+      close(acs);
+      return(-1);
+    }
+#endif
+
+    if (bind_sock(acs, state, &ba) != 0) {
+      GEN_ERR_REP(state->s, state->ver);
       return(-1);
     }
 
@@ -455,55 +428,97 @@ int socks_direct_conn(struct socks_req *req)
     len = sizeof(ss);
     if (getsockname(acs, (struct sockaddr *)&ss, (socklen_t *)&len) == -1) {
       /* getsockname failed */
-      GEN_ERR_REP(req->s, req->ver);
+      GEN_ERR_REP(state->s, state->ver);
       close(acs);
       return(-1);
     }
+    memcpy(&state->li->mys.addr, &ss, len);
+    state->li->mys.len = len;
 
     /* first reply for bind request */
-    POSITIVE_REP(req->s, req->ver, (struct sockaddr *)&ss);
+    POSITIVE_REP(state->s, state->ver, (struct sockaddr *)&ss);
     if ( error < 0 ) {
       /* could not reply */
-      close(req->s);
+      close(state->s);
       close(acs);
       return(-1);
     }
     if (wait_for_read(acs, TIMEOUTSEC) <= 0) {
-      GEN_ERR_REP(req->s, req->ver);
+      GEN_ERR_REP(state->s, state->ver);
       close(acs);
       return(-1);
     }
-      
+
     len = sizeof(ss);
     if ((cs = accept(acs, (struct sockaddr *)&ss, (socklen_t *)&len)) < 0) {
-      GEN_ERR_REP(req->s, req->ver);
+      GEN_ERR_REP(state->s, state->ver);
       close(acs);
       return(-1);
     }
     close(acs); /* accept socket is not needed
 		   any more, for current socks spec. */
+    state->r = cs;   /* set forwarding socket */
     /* sock name is in ss */
     /* TODO:
-     *  we must check ss against req->dest here for security reason
+     *  we must check ss against state->dest here for security reason
      */
     /* XXXXX */
     break;
 
+  case S5REQ_UDPA:
+    /* on UDP assoc of DIRECT method, state->r will not used */
+    /* initialize UDP transport sockets */
+    state->udp.d = state->udp.u = -1;
+    /* create UDP socket on same I/F as the request was catched */
+    memcpy(&ss, &state->li->myc.addr, sizeof(ss));
+    if ((cs = socket(ss.ss_family, SOCK_DGRAM, IPPROTO_IP)) >= 0) {
+      switch (ss.ss_family) {
+      case AF_INET:
+	((struct sockaddr_in*) &ss)->sin_port = 0;
+	break;
+      case AF_INET6:
+	((struct sockaddr_in6*) &ss)->sin6_port = 0;
+	break;
+      }
+      if (bind(cs, (struct sockaddr*)&ss, sizeof(ss)) < 0) {
+	/* bind error */
+	close(cs);
+	GEN_ERR_REP(state->s, state->ver);
+	close(state->s);
+	return(-1);
+      }
+      /* XXXXXXXX */
+      /* get my socket name to acquire an actual bound port */
+      len = sizeof(ss);
+      if (getsockname(cs, (struct sockaddr *)&ss, (socklen_t *)&len) == -1) {
+	/* getsockname failed */
+	GEN_ERR_REP(state->s, state->ver);
+	close(cs);
+	return(-1);
+      }
+      /* ss is actual socket name here for usig positive reply */
+      /* set downward soket */
+      state->udp.d = cs;
+    } else {
+      GEN_ERR_REP(state->s, state->ver);
+      return(-1);
+    }
+    break;
+
   default:
     /* unsupported request */
-    GEN_ERR_REP(req->s, req->ver);
-    close(req->s);
+    GEN_ERR_REP(state->s, state->ver);
+    close(state->s);
     return(-1);
   }
 
-  POSITIVE_REP(req->s, req->ver, (struct sockaddr *)&ss);
+  POSITIVE_REP(state->s, state->ver, (struct sockaddr *)&ss);
   if ( error < 0 ) {
     /* could not reply */
-    close(req->s);
+    close(state->s);
     close(cs);
     return(-1);
   }
-  req->r = cs;   /* set forwarding socket */
   return(0);
 }
 
@@ -513,82 +528,81 @@ int socks_direct_conn(struct socks_req *req)
 	   connect to next hop socks/ server.
            indirect connection to destination.
 */
-int proxy_connect(struct socks_req *req)
+int proxy_connect(SOCKS_STATE *state)
 {
   int     save_errno = 0;
   int     r = 0;
-  struct socks_req cp_req;
+  SOCKS_STATE cp_req;
 
   /* sanity check */
   /* relay method must not be DIRECT */
   /* forward socket should not be connected yet */
-  if (req->rtbl.rl_meth < 1 || req->r >= 0) {
+  if (state->rtbl.rl_meth < 1 || state->r >= 0) {
     /* shoud not be here */
-    GEN_ERR_REP(req->s, req->ver);
+    GEN_ERR_REP(state->s, state->ver);
     return(-1);
   }
 
-  req->r = forward_connect(req, &save_errno);
-  if (req->r < 0 || save_errno != 0) {
-    GEN_ERR_REP(req->s, req->ver);
-    req->r = -1;
+  r = forward_connect(state);
+  if (r < 0 || save_errno != 0) {
+    GEN_ERR_REP(state->s, state->ver);
     return(-1);
   }
 
-  switch(req->rtbl.rl_meth) {
+  switch(state->rtbl.rl_meth) {
   case PROXY1:
-    memcpy(&cp_req, req, sizeof(struct socks_req));
+    memcpy(&cp_req, state, sizeof(SOCKS_STATE));
     cp_req.ver = -1; /* fake req ver to suppress resp to client */
     cp_req.req = S5REQ_CONN;
-    memcpy(&cp_req.dest, &req->rtbl.prx[0].proxy, sizeof(struct bin_addr));
-    cp_req.port = req->rtbl.prx[0].pport;
-    if (req->rtbl.prx[1].pproto == HTTP) {
+    memcpy(&cp_req.dest, &state->rtbl.prx[0].proxy, sizeof(bin_addr));
+    cp_req.port = state->rtbl.prx[0].pport;
+    if (state->rtbl.prx[1].pproto == HTTP) {
       r = connect_to_http(&cp_req);
     } else { /* SOCKS, SOCKSv4, SOCKSv5 */
-      r = connect_to_socks(&cp_req, req->rtbl.prx[1].pproto);
+      r = connect_to_socks(&cp_req, state->rtbl.prx[1].pproto);
     }
     if (r < 0) {
-      GEN_ERR_REP(req->s, req->ver);
-      req->r = -1;
+      GEN_ERR_REP(state->s, state->ver);
       return(-1);
     }
     /* not break, just continue */
   case PROXY:
-    if (req->rtbl.prx[0].pproto == HTTP) {
+    if (state->rtbl.prx[0].pproto == HTTP) {
       /* limitation: cannot handle bind operation */
-      return(connect_to_http(req));
+      return(connect_to_http(state));
     } else { /* SOCKS, SOCKSv4, SOCKSv5 */
-      return(connect_to_socks(req, req->rtbl.prx[0].pproto));
+      return(connect_to_socks(state, state->rtbl.prx[0].pproto));
     }
   default:
     break;
   }
+  state->r = -1;
   return(-1);
 
 }
 
-int connect_to_socks(struct socks_req *req, int pproto)
+int connect_to_socks(SOCKS_STATE *state, int pproto)
 {
   int     r, len = 0;
   u_char  buf[640];
 
-  if (req->r < 0) {
-    GEN_ERR_REP(req->s, req->ver);
+  if (state->r < 0) {
+    GEN_ERR_REP(state->s, state->ver);
     return(-1);
   }
 
   /* process proxy request to next hop socks */
   /* first try socks5 server */
   if (pproto == SOCKS || pproto == SOCKSv5) {
-    if ((len = build_socks_request(req, buf, 5)) > 0) {
-      if (s5auth_c(req->r, req) == 0) {
+    if ((len = build_socks_request(state, buf, 5)) > 0) {
+      if (s5auth_c(state->r, &state->rtbl.prx[0].proxy) == 0) {
 	/* socks5 auth nego to next hop success */
-	r = timerd_write(req->r, buf, len, TIMEOUTSEC);
+	r = timerd_write(state->r, buf, len, TIMEOUTSEC);
 	if ( r == len ) {
 	  /* send request success */
-	  r = socks_proxy_reply(5, req);
+	  r = socks_proxy_reply(5, state);
 	  if (r == 0) {
-	    return(req->r);
+	    return(r);
 	  }
 	}
       }
@@ -597,20 +611,20 @@ int connect_to_socks(struct socks_req *req, int pproto)
 
   /* if an error, second try socks4 server */
   if (pproto == SOCKS || pproto == SOCKSv4) {
-    if ((len = build_socks_request(req, buf, 4)) > 0) {
-      r = timerd_write(req->r, buf, len, TIMEOUTSEC);
+    if ((len = build_socks_request(state, buf, 4)) > 0) {
+      r = timerd_write(state->r, buf, len, TIMEOUTSEC);
       if ( r == len ) {
 	/* send request success */
-	r = socks_proxy_reply(4, req);
+	r = socks_proxy_reply(4, state);
 	if (r == 0) {
-	  return(req->r);
+	  return(r);
 	}
       }
     }
   }
 
   /* still be an error, give it up. */
-  GEN_ERR_REP(req->s, req->ver);
+  GEN_ERR_REP(state->s, state->ver);
   return(-1);
 }
 
@@ -619,7 +633,7 @@ int connect_to_socks(struct socks_req *req, int pproto)
       build socks request on buf
       return buf length
  */
-int build_socks_request(struct socks_req *req, u_char *buf, int ver)
+int build_socks_request(SOCKS_STATE *state, u_char *buf, int ver)
 {
   int     r, len = 0;
   char    *user;
@@ -629,33 +643,33 @@ int build_socks_request(struct socks_req *req, u_char *buf, int ver)
   case 0x04:
     /* build v4 request */
     buf[0] = 0x04;
-    buf[1] = req->req;
-    if ( req->u_len == 0 ) {
+    buf[1] = state->req;
+    if ( state->u_len == 0 ) {
       user = S4DEFUSR;
       r = strlen(user);
     } else {
-      user = req->user;
-      r = req->u_len;
+      user = state->user;
+      r = state->u_len;
     }
     if (r < 0 || r > 255) {
       return(-1);
     }
-    buf[2] = (req->port / 256);
-    buf[3] = (req->port % 256);
+    buf[2] = (state->port / 256);
+    buf[3] = (state->port % 256);
     memcpy(&buf[8], user, r);
     len = 8+r;
     buf[len++] = 0x00;
-    switch (req->dest.atype) {
+    switch (state->dest.atype) {
     case S4ATIPV4:
-      memcpy(&buf[4], req->dest.v4_addr, sizeof(struct in_addr));
+      memcpy(&buf[4], state->dest.v4_addr, sizeof(struct in_addr));
       break;
     case S4ATFQDN:
       buf[4] = buf[5] = buf[6] = 0; buf[7] = 1;
-      r = req->dest.len_fqdn;
+      r = state->dest.len_fqdn;
       if (r <= 0 || r > 255) {
 	return(-1);
       }
-      memcpy(&buf[len], req->dest.fqdn, r);
+      memcpy(&buf[len], state->dest.fqdn, r);
       len += r;
       buf[len++] = 0x00;
       break;
@@ -667,28 +681,28 @@ int build_socks_request(struct socks_req *req, u_char *buf, int ver)
   case 0x05:
     /* build v5 request */
     buf[0] = 0x05;
-    buf[1] = req->req;
+    buf[1] = state->req;
     buf[2] = 0;
-    buf[3] = req->dest.atype;
-    switch (req->dest.atype) {
+    buf[3] = state->dest.atype;
+    switch (state->dest.atype) {
     case S5ATIPV4:
-      memcpy(&buf[4], req->dest.v4_addr, 4);
-      buf[8] = (req->port / 256);
-      buf[9] = (req->port % 256);
+      memcpy(&buf[4], state->dest.v4_addr, 4);
+      buf[8] = (state->port / 256);
+      buf[9] = (state->port % 256);
       len = 10;
       break;
     case S5ATIPV6:
-      memcpy(&buf[4], req->dest.v6_addr, 16);
-      buf[20] = (req->port / 256);
-      buf[21] = (req->port % 256);
+      memcpy(&buf[4], state->dest.v6_addr, 16);
+      buf[20] = (state->port / 256);
+      buf[21] = (state->port % 256);
       len = 22;
       break;
     case S5ATFQDN:
-      len = req->dest.len_fqdn;
+      len = state->dest.len_fqdn;
       buf[4] = len;
-      memcpy(&buf[5], req->dest.fqdn, len);
-      buf[5+len]   = (req->port / 256);
-      buf[5+len+1] = (req->port % 256);
+      memcpy(&buf[5], state->dest.fqdn, len);
+      buf[5+len]   = (state->port / 256);
+      buf[5+len+1] = (state->port % 256);
       len = 5+len+2;
       break;
     default:
@@ -707,9 +721,9 @@ int build_socks_request(struct socks_req *req, u_char *buf, int ver)
        v: server socks version.
        read server response and
        write converted reply to client if needed.
-       note: req->ver == -1 means DEEP indirect proxy.
+       note: state->ver == -1 means DEEP indirect proxy.
 */
-int socks_proxy_reply(int v, struct socks_req *req)
+int socks_proxy_reply(int v, SOCKS_STATE *state)
 {
   int     r, c, len;
   u_char  buf[512];
@@ -723,7 +737,7 @@ int socks_proxy_reply(int v, struct socks_req *req)
   sa = (struct sockaddr_in *)&ss;
   sa6 = (struct sockaddr_in6 *)&ss;
 
-  switch (req->req) {
+  switch (state->req) {
   case S5REQ_CONN:
     c = 1;
     break;
@@ -740,9 +754,9 @@ int socks_proxy_reply(int v, struct socks_req *req)
   while (c-- > 0) {
     memset(&ss, 0, sizeof(ss));
     /* read server reply */
-    r = timerd_read(req->r, buf, sizeof buf, TIMEOUTSEC, 0);
+    r = timerd_read(state->r, buf, sizeof buf, TIMEOUTSEC, 0);
 
-    if (req->ver == -1) {  /* special case */
+    if (state->ver == -1) {  /* special case */
       if ((v == 5 && buf[1] == S5AGRANTED)
 	  || (v == 4 && buf[1] == S4AGRANTED)) {
 	return(0);
@@ -758,9 +772,9 @@ int socks_proxy_reply(int v, struct socks_req *req)
 	r = -1;
 	break;
       }
-      switch (req->ver) {  /* client ver */
+      switch (state->ver) {  /* client ver */
       case 4: /* same version */
-	r = timerd_write(req->s, buf, r, TIMEOUTSEC);
+	r = timerd_write(state->s, buf, r, TIMEOUTSEC);
 	break;
 
       case 5:
@@ -769,7 +783,7 @@ int socks_proxy_reply(int v, struct socks_req *req)
 	  sa->sin_family = AF_INET;
 	  memcpy(&(sa->sin_addr), &buf[4], 4);
 	  memcpy(&(sa->sin_port), &buf[2], 2);
-	  r = socks_rep(req->s, 5, S5AGRANTED, (struct sockaddr *)&ss);
+	  r = socks_rep(state->s, 5, S5AGRANTED, (struct sockaddr *)&ss);
 	} else {
 	  r = -1;
 	}
@@ -786,7 +800,7 @@ int socks_proxy_reply(int v, struct socks_req *req)
 	r = -1;
 	break;
       }
-      switch (req->ver) { /* client ver */
+      switch (state->ver) { /* client ver */
       case 4:
 	/* translate reply v5->v4 */
 	if ( buf[1] == S5AGRANTED ) {
@@ -830,13 +844,13 @@ int socks_proxy_reply(int v, struct socks_req *req)
 	    }
 	    break;
 	  }
-	  r = socks_rep(req->s, 4, S4AGRANTED, (struct sockaddr *)&ss);
+	  r = socks_rep(state->s, 4, S4AGRANTED, (struct sockaddr *)&ss);
 	} else {
 	  r = -1;
 	}
 	break;
       case 5: /* same version */
-	r = timerd_write(req->s, buf, r, TIMEOUTSEC);
+	r = timerd_write(state->s, buf, r, TIMEOUTSEC);
 	break;
       default:
 	r = -1;
@@ -965,8 +979,8 @@ int s5auth_s(int s)
   int method=0, done=0;
 
   /* auth method negotiation */
-  r = timerd_read(s, buf, 2, TIMEOUTSEC, 0);
-  if ( r < 2 ) {
+  r = timerd_read(s, buf+1, 1, TIMEOUTSEC, 0);
+  if ( r < 1 ) {
     /* cannot read */
     s5auth_s_rep(s, S5ANOTACC);
     return(-1);
@@ -1051,7 +1065,7 @@ int s5auth_s_rep(int s, int method)
 /*
   socks5 auth negotiation as client.
 */
-int s5auth_c(int s, struct socks_req *req)
+int s5auth_c(int s, bin_addr *proxy)
 {
   u_char buf[512];
   int r, num=0;
@@ -1086,13 +1100,13 @@ int s5auth_c(int s, struct socks_req *req)
   }
   if (buf[0] == 0x05 && buf[1] == 2) {
     /* do username/passwd authentication */
-    return(auth_pwd_client(s, req));
+    return(auth_pwd_client(s, proxy));
   }
   /* auth negotiation failed */
   return(-1);
 }
 
-int connect_to_http(struct socks_req *req)
+int connect_to_http(SOCKS_STATE *state)
 {
   struct host_info dest;
   char   buf[1024];
@@ -1102,13 +1116,13 @@ int connect_to_http(struct socks_req *req)
   char *p;
 
   p = buf;
-  if (req->req != S5REQ_CONN) {
+  if (state->req != S5REQ_CONN) {
     /* cannot handle request */
-    GEN_ERR_REP(req->s, req->ver);
+    GEN_ERR_REP(state->s, state->ver);
     return(-1);
   }
 
-  error = resolv_host(&req->dest, req->port, &dest);
+  error = resolv_host(&state->dest, state->port, &dest);
 
   snprintf(buf, sizeof(buf), "CONNECT %s:%s HTTP/1.0\r\n\r\n",
 	   dest.host, dest.port);
@@ -1118,11 +1132,11 @@ int connect_to_http(struct socks_req *req)
   msg_out(norm, ">>HTTP CONN %s:%s", dest.host, dest.port);
 
   len = strlen(buf);
-  r = timerd_write(req->r, (u_char *)buf, len, TIMEOUTSEC);
+  r = timerd_write(state->r, (u_char *)buf, len, TIMEOUTSEC);
 
   if ( r == len ) {
     /* get resp */
-    r = get_line(req->r, buf, sizeof(buf));
+    r = get_line(state->r, buf, sizeof(buf));
     if (r >= 12) {
       while (r>0 && ((c=*p) != ' ' && c != '\t'))
 	p++; r--;
@@ -1131,50 +1145,49 @@ int connect_to_http(struct socks_req *req)
       if (strncmp(p, "200", 3) == 0) {
 	/* redirection not supported */
 	do { /* skip resp headers */
-	  r = get_line(req->r, buf, sizeof(buf));
+	  r = get_line(state->r, buf, sizeof(buf));
 	  if (r <= 0) {
-	    GEN_ERR_REP(req->s, req->ver);
+	    GEN_ERR_REP(state->s, state->ver);
 	    return(-1);
 	  }
 	} while (strcmp(buf, "\r\n") != 0);
 	len = sizeof(ss);
-	getsockname(req->r, (struct sockaddr *)&ss, (socklen_t *)&len);
+	getsockname(state->r, (struct sockaddr *)&ss, (socklen_t *)&len);
 	/* is this required ?? */
-	POSITIVE_REP(req->s, req->ver, (struct sockaddr *)&ss);
-	return(req->r);
+	POSITIVE_REP(state->s, state->ver, (struct sockaddr *)&ss);
+	return(0);
       }
     }
   }
-  GEN_ERR_REP(req->s, req->ver);
+  GEN_ERR_REP(state->s, state->ver);
   return(-1);
 }
 
 /*
   forward_connect:
       just resolve host and connect to her.
-      return connected socket/error(-1);
+      return ok(0)/error(-1);
  */
 
-int forward_connect(struct socks_req *req, int *err)
+int forward_connect(SOCKS_STATE *state)
 {
-  int    cs;
+  int    cs = -1;
   struct host_info dest;
   struct addrinfo hints, *res, *res0;
+  struct sockaddr_storage ss;
   int    error = 0;
 
-  cs = -1;
-
-  switch(req->rtbl.rl_meth) {
+  switch(state->rtbl.rl_meth) {
   case DIRECT:
-    error = resolv_host(&req->dest, req->port, &dest);
+    error = resolv_host(&state->dest, state->port, &dest);
     break;
   case PROXY:
-    error = resolv_host(&req->rtbl.prx[0].proxy,
-			req->rtbl.prx[0].pport, &dest);
+    error = resolv_host(&state->rtbl.prx[0].proxy,
+			state->rtbl.prx[0].pport, &dest);
     break;
   case PROXY1:
-    error = resolv_host(&req->rtbl.prx[1].proxy,
-			req->rtbl.prx[1].pport, &dest);
+    error = resolv_host(&state->rtbl.prx[1].proxy,
+			state->rtbl.prx[1].pport, &dest);
     break;
   default:
     return(-1);
@@ -1183,6 +1196,14 @@ int forward_connect(struct socks_req *req, int *err)
   /* string addr => addrinfo */
   memset(&hints, 0, sizeof(hints));
   hints.ai_socktype = SOCK_STREAM;
+  if (same_interface) {
+    memcpy(&ss, &state->li->myc.addr, sizeof(ss));
+    hints.ai_family = ss.ss_family;
+    /* XXXXX
+      this may cause getaddrinfo returns same address
+      family info as clients connected. Is this correct ?
+    */
+  }
   error = getaddrinfo(dest.host, dest.port, &hints, &res0);
   if (error) { /* getaddrinfo returns error>0 when error */
     return -1;
@@ -1190,17 +1211,36 @@ int forward_connect(struct socks_req *req, int *err)
 
   for (res = res0; res; res = res->ai_next) {
     error = 0;
-    cs = socket(res->ai_family,
-		res->ai_socktype, res->ai_protocol);
+    cs = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
     if ( cs < 0 ) {
       /* socket error */
       continue;
     }
 
+#ifdef SO_BINDTODEVICE
+    /*
+      bindtodevice may case error at bind call if device
+      config has conflicts with same_interface option ???
+     */
+    if (bindtodevice && do_bindtodevice(cs, bindtodevice) < 0) {
+      error = errno;
+      close(cs);
+      continue;
+    }
+#endif
+
     if (same_interface) {
       /* bind the outgoing socket to the same interface
 	 as the inbound client */
-      if (bind(cs, (struct sockaddr*)&req->inaddr, sizeof(req->inaddr)) <0) {
+      switch (ss.ss_family) {
+      case AF_INET:
+	((struct sockaddr_in*) &ss)->sin_port = 0;
+	break;
+      case AF_INET6:
+	((struct sockaddr_in6*) &ss)->sin6_port = 0;
+	break;
+      }
+      if (bind(cs, (struct sockaddr*)&ss, sizeof(ss)) <0) {
 	/* bind error */
 	error = errno;
 	close(cs);
@@ -1216,18 +1256,18 @@ int forward_connect(struct socks_req *req, int *err)
     }
     break;
   }
-
   freeaddrinfo(res0);
 
-  msg_out(norm, "Forward connect to %s:%s : %d",
+  msg_out(norm, "Forward connect to %s:%s rc=%d",
 	  dest.host, dest.port, error);
-  if (err != NULL)
-    *err = error;
-
-  return(cs);
+  state->r = cs;
+  if (cs >= 0)
+    return(0);
+  else
+    return(-1);
 }
 
-int bind_sock(int s, struct socks_req *req, struct addrinfo *ai)
+int bind_sock(int s, SOCKS_STATE *state, struct addrinfo *ai)
 {
   /*
     BIND port selection priority.
@@ -1240,13 +1280,13 @@ int bind_sock(int s, struct socks_req *req, struct addrinfo *ai)
   size_t     len;
 
   /* try requested port */
-  if (do_bind(s, ai, req->port) == 0)
+  if (do_bind(s, ai, state->port) == 0)
     return 0;
 
   /* try same port as client's */
   len = sizeof(ss);
   memset(&ss, 0, len);
-  if (getpeername(req->s, (struct sockaddr *)&ss, (socklen_t *)&len) != 0)
+  if (getpeername(state->s, (struct sockaddr *)&ss, (socklen_t *)&len) != 0)
     port = 0;
   else {
     switch (ss.ss_family) {
@@ -1304,6 +1344,112 @@ int do_bind(int s, struct addrinfo *ai, u_int16_t p)
   return(r);
 }
 
+#ifdef SO_BINDTODEVICE
+/*
+  do_bindtodevice:
+          bind socket to named device.
+ */
+#include <net/if.h>
+static int do_bindtodevice(int cs, char *dev)
+{
+  int rc;
+  struct ifreq interface;
+
+  strncpy(interface.ifr_name, dev, IFNAMSIZ);
+  setreuid(PROCUID, 0);
+  rc = setsockopt(cs, SOL_SOCKET, SO_BINDTODEVICE,
+                  (char *)&interface, sizeof(interface));
+  setreuid(0, PROCUID);
+  if (rc < 0)
+    msg_out(crit, "setsockopt SO_BINDTODEVICE(%s) failed: %d", dev, errno);
+  return(rc);
+}
+#endif
+
+/*
+  decode_socks_udp:
+	decode socks udp header.
+ */
+int decode_socks_udp(SOCKS_STATE *state, u_char *buf)
+{
+  int	len;
+  struct addrinfo hints, *res;
+  char host[256];
+
+#define _sa_  ((struct sockaddr_in *)&state->udp.aup.addr)
+#define _sa6_ ((struct sockaddr_in6 *)&state->udp.aup.addr)
+
+  len = 0;
+  state->udp.sv.len = 0;
+  if (buf[2] != 0x00) {
+    /* we do not support fragment */
+    return(-1);
+  }
+
+  switch (buf[3]) { /* address type */
+  case S5ATIPV4:
+#ifdef HAVE_SOCKADDR_SA_LEN
+    _sa_->sin_len = sizeof(struct sockaddr_in);
+#endif
+    _sa_->sin_family = AF_INET;
+    memcpy(&_sa_->sin_addr, buf+4, sizeof(struct in_addr));
+    state->udp.aup.len = sizeof(struct sockaddr_in);
+    _sa_->sin_port = htons(buf[8] * 0x100 + buf[9]);
+    state->udp.sv.len = 10;
+    break;
+
+  case S5ATIPV6:
+#ifdef HAVE_SOCKADDR_SA_LEN
+    _sa6_->sin6_len = sizeof(struct sockaddr_in6);
+#endif
+    _sa6_->sin6_family = AF_INET6;
+    memcpy(&(_sa6_->sin6_addr), buf+4, sizeof(struct in6_addr));
+    state->udp.aup.len = sizeof(struct sockaddr_in6);
+    _sa6_->sin6_scope_id = 0;
+    _sa6_->sin6_port = htons(buf[20] * 0x100 + buf[21]);
+    state->udp.sv.len = 22;
+    break;
+
+  case S5ATFQDN:
+    len = buf[4] & 0xFF;   /* length */
+    if (len < 0 || len > 255) {  /* will not occur */
+      return(-1);
+    }
+    memcpy(host, buf+5, len);
+    host[len] = 0x00;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_socktype = SOCK_DGRAM;
+    if (getaddrinfo(host, 0, &hints, &res) > 0 ) {
+      /* error */
+      return(-1);
+    }
+    memcpy(&state->udp.aup.addr, res->ai_addr, res->ai_addrlen);
+    state->udp.aup.len = res->ai_addrlen;
+    switch (res->ai_family) {
+    case AF_INET:
+      _sa_->sin_port = htons(buf[5+len] * 0x100 + buf[5+len+1]);
+      break;
+    case AF_INET6:
+      _sa6_->sin6_port = htons(buf[5+len] * 0x100 + buf[5+len+1]);
+      break;
+    default:
+      /* error */
+      break;
+    }
+    state->udp.sv.len = 5+len+2;
+    freeaddrinfo(res);
+    break;
+  default:
+    /* error */
+    return(-1);
+  }
+  /* save socks udp header */
+  memcpy(state->udp.sv.data, buf, state->udp.sv.len);
+  return(0);
+#undef _sa_
+#undef _sa6_
+}
+
 /*
   wait_for_read:
           wait for readable status.
@@ -1352,13 +1498,27 @@ ssize_t timerd_write(int s, u_char *buf, size_t len, int sec)
   return(r);
 }
 
-int get_line(int s, char *buf, size_t len) {
+int get_line(int s, char *buf, size_t len)
+{
+  return read_until_delim(s, buf, len, 012);
+}
+
+int get_str(int s, char *buf, size_t len)
+{
+  int r = read_until_delim(s, buf, len, 0);
+  if (r > 0)
+    r--;
+  return(r); 
+}
+
+int read_until_delim(int s, char *buf, size_t len, int delim)
+{
   int     r = 0;
   char   *p = buf;
   int     ret;
 
   while ( len > 1 ) { /* guard the buf */
-    ret = recvfrom(s, p, 1, 0, 0, 0);
+    ret = timerd_read(s, (u_char *)p, 1, TIMEOUTSEC, 0);
     if (ret < 0) {
       if (errno == EINTR) {  /* not thread safe ?? */
 	continue;
@@ -1369,7 +1529,7 @@ int get_line(int s, char *buf, size_t len) {
       len = 0; /* to exit loop */
     } else {
       len--;
-      if (*p == 012) { /* New Line */
+      if (*p == delim) {
 	len = 0; /* to exit loop */
       }
       r++; p++;
@@ -1380,37 +1540,41 @@ int get_line(int s, char *buf, size_t len) {
 
 }
 
-int lookup_tbl(struct socks_req *req)
+int lookup_tbl(SOCKS_STATE *state)
 {
   int    i, match, error;
   struct addrinfo hints, *res, *res0;
   char   name[NI_MAXHOST];
-  struct bin_addr addr;
+  bin_addr addr;
   struct sockaddr_in  *sa;
   struct sockaddr_in6 *sa6;
 
   match = 0;
   for (i=0; i < proxy_tbl_ind; i++) {
     /* check atype */
-    if ( req->dest.atype != proxy_tbl[i].dest.atype )
+    if ( state->dest.atype != proxy_tbl[i].dest.atype )
+      continue;
+    /* check IP PROTO */
+    if ( (state->req == S5REQ_UDPA && proxy_tbl[i].proto == TCP)
+	 || (state->req != S5REQ_UDPA && proxy_tbl[i].proto == UDP))
       continue;
     /* check destination port */
-    if ( req->port < proxy_tbl[i].port_l
-	 || req->port > proxy_tbl[i].port_h)
+    if ( state->port < proxy_tbl[i].port_l
+	 || state->port > proxy_tbl[i].port_h)
       continue;
 
-    if (addr_comp(&(req->dest), &(proxy_tbl[i].dest),
+    if (addr_comp(&(state->dest), &(proxy_tbl[i].dest),
 		  proxy_tbl[i].mask) == 0) {
       match++;
       break;
     }
   }
 
-  if ( !match && req->dest.atype == S5ATFQDN ) {
+  if ( !match && state->dest.atype == S5ATFQDN ) {
     /* fqdn 2nd stage: try resolve and lookup */
 
-    strncpy(name, (char *)req->dest.fqdn, req->dest.len_fqdn);
-    name[req->dest.len_fqdn] = '\0';
+    strncpy(name, (char *)state->dest.fqdn, state->dest.len_fqdn);
+    name[state->dest.len_fqdn] = '\0';
     memset(&hints, 0, sizeof(hints));
     hints.ai_socktype = SOCK_STREAM;
     error = getaddrinfo(name, NULL, &hints, &res0);
@@ -1418,9 +1582,13 @@ int lookup_tbl(struct socks_req *req)
     if ( !error ) {
       for (res = res0; res; res = res->ai_next) {
 	for (i = 0; i < proxy_tbl_ind; i++) {
+	  /* check IP PROTO */
+	  if ( (state->req == S5REQ_UDPA && proxy_tbl[i].proto == TCP)
+	       || (state->req != S5REQ_UDPA && proxy_tbl[i].proto == UDP))
+	    continue;
 	  /* check destination port */
-	  if ( req->port < proxy_tbl[i].port_l
-	       || req->port > proxy_tbl[i].port_h)
+	  if ( state->port < proxy_tbl[i].port_l
+	       || state->port > proxy_tbl[i].port_h)
 	    continue;
 
 	  memset(&addr, 0, sizeof(addr));
@@ -1456,20 +1624,21 @@ int lookup_tbl(struct socks_req *req)
     }
   }
 
-  memset(&(req->rtbl), 0, sizeof(struct rtbl));
+  memset(&(state->rtbl), 0, sizeof(rtbl));
 
   if (match) {
-    memcpy(&(req->rtbl), &(proxy_tbl[i]), sizeof(struct rtbl));
-    return(i);
+    memcpy(&(state->rtbl), &(proxy_tbl[i]), sizeof(rtbl));
+    state->tbl_ind = i;
   } else
-    return(proxy_tbl_ind);
+    state->tbl_ind = proxy_tbl_ind;
+  return(0);
 }
 
 /*
   resolv_host:
        convert binary addr into string replesentation host_info
  */
-int resolv_host(struct bin_addr *addr, u_int16_t port, struct host_info *info)
+int resolv_host(bin_addr *addr, u_int16_t port, struct host_info *info)
 {
   struct  sockaddr_storage ss;
   struct  sockaddr_in  *sa;
@@ -1536,9 +1705,8 @@ int resolv_host(struct bin_addr *addr, u_int16_t port, struct host_info *info)
 /*
   log_request:
 */
-int log_request(struct socks_req *req)
+int log_request(SOCKS_STATE *state)
 {
-  struct  sockaddr_storage ss;
   struct  host_info client, dest, proxy;
   int     error = 0;
   char    user[256];
@@ -1546,41 +1714,33 @@ int log_request(struct socks_req *req)
   char    *reqs[] = {"CON", "BND", "UDP", "?"};
   int     atmap[] = {3, 0, 3, 1, 2};
   int     reqmap[] = {3, 0, 1, 2};
-  int     len;
   int     direct = 0;
 
-  if (req->rtbl.rl_meth == DIRECT) {
+  if (state->rtbl.rl_meth == DIRECT) {
     /* proxy_XX is N/A */
     strcpy(proxy.host, "-");
     strcpy(proxy.port, "-");
     direct = 1;
   } else {
-    error += resolv_host(&req->rtbl.prx[0].proxy,
-			 req->rtbl.prx[0].pport,
+    error += resolv_host(&state->rtbl.prx[0].proxy,
+			 state->rtbl.prx[0].pport,
 			 &proxy);
   }
-  error += resolv_host(&req->dest, req->port, &dest);
+  error += resolv_host(&state->dest, state->port, &dest);
 
-  len = sizeof(ss);
-  if (getpeername(req->s, (struct sockaddr *)&ss, (socklen_t *)&len) != 0) {
-    strcpy(client.host, "?");
-    strcpy(client.port, "?");
-    error++;
-  } else {
-    error += getnameinfo((struct sockaddr *)&ss, len,
+  error += getnameinfo((struct sockaddr *)&state->li->prc.addr, state->li->prc.len,
 			client.host, sizeof(client.host),
 			client.port, sizeof(client.port),
 			NI_NUMERICHOST | NI_NUMERICSERV);
-  }
-
-  strncpy(user, req->user, req->u_len);
-  user[req->u_len] = '\0';
+ 
+  strncpy(user, state->user, state->u_len);
+  user[state->u_len] = '\0';
 
   msg_out(norm, "%s:%s %d-%s %s:%s(%s) %s %s%s:%s.",
 		client.host, client.port,
-		req->ver, reqs[reqmap[req->req]],
+		state->ver, reqs[reqmap[state->req]],
 	        dest.host, dest.port,
-		ats[atmap[req->dest.atype]],
+		ats[atmap[state->dest.atype]],
 	        user,
 		direct ? "direct" : "relay=",
 	        proxy.host, proxy.port );

@@ -1,8 +1,8 @@
 /*
   util.c:
-  $Id: util.c,v 1.8 2009/12/09 04:07:53 bulkstream Exp $
+  $Id: util.c,v 1.10 2010/10/18 05:17:51 bulkstream Exp $
 
-Copyright (C) 2001-2009 Tomo.M (author).
+Copyright (C) 2001-2010 Tomo.M (author).
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -53,34 +53,31 @@ int forcesyslog = 0;
 
 void msg_out(int severity, const char *fmt, ...)
 {
-  if (severity == norm) return;
-
   va_list ap;
-//  int priority;
+  int priority;
 
-//  switch (severity) {
-//  case crit:
-//    priority = SYSLOGFAC|LOG_ERR;
-//    break;
-//  case warn:
-//    priority = SYSLOGFAC|LOG_WARNING;
-//    break;
-//  case norm:
-//  default:
-//    priority = SYSLOGFAC|LOG_INFO;
-//    break;
-//  }
-
+  switch (severity) {
+  case crit:
+    priority = SYSLOGFAC|LOG_ERR;
+    break;
+  case warn:
+    priority = SYSLOGFAC|LOG_WARNING;
+    break;
+  case norm:
+  default:
+    priority = SYSLOGFAC|LOG_INFO;
+    break;
+  }
+  
+  return;
   va_start(ap, fmt);
-//  if (!forcesyslog && isatty(fileno(stderr))) {
-//    vfprintf(stderr, fmt, ap);
-//  } else {
-//    vsyslog(priority, fmt, ap);
-//  }
-  vfprintf(stdout, fmt, ap);
-
-  printf("\n");
-
+  if (!forcesyslog && isatty(fileno(stderr))) {
+    vfprintf(stderr, fmt, ap);
+    fprintf(stderr, "\n");
+  } else {
+    vsyslog(priority, fmt, ap);
+    syslog(priority, "\n");
+  }
   va_end(ap);
 }
 
@@ -88,7 +85,7 @@ void msg_out(int severity, const char *fmt, ...)
   addr_comp:
       compare bin_addr
 */
-int addr_comp(struct bin_addr *a1, struct bin_addr *a2, int mask)
+int addr_comp(bin_addr *a1, bin_addr *a2, int mask)
 {
   int    ret = -1;
   u_int32_t smask;
@@ -272,10 +269,6 @@ void reapchild()
 
 void cleanup()
 {
-  int i;
-  for ( i = 0; i < serv_sock_ind; i++ ) {
-    close(serv_sock[i]);
-  }
   /* unlink PID file */
   if (pidfile != NULL) {
     setreuid(PROCUID, 0);
@@ -283,7 +276,7 @@ void cleanup()
     setreuid(0, PROCUID);
   }
   msg_out(norm, "sig TERM received. exitting...");
-  // exit(0);
+  exit(0);
 }
 
 void reload()
@@ -421,11 +414,4 @@ void proclist_probe()
   }
   if (cur_child < 0)
     cur_child = 0;
-}
-
-// ----------------
-
-void srelay_exit()
-{
-  feed_sig('T');
 }

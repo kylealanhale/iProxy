@@ -20,6 +20,7 @@
 @interface HTTPServer : SocketServer <NSNetServiceDelegate>
 {
 	NSMutableDictionary *incomingRequests;
+    NSMutableArray *responseHandlers;
 }
 
 + (HTTPServer *)sharedHTTPServer;

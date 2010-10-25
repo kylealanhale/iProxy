@@ -8,7 +8,6 @@
 
 #import "GenericServer.h"
 
-
 @interface HTTPProxyServer : GenericServer <NSNetServiceDelegate>
 {
 }

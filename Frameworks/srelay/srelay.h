@@ -1,9 +1,9 @@
 /*
   srelay.h:
-  $Id: srelay.h,v 1.21 2009/12/17 14:49:50 bulkstream Exp $
+  $Id: srelay.h,v 1.25 2010/10/20 14:17:54 bulkstream Exp $
          common definitions.
 
-Copyright (C) 2001-2009 Tomo.M (author).
+Copyright (C) 2001-2010 Tomo.M (author).
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -102,7 +102,7 @@ typedef    u_int32_t    socklen_t;
 # endif
 #endif
 
-#define version  "srelay 0.4.7 2009/08/30 (Tomo.M)"
+#define version  "srelay 0.4.8b1 2010/10/18 (Tomo.M)"
 
 #ifndef SYSCONFDIR
 # define SYSCONFDIR "/usr/local/etc"
@@ -202,7 +202,35 @@ enum { norm=0, warn, crit };
 #define S5ACHAP       3
 #define S5ANOTACC     0xff
 
-struct bin_addr {            /* binary format of SOCKS address */
+/* SOCKSv5 request code */
+#define S5REQ_CONN    1
+#define S5REQ_BIND    2
+#define S5REQ_UDPA    3
+
+/* SOCKSv5 reply code */
+#define S5AGRANTED    0
+#define S5EGENERAL    1
+#define S5ENOTALOW    2
+#define S5ENETURCH    3 
+#define S5EHOSURCH    4
+#define S5ECREFUSE    5
+#define S5ETTLEXPR    6
+#define S5EUNSUPRT    7
+#define S5EUSATYPE    8
+#define S5EINVADDR    9
+
+/* SOCKSv4 request code */
+#define S4REQ_CONN    1
+#define S4REQ_BIND    2
+
+/* SOCKSv4 reply code */
+#define S4AGRANTED    90
+#define S4EGENERAL    91
+#define S4ECNIDENT    92
+#define S4EIVUSRID    93
+
+
+typedef struct {            /* binary format of SOCKS address */
   u_int8_t      atype;
   union {
     u_int8_t    ip4[4];   /* NBO */
@@ -220,40 +248,76 @@ struct bin_addr {            /* binary format of SOCKS address */
 #define v6_scope  _addr._ip6.scope
 #define len_fqdn  _addr._fqdn._nlen
 #define fqdn      _addr._fqdn._name
-};
+} bin_addr;
 
+enum { ANY = 0, TCP = 6, UDP = 17 };
 enum { SOCKS = 0, HTTP, SOCKSv4, SOCKSv5 };
 enum { DIRECT = 0, PROXY, PROXY1 };
 #define  USER_PASS_MAX   255
 #define  PROXY_MAX  2
 
-struct rtbl {
-  struct bin_addr dest;       /* destination address */
-  int             mask;       /* destination address mask len */
-  u_int16_t       port_l;     /* port range low  (HostByteOrder) */
-  u_int16_t       port_h;     /* port range high (HBO)*/
-  int		  rl_meth;    /* relaying method(direct, proxy, 2proxy*/
+typedef struct {
+  bin_addr	dest;		/* destination address */
+  int		mask;		/* destination address mask len */
+  u_int16_t	port_l;		/* port range low  (HostByteOrder) */
+  u_int16_t	port_h;		/* port range high (HBO)*/
+  int		proto;		/* IP PROTO ANY/TCP/UDP */
+  int		rl_meth;	/* relaying method(direct, proxy, 2proxy*/
   struct {
-    struct bin_addr proxy;    /* proxy address */
-    u_int16_t       pport;    /* proxy port (HBO) */
-    int		    pproto;   /* proxy protocol (0:socks, 1:HTTP, ..) */
+    bin_addr	proxy;		/* proxy address */
+    u_int16_t	pport;		/* proxy port (HBO) */
+    int		pproto;		/* proxy protocol (0:socks, 1:HTTP, ..) */
   } prx[PROXY_MAX];
-};
+} rtbl;
 
-struct socks_req {
-  int		  s;          /* client socket */
-  int		  req;        /* request CONN/BIND */
-  int		  ver;        /* client socks version (4,5) */
-  struct sockaddr_storage inaddr;
-  	/* the local address that the client socket is connected to */
-  int		  r;          /* forwarding socket */
-  struct bin_addr dest;       /* destination address */
-  u_int16_t	  port;       /* destination port (host byte order) */
-  u_int8_t	  u_len;      /* user name length (socks v4) */
-  char		  user[USER_PASS_MAX];  /* user name (socks v4) */ 
-  int		  tbl_ind;    /* proxy table indicator */
-  struct rtbl	  rtbl;       /* selected proxy routing */
-};
+typedef struct {
+  struct sockaddr_storage addr;
+  socklen_t  len;
+} HADDR;
+
+typedef struct {
+  HADDR  mys;			/* my upstream socket name */
+  HADDR  myc;			/* my downstream socket name */
+  HADDR  prs;			/* upstream peer socket name */
+  HADDR  prc;			/* downstream peer socket name */
+  char   cl_addr[NI_MAXHOST];	/* client (downstream peer) IP */
+  char   cl_name[NI_MAXHOST];	/* client (downstream peer) NAME */
+  u_long upl;
+  u_long dnl;
+  u_long bc;
+  struct timeval start;
+  struct timeval end;
+} loginfo;
+
+typedef struct {
+  int		len;		/* socks udp header length */
+  u_int8_t	data[300];	/* socks udp header data */
+} UDPH;
+
+typedef struct {
+  int		d;		/* downward socket */
+  int		u;		/* upward socket */
+  HADDR		adn;		/* saved down side sockaddr */
+  HADDR		aup;		/* saved up side sockaddr */
+  bin_addr	dest;		/* udp-relay proxy destination */
+  u_int16_t	port;		/* udp-relay proxy dest port */
+  UDPH		sv;		/* saved socks udp header */
+} UDP_ATTR;
+
+typedef struct {
+  int		s;		/* client socket */
+  int		req;		/* request CONN/BIND/UDP */
+  int		ver;		/* client socks version (4,5) */
+  int		r;		/* forwarding socket */
+  bin_addr 	dest;		/* destination address */
+  u_int16_t	port;		/* destination port (host byte order) */
+  u_int8_t	u_len;		/* user name length (socks v4) */
+  char		user[USER_PASS_MAX];  /* user name (socks v4) */ 
+  int		tbl_ind;	/* proxy table indicator */
+  rtbl		rtbl;		/* selected proxy routing */
+  UDP_ATTR	udp;		/* proxy info used for udp-relay */
+  loginfo	*li;		/* data for logging */
+} SOCKS_STATE;
 
 struct user_pass {
   char		user[USER_PASS_MAX];
@@ -287,6 +351,7 @@ extern char *config;
 extern char *ident;
 extern char *pidfile;
 extern char *pwdfile;
+extern char *bindtodevice;
 extern int max_child;
 extern int cur_child;
 extern char method_tab[];
@@ -306,7 +371,7 @@ extern fd_set allsock;
 extern int sig_queue[];
 
 /* from readconf.c */
-extern struct rtbl *proxy_tbl;
+extern rtbl *proxy_tbl;
 extern int proxy_tbl_ind;
 
 /* from relay.c */
@@ -332,23 +397,25 @@ extern int queue_init __P((void));
 
 /* readconf.c */
 extern int readconf __P((FILE *));
-extern int readpasswd __P((FILE *, struct socks_req *, struct user_pass *));
+extern int readpasswd __P((FILE *, bin_addr *, struct user_pass *));
 
 /* relay.c */
-extern int serv_loop __P((void));
+extern void relay __P((SOCKS_STATE *));
+extern void relay_udp __P((SOCKS_STATE *));
 
 /* socks.c */
 int wait_for_read __P((int, long));
 ssize_t timerd_read __P((int, u_char *, size_t, int, int));
 ssize_t timerd_write __P((int, u_char *, size_t, int));
-extern int proto_socks __P((int));
+extern int proto_socks __P((SOCKS_STATE *));
+extern int decode_socks_udp __P((SOCKS_STATE *, u_char *));
 
 /* get-bind.c */
-int get_bind_addr __P((struct socks_req *, struct addrinfo *));
+int get_bind_addr __P((bin_addr *, struct addrinfo *));
 
 /* util.c */
 extern void msg_out __P((int, const char *, ...));
-extern int addr_comp __P((struct bin_addr *, struct bin_addr *, int));
+extern int addr_comp __P((bin_addr *, bin_addr *, int));
 extern void set_blocking __P((int));
 extern int settimer __P((int));
 extern void timeout __P((int));
@@ -366,4 +433,4 @@ extern void proclist_drop __P((pid_t));
 
 /* auth-pwd.c */
 extern int auth_pwd_server __P((int));
-extern int auth_pwd_client __P((int, struct socks_req *));
+extern int auth_pwd_client __P((int, bin_addr *));

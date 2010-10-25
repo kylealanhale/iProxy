@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#define CONNEXION_COUNT_MAX 50
 
 typedef enum
 {
@@ -41,13 +42,19 @@ typedef enum
 @interface SocketServer : GenericServer
 {
 	NSError *_lastError;
-	NSFileHandle *listeningHandle;
-	CFSocketRef socket;
-	NSMutableSet *responseHandlers;
+	CFSocketRef _sockets[2];
+    NSMutableArray *_connexions;
 }
+
+@property(readonly) NSUInteger connexionCount;
 
 - (NSError *)lastError;
 - (void)_setLastErrorWithMessage:(NSString *)message;
 - (void)_closeSocket;
+- (void)_receiveIncomingConnection:(NSFileHandle *)incomingFileHandle;
+- (void)_closeConnexion:(NSFileHandle *)handle;
+- (void)_createSocket;
+- (void)newReceiveIncomingConnection:(NSFileHandle *)handle;
+- (void)socketCallbackWithSocket:(CFSocketRef)sock type:(CFSocketCallBackType)type address:(CFDataRef)address data:(const void *)data;
 
 @end

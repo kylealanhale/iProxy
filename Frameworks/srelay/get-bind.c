@@ -1,8 +1,8 @@
 /*
   get-bind.c:
-  $Id: get-bind.c,v 1.8 2009/12/09 04:07:53 bulkstream Exp $
+  $Id: get-bind.c,v 1.10 2010/10/18 05:17:51 bulkstream Exp $
 
-Copyright (C) 2001-2009 Tomo.M (author).
+Copyright (C) 2001-2010 Tomo.M (author).
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -50,6 +50,18 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <asm/types.h>
 #include <linux/netlink.h>
 #include <linux/rtnetlink.h>
+#include <linux/version.h> 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19) 
+# include <linux/if_addr.h> 
+#endif 
+#ifndef IFA_RTA 
+# define IFA_RTA(r) ((struct rtattr *) ((char *)(r) + NLMSG_ALIGN (sizeof (struct ifaddrmsg)))) 
+# define IFA_PAYLOAD(n) NLMSG_PAYLOAD (n, sizeof (struct ifaddrmsg)) 
+#endif 
+#ifndef IFLA_RTA 
+# define IFLA_RTA(r) ((struct rtattr *) ((char *)(r) + NLMSG_ALIGN (sizeof (struct ifinfomsg)))) 
+# define IFLA_PAYLOAD(n) NLMSG_PAYLOAD (n, sizeof (struct ifinfomsg)) 
+#endif 
 
 static int get_ifconf(int, struct addrinfo *);
 #endif /* defined(LINUX) */
@@ -65,7 +77,6 @@ static int get_ifconf(int, struct addrinfo *);
 #define RTAX_IFA         5
 #define RTAX_AUTHOR      6
 #define RTAX_BRD         7
-#define RTA_NUMBITS 8
 #define RTAX_MAX        RTA_NUMBITS /* Number of bits used in RTA_* */
 #endif
 
@@ -125,7 +136,7 @@ get_rtaddrs(int addrs, struct sockaddr *sa, struct sockaddr **rti_info)
 #define	SEQ		9999	/* packet sequence dummy */
 #define MAXNUM_IF	256	/* max number of interfaces */
 
-int get_bind_addr(struct socks_req *req, struct addrinfo *ba)
+int get_bind_addr(bin_addr *dest, struct addrinfo *ba)
 {
 
   /* list interface name/address
@@ -154,9 +165,9 @@ int get_bind_addr(struct socks_req *req, struct addrinfo *ba)
 
 
   /* IPv6 routing is not implemented yet */
-  switch (req->dest.atype) {
+  switch (dest->atype) {
   case S5ATIPV4:
-    memcpy(&ia, &(req->dest.v4_addr), 4);
+    memcpy(&ia, &(dest->v4_addr), 4);
     break;
   case S5ATIPV6:
     return -1;
@@ -164,8 +175,8 @@ int get_bind_addr(struct socks_req *req, struct addrinfo *ba)
     memset(&hints, 0, sizeof(hints));
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_family = AF_INET;
-    memcpy(host, &req->dest.fqdn, req->dest.len_fqdn);
-    host[req->dest.len_fqdn] = '\0';
+    memcpy(host, &dest->fqdn, dest->len_fqdn);
+    host[dest->len_fqdn] = '\0';
     error = getaddrinfo(host, NULL, &hints, &res0);
     if (error) {
       return -1;
@@ -299,7 +310,7 @@ int get_bind_addr(struct socks_req *req, struct addrinfo *ba)
 
 #if defined(LINUX)
 
-int get_bind_addr(struct socks_req *req, struct addrinfo *ba)
+int get_bind_addr(bin_addr *dest, struct addrinfo *ba)
 {
   int s;
   int len;
@@ -335,9 +346,9 @@ int get_bind_addr(struct socks_req *req, struct addrinfo *ba)
   unsigned *d;
 
   /* IPv6 routing is not implemented yet */
-  switch (req->dest.atype) {
+  switch (dest->atype) {
   case S5ATIPV4:
-    memcpy(&ia, &(req->dest.v4_addr), 4);
+    memcpy(&ia, &(dest->v4_addr), 4);
     break;
   case S5ATIPV6:
     return -1;
@@ -345,8 +356,8 @@ int get_bind_addr(struct socks_req *req, struct addrinfo *ba)
     memset(&hints, 0, sizeof(hints));
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_family = AF_INET;
-    memcpy(host, &req->dest.fqdn, req->dest.len_fqdn);
-    host[req->dest.len_fqdn] = '\0';
+    memcpy(host, &dest->fqdn, dest->len_fqdn);
+    host[dest->len_fqdn] = '\0';
     error = getaddrinfo(host, NULL, &hints, &res0);
     if (error) {
       return -1;

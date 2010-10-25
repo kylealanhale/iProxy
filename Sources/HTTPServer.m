@@ -38,6 +38,7 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
 	self = [super init];
     if (self) {
 		incomingRequests = [[NSMutableDictionary alloc] init];
+        responseHandlers = [[NSMutableArray alloc] init];
     }
 	return self;
 }
@@ -86,11 +87,8 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
 // Parameters:
 //    notification - the new connection notification
 //
-- (void)receiveIncomingConnectionNotification:(NSNotification *)notification
+- (void)_receiveIncomingConnection:(NSFileHandle *)incomingFileHandle
 {
-	NSDictionary *userInfo = [notification userInfo];
-	NSFileHandle *incomingFileHandle = [userInfo objectForKey:NSFileHandleNotificationFileHandleItem];
-
     if(incomingFileHandle) {
     	CFHTTPMessageRef message;
         
@@ -106,7 +104,6 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
 		
         [incomingFileHandle waitForDataInBackgroundAndNotify];
     }
-	[[notification object] acceptConnectionInBackgroundAndNotify];
 }
 
 //
