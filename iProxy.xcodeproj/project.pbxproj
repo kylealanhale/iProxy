@@ -536,9 +536,9 @@
 			productReference = 0274FA6312444A5D00173784 /* iProxyMacSetup.app */;
 			productType = "com.apple.product-type.application";
 		};
-		02E754CC12752A3700D55958 /* srelay */ = {
+		02E754CC12752A3700D55958 /* srelay (useless, just to test) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 02E754DB12752A7400D55958 /* Build configuration list for PBXNativeTarget "srelay" */;
+			buildConfigurationList = 02E754DB12752A7400D55958 /* Build configuration list for PBXNativeTarget "srelay (useless, just to test)" */;
 			buildPhases = (
 				02E754CA12752A3700D55958 /* Sources */,
 				02E754CB12752A3700D55958 /* Frameworks */,
@@ -547,7 +547,7 @@
 			);
 			dependencies = (
 			);
-			name = srelay;
+			name = "srelay (useless, just to test)";
 			productName = srelay;
 			productType = "com.apple.product-type.tool";
 		};
@@ -590,7 +590,7 @@
 			targets = (
 				1D6058900D05DD3D006BFB54 /* iProxy */,
 				0274FA6212444A5D00173784 /* iProxyMacSetup */,
-				02E754CC12752A3700D55958 /* srelay */,
+				02E754CC12752A3700D55958 /* srelay (useless, just to test) */,
 			);
 		};
 /* End PBXProject section */
@@ -1051,7 +1051,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		02E754DB12752A7400D55958 /* Build configuration list for PBXNativeTarget "srelay" */ = {
+		02E754DB12752A7400D55958 /* Build configuration list for PBXNativeTarget "srelay (useless, just to test)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				02E754CD12752A3900D55958 /* Debug */,
