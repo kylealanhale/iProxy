@@ -117,7 +117,6 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
 	self = [super init];
 	if (self != nil) {
 		_connexions = [[NSMutableSet alloc] init];
-        [self _createSocket];
 	}
 	return self;
 }
@@ -179,18 +178,18 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
 
 - (BOOL)_openSocket
 {
+    [self _createSocket];
 	CFRunLoopRef rl = CFRunLoopGetCurrent();
 	for (unsigned int ii = 0; ii < (sizeof(_sockets) / sizeof(_sockets[0])); ii++) {
 	
 		// Create the run loop source for putting on the run loop.
         if (_sockets[ii]) {
-			CFRunLoopSourceRef src = CFSocketCreateRunLoopSource(NULL, _sockets[ii], 0);
-			if (src == NULL)
+			_runLoopSource[ii] = CFSocketCreateRunLoopSource(NULL, _sockets[ii], 0);
+			if (_runLoopSource[ii] == NULL)
 				break;
 			
 			// Add the run loop source to the current run loop and default mode.
-			CFRunLoopAddSource(rl, src, kCFRunLoopCommonModes);
-			CFRelease(src);
+			CFRunLoopAddSource(rl, _runLoopSource[ii], kCFRunLoopCommonModes);
         }
     }
     
@@ -250,7 +249,13 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
     }
     [_connexions removeAllObjects];
 	
+	CFRunLoopRef rl = CFRunLoopGetCurrent();
     for (int ii = 0; ii < sizeof(_sockets) / sizeof(_sockets[0]); ii++) {
+    	if (_runLoopSource[ii]) {
+        	CFRunLoopRemoveSource(rl, _runLoopSource[ii], kCFRunLoopCommonModes);
+			CFRelease(_runLoopSource[ii]);
+            _runLoopSource[ii] = NULL;
+        }
 	    if (_sockets[ii]) {
     	    CFSocketInvalidate(_sockets[ii]);
         	CFRelease(_sockets[ii]);

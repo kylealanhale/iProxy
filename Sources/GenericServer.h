@@ -43,6 +43,7 @@ typedef enum
 {
 	NSError *_lastError;
 	CFSocketRef _sockets[2];
+    CFRunLoopSourceRef _runLoopSource[2];
     NSMutableArray *_connexions;
 }
 
@@ -53,7 +54,6 @@ typedef enum
 - (void)_closeSocket;
 - (void)_receiveIncomingConnection:(NSFileHandle *)incomingFileHandle;
 - (void)_closeConnexion:(NSFileHandle *)handle;
-- (void)_createSocket;
 - (void)newReceiveIncomingConnection:(NSFileHandle *)handle;
 - (void)socketCallbackWithSocket:(CFSocketRef)sock type:(CFSocketCallBackType)type address:(CFDataRef)address data:(const void *)data;
 
