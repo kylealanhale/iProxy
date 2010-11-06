@@ -34,8 +34,6 @@
     [window addSubview:statusViewController.view];
     [window makeKeyAndVisible];
 
-    application.idleTimerDisabled = YES;
-
     // setup fake audio
     
     NSError *error = nil;
