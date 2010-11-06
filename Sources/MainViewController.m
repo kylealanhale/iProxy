@@ -67,11 +67,11 @@
     [self.view.layer insertSublayer:gradient atIndex:0];
     
     hostName = [[NSProcessInfo processInfo] hostName];
-    httpAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, [HTTPProxyServer sharedHTTPProxyServer].servicePort];
-    httpPacLabel.text = [NSString stringWithFormat:@"http://%@:%d/http.pac", hostName, [HTTPServer sharedHTTPServer].servicePort];
+    httpAddressLabel.text = [NSString stringWithFormat:@"%@.local:%d", hostName, [HTTPProxyServer sharedHTTPProxyServer].servicePort];
+    httpPacLabel.text = [NSString stringWithFormat:@"http://%@.local:%d/http.pac", hostName, [HTTPServer sharedHTTPServer].servicePort];
 
-    socksAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, [SocksProxyServer sharedSocksProxyServer].servicePort];
-    socksPacLabel.text = [NSString stringWithFormat:@"http://%@:%d/socks.pac", hostName, [HTTPServer sharedHTTPServer].servicePort];
+    socksAddressLabel.text = [NSString stringWithFormat:@"%@.local:%d", hostName, [SocksProxyServer sharedSocksProxyServer].servicePort];
+    socksPacLabel.text = [NSString stringWithFormat:@"http://%@.local:%d/socks.pac", hostName, [HTTPServer sharedHTTPServer].servicePort];
     [self.view addTaggedSubview:runningView];
 	
     [[SocksProxyServer sharedSocksProxyServer] addObserver:self forKeyPath:@"connexionCount" options:NSKeyValueObservingOptionNew context:nil];
