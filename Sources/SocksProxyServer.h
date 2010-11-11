@@ -13,13 +13,11 @@
 @interface SocksProxyServer : SocketServer <NSNetServiceDelegate>
 {
     UInt32 _currentStat;
-    UInt64 _upload;
-    UInt64 _download;
+    NSMutableArray *_logInfoValues;
 }
 
 + (SocksProxyServer *)sharedSocksProxyServer;
 
-- (void)_addBandwidthStatWithUpload:(UInt64)upload download:(UInt64)download;
-- (void)getBandwidthStatWithUpload:(float *)upload download:(float *)download;
+- (void)getBandwidthStatWithUpload:(UInt64 *)upload download:(UInt64 *)download;
 
 @end

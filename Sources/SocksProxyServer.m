@@ -16,7 +16,7 @@ extern u_long idle_timeout;
 
 void socks_proxy_bandwidth_stat(u_long upload, u_long download)
 {
-	[[SocksProxyServer sharedSocksProxyServer] _addBandwidthStatWithUpload:upload download:download];
+//	[[SocksProxyServer sharedSocksProxyServer] _addBandwidthStatWithUpload:upload download:download];
 }
 
 @implementation SocksProxyServer
@@ -35,11 +35,15 @@ void socks_proxy_bandwidth_stat(u_long upload, u_long download)
 {
 	self = [super init];
     if (self) {
-//        idle_timeout = 0; // set a socket timeout of 1 minutes
-        _upload = 0;
-        _download = 0;
+        _logInfoValues = [[NSMutableArray alloc] init];
     }
     return self;
+}
+
+- (void)dealloc
+{
+	[_logInfoValues release];
+	[super dealloc];
 }
 
 - (NSString *)serviceDomaine
@@ -57,10 +61,15 @@ void socks_proxy_bandwidth_stat(u_long upload, u_long download)
 	NSAutoreleasePool *pool;
     SOCKS_STATE state;
     loginfo li;
+    NSValue *loginfoValue;
     
     pool = [[NSAutoreleasePool alloc] init];
 	memset(&state, 0, sizeof(state));
 	memset(&li, 0, sizeof(li));
+    loginfoValue = [NSValue valueWithPointer:&li];
+    @synchronized (_logInfoValues) {
+    	[_logInfoValues addObject:loginfoValue];
+    }
 	state.li = &li;
     state.s = [fileHandle fileDescriptor];
     if (proto_socks(&state) == 0) {
@@ -70,6 +79,9 @@ void socks_proxy_bandwidth_stat(u_long upload, u_long download)
 			relay(&state);
 		}
 	    close(state.r);
+    }
+    @synchronized (_logInfoValues) {
+    	[_logInfoValues removeObject:loginfoValue];
     }
     [fileHandle closeFile];
     [self performSelectorOnMainThread:@selector(_closeConnexion:) withObject:fileHandle waitUntilDone:NO];
@@ -81,30 +93,21 @@ void socks_proxy_bandwidth_stat(u_long upload, u_long download)
 	[NSThread detachNewThreadSelector:@selector(processIncomingConnection:) toTarget:self withObject:handle];
 }
 
-- (void)getBandwidthStatWithUpload:(float *)upload download:(float *)download
+- (void)getBandwidthStatWithUpload:(UInt64 *)upload download:(UInt64 *)download
 {
-	return;
-	@synchronized (self) {
-		*upload = _upload;
-    	*download = _download;
-        _upload = 0;
-        _download = 0;
+	@synchronized (_logInfoValues) {
+    	for (NSValue *value in _logInfoValues) {
+        	loginfo *li = [value pointerValue];
+            
+            *upload += li->upl;
+            *download += li->dnl;
+        }
     }
 }
 
 - (void)_sendBandwidthStatNotification
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:HTTPProxyServerNewBandwidthStatNotification object:nil];
-}
-
-- (void)_addBandwidthStatWithUpload:(UInt64)upload download:(UInt64)download
-{
-	return;
-	@synchronized (self) {
-        _upload += upload;
-        _download += download;
-    }
-//    [self performSelectorOnMainThread:@selector(_sendBandwidthStatNotification) withObject:nil waitUntilDone:NO];
 }
 
 @end
