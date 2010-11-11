@@ -21,6 +21,8 @@
 		0274FA9012444D8F00173784 /* PMSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0274FA8F12444D8F00173784 /* PMSAppDelegate.m */; };
 		0274FA9212444D9B00173784 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0274FA9112444D9B00173784 /* main.m */; };
 		0275613E124AD4AD00B64593 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0275613D124AD4AD00B64593 /* MessageUI.framework */; };
+		02774268128B591700064370 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02774267128B591700064370 /* SystemConfiguration.framework */; };
+		0277431C128B857600064370 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0277431B128B857600064370 /* AudioToolbox.framework */; };
 		02E7545F1274E8C400D55958 /* auth-pwd.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754551274E8C400D55958 /* auth-pwd.c */; };
 		02E754601274E8C400D55958 /* get-bind.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754561274E8C400D55958 /* get-bind.c */; };
 		02E754611274E8C400D55958 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754571274E8C400D55958 /* init.c */; };
@@ -114,6 +116,8 @@
 		0274FA8F12444D8F00173784 /* PMSAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMSAppDelegate.m; sourceTree = "<group>"; };
 		0274FA9112444D9B00173784 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		0275613D124AD4AD00B64593 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		02774267128B591700064370 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		0277431B128B857600064370 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		02E754551274E8C400D55958 /* auth-pwd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "auth-pwd.c"; sourceTree = "<group>"; };
 		02E754561274E8C400D55958 /* get-bind.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "get-bind.c"; sourceTree = "<group>"; };
 		02E754571274E8C400D55958 /* init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = init.c; sourceTree = "<group>"; };
@@ -254,6 +258,8 @@
 				020BC9CE124ADBD000E2E1F2 /* MobileCoreServices.framework in Frameworks */,
 				9D3437F912420C5A00629728 /* AVFoundation.framework in Frameworks */,
 				9DF66E4C124839050012D66D /* QuartzCore.framework in Frameworks */,
+				02774268128B591700064370 /* SystemConfiguration.framework in Frameworks */,
+				0277431C128B857600064370 /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -329,6 +335,8 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				02774267128B591700064370 /* SystemConfiguration.framework */,
+				0277431B128B857600064370 /* AudioToolbox.framework */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";
