@@ -24,10 +24,18 @@
 #import "UIColorAdditions.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <QuartzCore/QuartzCore.h>
+#import <SystemConfiguration/SCNetworkReachability.h>
+#import <netinet/in.h>
+#import <AudioToolbox/AudioToolbox.h>
 
 // defaults keys
 #define KEY_SOCKS_ON    @"socks.on"
 #define KEY_HTTP_ON     @"http.on"
+
+void reachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReachabilityFlags flags, void *info)
+{
+	[(MainViewController *)info reachabilityNotificationWithFlags:flags];
+}
 
 @interface MainViewController()
 - (void)updateHTTPProxy;
@@ -45,13 +53,74 @@
 @synthesize connectView;
 @synthesize runningView;
 @synthesize socksConnextionCountLabel;
+@synthesize hasNetwork;
+@synthesize hasWifi;
+
+#define ReachableDirectWWAN               (1 << 18)
+
+- (void)unsetupReachabilityNotification
+{
+    if (defaultRouteReachability) {
+    	SCNetworkReachabilityUnscheduleFromRunLoop(defaultRouteReachability, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+        SCNetworkReachabilitySetCallback(defaultRouteReachability, NULL, NULL);
+        CFRelease(defaultRouteReachability);
+        defaultRouteReachability = NULL;
+    }
+}
+
+- (BOOL)setupReachabilityNotification
+{
+    // Create zero addy
+    struct sockaddr_in zeroAddress;
+    bzero(&zeroAddress, sizeof(zeroAddress));
+    zeroAddress.sin_len = sizeof(zeroAddress);
+    zeroAddress.sin_family = AF_INET;
+    SCNetworkReachabilityContext context = { 0, self, NULL, NULL, NULL };
+    BOOL result = NO;
+	
+    // Recover reachability flags
+    defaultRouteReachability = SCNetworkReachabilityCreateWithAddress(NULL, (struct sockaddr *)&zeroAddress);
+//	defaultRouteReachability = SCNetworkReachabilityCreateWithName(NULL, "169.254.255.255");
+
+	if (defaultRouteReachability
+    	&& SCNetworkReachabilitySetCallback(defaultRouteReachability, reachabilityCallback, &context)
+        && SCNetworkReachabilityScheduleWithRunLoop(defaultRouteReachability, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode)) {
+        result = YES;
+    }
+    if (!result && defaultRouteReachability) {
+    	[self unsetupReachabilityNotification];
+    } else if (result) {
+		SCNetworkReachabilityFlags flags;
+
+		if (SCNetworkReachabilityGetFlags(defaultRouteReachability, &flags)) {
+        	self.hasNetwork = YES;
+			[self reachabilityNotificationWithFlags:flags];
+		}
+    }
+    return result;
+}
+
+- (void)reachabilityNotificationWithFlags:(SCNetworkReachabilityFlags)flags
+{
+	BOOL newHasNetwork;
+    BOOL newHasWifi;
+    
+    newHasNetwork = (flags & kSCNetworkFlagsReachable) ? YES : NO;
+    newHasWifi = (flags & ReachableDirectWWAN) ? NO : newHasNetwork;
+    if (newHasNetwork != hasNetwork) {
+		AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
+    }
+//    NSLog(@"%d %d %d %d", newHasNetwork, newHasWifi, hasNetwork, hasWifi);
+//    NSLog(@"%d", flags);
+    self.hasNetwork = newHasNetwork;
+    self.hasWifi = newHasWifi;
+}
 
 - (void) viewWillAppear:(BOOL)animated
 {
 	NSString *hostName;
-    // connectView.layer.cornerRadius = 15;
-    // runningView.layer.cornerRadius = 15;
-
+	
+    [self setupReachabilityNotification];
     httpSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey: KEY_HTTP_ON];
     socksSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey: KEY_SOCKS_ON];
 
@@ -99,7 +168,7 @@
 static NSDate *date = nil;
 - (void)updateSocksProxyInfo
 {
-	float upload = 0, download = 0;
+	UInt64 upload = 0, download = 0;
     NSDate *now = [NSDate date];
     
     [[SocksProxyServer sharedSocksProxyServer] getBandwidthStatWithUpload:&upload download:&download];
