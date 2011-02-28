@@ -11,3 +11,11 @@ To use ssh on you computer, add this line in /etc/ssh_config
 ProxyCommand /usr/bin/nc -X 5 -x iPhone.local:1080 %h %p
 
 (replace iPhone.local by the name of iphone)
+
+
+
+-----
+
+To switch from OSX target to iPhoneOS target:
+    + open project.pbxproj
+    + replace all SDKROOT = iphonesimulator to SDKROOT = iphoneos
