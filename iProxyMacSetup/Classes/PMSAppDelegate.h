@@ -13,7 +13,7 @@
 #define INTERFACE_ENABLED @"enabled"
 
 #define PROXY_SERVICE_KEY @"service"
-#define PROXY_IP_KEY @"ip"
+#define PROXY_HOST_NAME_KEY @"hostname"
 #define PROXY_DEVICE_KEY @"device"
 #define PROXY_RESOLVING_KEY @"resolving"
 
@@ -30,11 +30,11 @@
     BOOL proxyEnabled;
 }
 
-@property(readonly) BOOL browsing;
-@property(nonatomic) BOOL automatic;
-@property(readonly) BOOL proxyEnabled;
-@property(readonly) NSUInteger resolvingServiceCount;
-@property(readonly) NSArray *proxyServiceList;
+@property(nonatomic, readonly, assign) BOOL browsing;
+@property(nonatomic, readwrite, assign) BOOL automatic;
+@property(nonatomic, readonly, assign) BOOL proxyEnabled;
+@property(nonatomic, readonly, assign) NSUInteger resolvingServiceCount;
+@property(nonatomic, readonly, retain) NSArray *proxyServiceList;
 
 - (void)startBrowsingServices;
 - (void)enableProxy:(NSDictionary *)proxy;

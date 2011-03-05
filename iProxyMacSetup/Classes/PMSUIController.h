@@ -19,7 +19,7 @@
     IBOutlet NSButton *startButton;
 }
 
-@property(readonly)PMSAppDelegate *appDelegate;
+@property(nonatomic, readonly, assign)PMSAppDelegate *appDelegate;
 
 - (void)updateProgressIndicator;
 - (void)updateProxyPopUpButton;

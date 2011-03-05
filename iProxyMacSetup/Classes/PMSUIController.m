@@ -74,9 +74,15 @@
     for (NSDictionary *proxy in appDelegate.proxyServiceList) {
     	NSString *title;
         NSNetService *proxyService;
+        NSInteger counter = 1;
         
         proxyService = [proxy objectForKey:PROXY_SERVICE_KEY];
-        title = [[NSString alloc] initWithFormat:@"%@.%@", [proxyService name], [proxyService domain]];
+        title = [[proxyService name] retain];
+        while ([proxyPopUpButton itemWithTitle:title]) {
+        	[title release];
+            title = [[NSString alloc] initWithFormat:@"%@-%d", [proxyService name], counter];
+            counter++;
+        }
     	if ([appDelegate isProxyReady:proxy]) {
             [proxyPopUpButton addItemWithTitle:title];
         } else {
