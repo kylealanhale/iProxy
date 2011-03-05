@@ -24,7 +24,7 @@ void polipo_exit();
     return shared;
 }
 
-- (NSString	*)serviceDomain
+- (NSString	*)serviceDomaine
 {
 	return HTTP_PROXY_DOMAIN;
 }
