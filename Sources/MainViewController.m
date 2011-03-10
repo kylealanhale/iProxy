@@ -121,7 +121,8 @@ void reachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReachability
 	NSString *hostName;
 	
     [self setupReachabilityNotification];
-    httpSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey: KEY_HTTP_ON];
+//    httpSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey: KEY_HTTP_ON];
+    httpSwitch.on = NO;
     socksSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey: KEY_SOCKS_ON];
 
     connectView.backgroundColor = [UIColor clearColor];
