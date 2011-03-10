@@ -99,6 +99,7 @@
 
 /* Begin PBXFileReference section */
 		020BC9CD124ADBD000E2E1F2 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		0220C6B81328C9ED00962EF9 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		02501CC2126667EF00CE5CA9 /* GenericServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericServer.h; path = Sources/GenericServer.h; sourceTree = "<group>"; };
 		02501CC3126667EF00CE5CA9 /* GenericServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GenericServer.m; path = Sources/GenericServer.m; sourceTree = "<group>"; };
 		02501CC51266680900CE5CA9 /* HTTPProxyServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTPProxyServer.h; path = Sources/HTTPProxyServer.h; sourceTree = "<group>"; };
@@ -329,6 +330,7 @@
 			isa = PBXGroup;
 			children = (
 				02ED13FD12667DFF00595AA0 /* SharedHeader.h */,
+				0220C6B81328C9ED00962EF9 /* README.txt */,
 				0274FA7E12444C3500173784 /* iProxyMacSetup */,
 				9D63174410FEACBE0041EE37 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
