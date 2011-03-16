@@ -350,8 +350,6 @@
 				02E203DB133176610007CA2C /* Librairies */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				02774267128B591700064370 /* SystemConfiguration.framework */,
-				0277431B128B857600064370 /* AudioToolbox.framework */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";
@@ -383,6 +381,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0277431B128B857600064370 /* AudioToolbox.framework */,
+				02774267128B591700064370 /* SystemConfiguration.framework */,
 				3A18D6B3119DC7E300C56A7A /* CFNetwork.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
