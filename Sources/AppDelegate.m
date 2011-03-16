@@ -51,7 +51,7 @@
 
     NSString *sample = [[NSBundle mainBundle] pathForResource:@"silence" ofType:@"wav"];
     NSURL *url = [NSURL URLWithString:sample];
-    AVAudioPlayer *player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
+    player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
     player.numberOfLoops = -1;
     player.volume = 0.00;
     [player prepareToPlay];

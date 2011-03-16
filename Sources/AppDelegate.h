@@ -19,10 +19,11 @@
 
 @class MainViewController;
 
-@interface AppDelegate : NSObject <UIApplicationDelegate, AVAudioSessionDelegate> {
-
+@interface AppDelegate : NSObject <UIApplicationDelegate, AVAudioSessionDelegate>
+{
     IBOutlet UIWindow *window;
     IBOutlet MainViewController *statusViewController;
+    AVAudioPlayer *player;
 }
 
 @property (nonatomic, retain) UIWindow *window;
