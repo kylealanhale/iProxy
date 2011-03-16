@@ -107,14 +107,14 @@
 		02501CC81266681800CE5CA9 /* SocksProxyServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SocksProxyServer.h; path = Sources/SocksProxyServer.h; sourceTree = "<group>"; };
 		02501CC91266681800CE5CA9 /* SocksProxyServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SocksProxyServer.m; path = Sources/SocksProxyServer.m; sourceTree = "<group>"; };
 		0267229C12444EA000A2EACF /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		0267243C1245646C00A2EACF /* PMSUIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMSUIController.h; sourceTree = "<group>"; };
-		0267243D1245646C00A2EACF /* PMSUIController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMSUIController.m; sourceTree = "<group>"; };
+		0267243C1245646C00A2EACF /* PMSUIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PMSUIController.h; path = Classes/PMSUIController.h; sourceTree = "<group>"; };
+		0267243D1245646C00A2EACF /* PMSUIController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PMSUIController.m; path = Classes/PMSUIController.m; sourceTree = "<group>"; };
 		0274FA6312444A5D00173784 /* iProxyMacSetup.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iProxyMacSetup.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0274FA6512444A5D00173784 /* iProxyMacSetup-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iProxyMacSetup-Info.plist"; sourceTree = "<group>"; };
 		0274FA8A12444D8300173784 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		0274FA8B12444D8300173784 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		0274FA8E12444D8F00173784 /* PMSAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMSAppDelegate.h; sourceTree = "<group>"; };
-		0274FA8F12444D8F00173784 /* PMSAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMSAppDelegate.m; sourceTree = "<group>"; };
+		0274FA8E12444D8F00173784 /* PMSAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PMSAppDelegate.h; path = Classes/PMSAppDelegate.h; sourceTree = "<group>"; };
+		0274FA8F12444D8F00173784 /* PMSAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PMSAppDelegate.m; path = Classes/PMSAppDelegate.m; sourceTree = "<group>"; };
 		0274FA9112444D9B00173784 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		0275613D124AD4AD00B64593 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		02774267128B591700064370 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -270,22 +270,14 @@
 		0274FA7E12444C3500173784 /* iProxyMacSetup */ = {
 			isa = PBXGroup;
 			children = (
-				0274FA9112444D9B00173784 /* main.m */,
-				0274FA8912444D1200173784 /* Resources */,
-				0274FA8312444C9C00173784 /* Classes */,
-			);
-			path = iProxyMacSetup;
-			sourceTree = "<group>";
-		};
-		0274FA8312444C9C00173784 /* Classes */ = {
-			isa = PBXGroup;
-			children = (
 				0274FA8E12444D8F00173784 /* PMSAppDelegate.h */,
 				0274FA8F12444D8F00173784 /* PMSAppDelegate.m */,
 				0267243C1245646C00A2EACF /* PMSUIController.h */,
 				0267243D1245646C00A2EACF /* PMSUIController.m */,
+				0274FA8912444D1200173784 /* Resources */,
+				0274FA9112444D9B00173784 /* main.m */,
 			);
-			path = Classes;
+			path = iProxyMacSetup;
 			sourceTree = "<group>";
 		};
 		0274FA8912444D1200173784 /* Resources */ = {
@@ -296,6 +288,30 @@
 				0274FA6512444A5D00173784 /* iProxyMacSetup-Info.plist */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		02E203DB133176610007CA2C /* Librairies */ = {
+			isa = PBXGroup;
+			children = (
+				02E7548E1274EC1A00D55958 /* route.h */,
+				02E7544F1274E8A500D55958 /* srelay */,
+				9D71D7AD1237A53C008538A1 /* polipo */,
+			);
+			name = Librairies;
+			sourceTree = "<group>";
+		};
+		02E203DC133176A50007CA2C /* iProxy */ = {
+			isa = PBXGroup;
+			children = (
+				9D63173310FEAC8B0041EE37 /* AppDelegate.h */,
+				9D63173410FEAC8B0041EE37 /* AppDelegate.m */,
+				9DDA4C62124E4AD200BF30F3 /* ViewControllers */,
+				3A18D67F119DC6F700C56A7A /* Server */,
+				9DF66D6412482AF70012D66D /* Additions */,
+				29B97315FDCFA39411CA2CEA /* Other Sources */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
+			);
+			name = iProxy;
 			sourceTree = "<group>";
 		};
 		02E7544F1274E8A500D55958 /* srelay */ = {
@@ -331,10 +347,9 @@
 			children = (
 				02ED13FD12667DFF00595AA0 /* SharedHeader.h */,
 				0220C6B81328C9ED00962EF9 /* README.txt */,
+				02E203DC133176A50007CA2C /* iProxy */,
 				0274FA7E12444C3500173784 /* iProxyMacSetup */,
-				9D63174410FEACBE0041EE37 /* Classes */,
-				29B97315FDCFA39411CA2CEA /* Other Sources */,
-				29B97317FDCFA39411CA2CEA /* Resources */,
+				02E203DB133176610007CA2C /* Librairies */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 				02774267128B591700064370 /* SystemConfiguration.framework */,
@@ -371,9 +386,6 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				02E7548E1274EC1A00D55958 /* route.h */,
-				02E7544F1274E8A500D55958 /* srelay */,
-				9D71D7AD1237A53C008538A1 /* polipo */,
 				3A18D6B3119DC7E300C56A7A /* CFNetwork.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
@@ -419,18 +431,6 @@
 				9DF66E8A12483BE30012D66D /* Icon-72-transparent.png */,
 			);
 			name = Icons;
-			sourceTree = "<group>";
-		};
-		9D63174410FEACBE0041EE37 /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-				9DF66D6412482AF70012D66D /* Additions */,
-				3A18D67F119DC6F700C56A7A /* Server */,
-				9DDA4C62124E4AD200BF30F3 /* ViewControllers */,
-				9D63173310FEAC8B0041EE37 /* AppDelegate.h */,
-				9D63173410FEAC8B0041EE37 /* AppDelegate.m */,
-			);
-			name = Classes;
 			sourceTree = "<group>";
 		};
 		9D71D7AD1237A53C008538A1 /* polipo */ = {
