@@ -310,7 +310,7 @@
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 			);
-			name = iProxy;
+			path = iProxy;
 			sourceTree = "<group>";
 		};
 		02E7544F1274E8A500D55958 /* srelay */ = {
