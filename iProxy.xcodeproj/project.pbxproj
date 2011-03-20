@@ -263,14 +263,13 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		02E203DB133176610007CA2C /* Librairies */ = {
+		02E203DB133176610007CA2C /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
 				02E7548E1274EC1A00D55958 /* route.h */,
 				02E7544F1274E8A500D55958 /* srelay */,
 				9D71D7AD1237A53C008538A1 /* polipo */,
 			);
-			name = Librairies;
 			path = Libraries;
 			sourceTree = "<group>";
 		};
@@ -322,7 +321,7 @@
 				0220C6B81328C9ED00962EF9 /* README.txt */,
 				02E203DC133176A50007CA2C /* iProxy */,
 				0274FA7E12444C3500173784 /* iProxyMacSetup */,
-				02E203DB133176610007CA2C /* Librairies */,
+				02E203DB133176610007CA2C /* Libraries */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
