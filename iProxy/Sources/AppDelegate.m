@@ -102,15 +102,11 @@
     BOOL running = FALSE;
     
     for (GenericServer *server in proxyServers) {
-        running = running && [server state] == SERVER_STATE_STOPPED;
+        running = running || [server state] == SERVER_STATE_STOPPED;
     }
     if (!running) {
     	[[UIApplication sharedApplication] _terminateWithStatus:0];
     }
-}
-
-- (void)applicationWillTerminate:(UIApplication *)application
-{
 }
 
 - (void)dealloc
