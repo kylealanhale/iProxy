@@ -21,6 +21,7 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
 @implementation GenericServer
 
 @synthesize state = _state; 
+@synthesize serviceDomain;
 
 + (id)sharedServer
 {
