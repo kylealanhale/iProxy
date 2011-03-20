@@ -28,8 +28,12 @@ typedef enum
 @property (readonly, getter = serviceDomain) NSString *serviceDomain;
 @property (readonly, getter = servicePort) int servicePort;
 
++ (id)sharedServer;
++ (NSString *)pacFilePath;
+
 - (BOOL)start;
 - (void)stop;
+- (NSString *)pacFileContentWithCurrentIP:(NSString *)ip;
 
 - (void)_started;
 - (void)_failedStarting;

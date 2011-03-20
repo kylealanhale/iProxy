@@ -21,14 +21,9 @@ void socks_proxy_bandwidth_stat(u_long upload, u_long download)
 
 @implementation SocksProxyServer
 
-+ (id)sharedSocksProxyServer
++ (NSString *)pacFilePath
 {
-	static SocksProxyServer *shared = nil;
-    
-    if (!shared) {
-    	shared = [[SocksProxyServer alloc] init];
-    }
-    return shared;
+    return @"/socks.pac";
 }
 
 - (id)init

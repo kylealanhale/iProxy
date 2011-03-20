@@ -16,7 +16,7 @@
 
 @interface PacFileResponse : HTTPResponseHandler
 {
-
+    NSMutableDictionary *servers;
 }
 
 @end

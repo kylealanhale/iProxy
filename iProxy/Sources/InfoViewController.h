@@ -20,7 +20,6 @@
 
 }
 
-- (IBAction) actionLike;
 - (IBAction) actionHelp;
 - (IBAction) actionIssues;
 - (IBAction) actionDonate;

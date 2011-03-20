@@ -41,20 +41,6 @@
     self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismiss)] autorelease];
 }
 
-- (IBAction) actionLike;
-{
-    NSString *anonymizedUnique = [[[UIDevice currentDevice] uniqueIdentifier] md5];
-
-#if TARGET_IPHONE_SIMULATOR
-    NSURL *url = [NSURL URLWithString: [NSString stringWithFormat: @"http://localhost?%@", anonymizedUnique]];
-#else
-    NSURL *url = [NSURL URLWithString: [NSString stringWithFormat: URL_LIKE, anonymizedUnique]];
-#endif
-
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
-    [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
-}
-
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
     if ([(NSHTTPURLResponse*)response statusCode] == 200) {

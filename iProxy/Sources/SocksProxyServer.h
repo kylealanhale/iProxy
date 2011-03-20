@@ -16,8 +16,6 @@
     NSMutableArray *_logInfoValues;
 }
 
-+ (SocksProxyServer *)sharedSocksProxyServer;
-
 - (void)getBandwidthStatWithUpload:(UInt64 *)upload download:(UInt64 *)download;
 
 @end

@@ -19,7 +19,7 @@
 #import "HTTPServer.h"
 #import "PacFileResponse.h"
 #import "SocksProxyServer.h"
-#import "HTTPProxyServer.h"
+//#import "HTTPProxyServer.h"
 #import "UIViewAdditions.h"
 #import "UIColorAdditions.h"
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -137,16 +137,16 @@ void reachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReachability
     [self.view.layer insertSublayer:gradient atIndex:0];
     
     hostName = [[NSProcessInfo processInfo] hostName];
-    httpAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, [HTTPProxyServer sharedHTTPProxyServer].servicePort];
-    httpPacLabel.text = [NSString stringWithFormat:@"http://%@:%d/http.pac", hostName, [HTTPServer sharedHTTPServer].servicePort];
+//    httpAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, [[HTTPProxyServer sharedServer] servicePort]];
+//    httpPacLabel.text = [NSString stringWithFormat:@"http://%@:%d%@", hostName, [HTTPServer sharedHTTPServer].servicePort, [HTTPProxyServer pacFilePath]];
+//    [[HTTPProxyServer sharedServer] addObserver:self forKeyPath:@"state" options:NSKeyValueObservingOptionNew context:nil];
 
-    socksAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, [SocksProxyServer sharedSocksProxyServer].servicePort];
-    socksPacLabel.text = [NSString stringWithFormat:@"http://%@:%d/socks.pac", hostName, [HTTPServer sharedHTTPServer].servicePort];
+    socksAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, [[SocksProxyServer sharedServer] servicePort]];
+    socksPacLabel.text = [NSString stringWithFormat:@"http://%@:%d%@", hostName, [HTTPServer sharedHTTPServer].servicePort, [SocksProxyServer pacFilePath]];
     [self.view addTaggedSubview:runningView];
-	
-    [[SocksProxyServer sharedSocksProxyServer] addObserver:self forKeyPath:@"connexionCount" options:NSKeyValueObservingOptionNew context:nil];
-    [[SocksProxyServer sharedSocksProxyServer] addObserver:self forKeyPath:@"state" options:NSKeyValueObservingOptionNew context:nil];
-    [[HTTPProxyServer sharedHTTPProxyServer] addObserver:self forKeyPath:@"state" options:NSKeyValueObservingOptionNew context:nil];
+    [[SocksProxyServer sharedServer] addObserver:self forKeyPath:@"connexionCount" options:NSKeyValueObservingOptionNew context:nil];
+    [[SocksProxyServer sharedServer] addObserver:self forKeyPath:@"state" options:NSKeyValueObservingOptionNew context:nil];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(scheduleSocksProxyInfoTimer) name:HTTPProxyServerNewBandwidthStatNotification object:nil];
     [self updateHTTPProxy];
     [self updateSocksProxy];
@@ -161,7 +161,7 @@ void reachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReachability
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-	if (object == [SocksProxyServer sharedSocksProxyServer] && [keyPath isEqualToString:@"connexionCount"]) {
+	if (object == [SocksProxyServer sharedServer] && [keyPath isEqualToString:@"connexionCount"]) {
     	[self scheduleSocksProxyInfoTimer];
     }
 }
@@ -172,7 +172,7 @@ static NSDate *date = nil;
 	UInt64 upload = 0, download = 0;
     NSDate *now = [NSDate date];
     
-    [[SocksProxyServer sharedSocksProxyServer] getBandwidthStatWithUpload:&upload download:&download];
+    [[SocksProxyServer sharedServer] getBandwidthStatWithUpload:&upload download:&download];
     if (date) {
     	NSTimeInterval lapse;
         
@@ -181,44 +181,44 @@ static NSDate *date = nil;
     }
     [date release];
     date = [now retain];
-    socksConnextionCountLabel.text = [NSString stringWithFormat:@"%d", [SocksProxyServer sharedSocksProxyServer].connexionCount];
+    socksConnextionCountLabel.text = [NSString stringWithFormat:@"%d", [[SocksProxyServer sharedServer] connexionCount]];
     socksProxyInfoTimer = nil;
 }
 
 - (void)updateHTTPProxy
 {
-    if (httpSwitch.on) {
-        [[HTTPProxyServer sharedHTTPProxyServer] start];
-
-        httpAddressLabel.alpha = 1.0;
-        httpPacLabel.alpha = 1.0;
-        httpPacButton.enabled = YES;
-
-    } else {
-        [[HTTPProxyServer sharedHTTPProxyServer] stop];
-
-        httpAddressLabel.alpha = 0.1;
-        httpPacLabel.alpha = 0.1;
-        httpPacButton.enabled = NO;
-    }
-    if (httpSwitch.on || socksSwitch.on) {
-        [[HTTPServer sharedHTTPServer] start];
-    } else {
-        [[HTTPServer sharedHTTPServer] stop];
-    }
+//    if (httpSwitch.on) {
+//        [(GenericServer *)[HTTPProxyServer sharedServer] start];
+//
+//        httpAddressLabel.alpha = 1.0;
+//        httpPacLabel.alpha = 1.0;
+//        httpPacButton.enabled = YES;
+//
+//    } else {
+//        [[HTTPProxyServer sharedServer] stop];
+//
+//        httpAddressLabel.alpha = 0.1;
+//        httpPacLabel.alpha = 0.1;
+//        httpPacButton.enabled = NO;
+//    }
+//    if (httpSwitch.on || socksSwitch.on) {
+//        [[HTTPServer sharedHTTPServer] start];
+//    } else {
+//        [[HTTPServer sharedHTTPServer] stop];
+//    }
 }
 
 - (void)updateSocksProxy
 {
     if (socksSwitch.on) {
-        [[SocksProxyServer sharedSocksProxyServer] start];
+        [(GenericServer *)[SocksProxyServer sharedServer] start];
 
         socksAddressLabel.alpha = 1.0;
         socksPacLabel.alpha = 1.0;
         socksPacButton.enabled = YES;
 
     } else {
-        [[SocksProxyServer sharedSocksProxyServer] stop];
+        [[SocksProxyServer sharedServer] stop];
 
         socksAddressLabel.alpha = 0.1;
         socksPacLabel.alpha = 0.1;

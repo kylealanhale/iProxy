@@ -21,6 +21,30 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
 @implementation GenericServer
 
 @synthesize state = _state; 
+@synthesize serviceDomain;
+
++ (id)sharedServer
+{
+	static NSMutableDictionary *servers = nil;
+    id server;
+    
+    if (!servers) {
+    	servers = [[NSMutableDictionary alloc] init];
+    }
+    server = [servers objectForKey:NSStringFromClass([self class])];
+    if (!server) {
+        server = [[[self class] alloc] init];
+        [servers setObject:server forKey:NSStringFromClass([self class])];
+        [server autorelease];
+    }
+    return server;
+}
+
++ (NSString *)pacFilePath
+{
+    NSAssert(FALSE, @"not implemented");
+    return nil;
+}
 
 - (id)init
 {
@@ -45,6 +69,12 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
 - (int)servicePort
 {
 	return 0;
+}
+
+- (NSString *)pacFileContentWithCurrentIP:(NSString *)ip
+{
+    NSAssert(FALSE, @"not implemented");
+    return nil;
 }
 
 - (BOOL)_starting

@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		020BC9CE124ADBD000E2E1F2 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 020BC9CD124ADBD000E2E1F2 /* MobileCoreServices.framework */; };
 		02501CC4126667EF00CE5CA9 /* GenericServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 02501CC3126667EF00CE5CA9 /* GenericServer.m */; };
-		02501CC71266680900CE5CA9 /* HTTPProxyServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 02501CC61266680900CE5CA9 /* HTTPProxyServer.m */; };
 		02501CCA1266681800CE5CA9 /* SocksProxyServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 02501CC91266681800CE5CA9 /* SocksProxyServer.m */; };
 		02501D61126674DB00CE5CA9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 02501D60126674DB00CE5CA9 /* InfoPlist.strings */; };
 		02501D63126674E200CE5CA9 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02501D62126674E200CE5CA9 /* MainMenu.xib */; };
@@ -58,31 +57,6 @@
 		9D63173810FEAC8B0041EE37 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D63173410FEAC8B0041EE37 /* AppDelegate.m */; };
 		9D63173910FEAC8B0041EE37 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D63173610FEAC8B0041EE37 /* MainViewController.m */; };
 		9D63173C10FEAC980041EE37 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D63173A10FEAC980041EE37 /* main.m */; };
-		9D71D7EC1237A598008538A1 /* atom.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7B81237A598008538A1 /* atom.c */; };
-		9D71D7ED1237A598008538A1 /* auth.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7BA1237A598008538A1 /* auth.c */; };
-		9D71D7EE1237A598008538A1 /* chunk.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7BC1237A598008538A1 /* chunk.c */; };
-		9D71D7EF1237A598008538A1 /* client.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7BE1237A598008538A1 /* client.c */; };
-		9D71D7F01237A598008538A1 /* config.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7C01237A598008538A1 /* config.c */; };
-		9D71D7F11237A598008538A1 /* diskcache.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7C21237A598008538A1 /* diskcache.c */; };
-		9D71D7F21237A598008538A1 /* dns.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7C41237A598008538A1 /* dns.c */; };
-		9D71D7F31237A598008538A1 /* event.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7C61237A598008538A1 /* event.c */; };
-		9D71D7F41237A598008538A1 /* forbidden.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7C81237A598008538A1 /* forbidden.c */; };
-		9D71D7F51237A598008538A1 /* fts_compat.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7CA1237A598008538A1 /* fts_compat.c */; };
-		9D71D7F61237A598008538A1 /* ftsimport.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7CC1237A598008538A1 /* ftsimport.c */; };
-		9D71D7F71237A598008538A1 /* http_parse.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7CE1237A598008538A1 /* http_parse.c */; };
-		9D71D7F81237A598008538A1 /* http.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7D01237A598008538A1 /* http.c */; };
-		9D71D7F91237A598008538A1 /* io.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7D21237A598008538A1 /* io.c */; };
-		9D71D7FA1237A598008538A1 /* local.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7D41237A598008538A1 /* local.c */; };
-		9D71D7FB1237A598008538A1 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7D61237A598008538A1 /* log.c */; };
-		9D71D7FC1237A598008538A1 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7D81237A598008538A1 /* main.c */; };
-		9D71D7FD1237A598008538A1 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7D91237A598008538A1 /* md5.c */; };
-		9D71D7FF1237A598008538A1 /* mingw.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7DD1237A598008538A1 /* mingw.c */; };
-		9D71D8001237A598008538A1 /* object.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7DF1237A598008538A1 /* object.c */; };
-		9D71D8011237A598008538A1 /* parse_time.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7E11237A598008538A1 /* parse_time.c */; };
-		9D71D8021237A598008538A1 /* server.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7E41237A598008538A1 /* server.c */; };
-		9D71D8031237A598008538A1 /* socks.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7E61237A598008538A1 /* socks.c */; };
-		9D71D8041237A598008538A1 /* tunnel.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7E81237A598008538A1 /* tunnel.c */; };
-		9D71D8051237A598008538A1 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7EA1237A598008538A1 /* util.c */; };
 		9D79C2BF124E7173008F7F98 /* NSStringAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D79C2BE124E7173008F7F98 /* NSStringAdditions.m */; };
 		9D83D36711B9AF5C00A9922F /* PacFileResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D83D36111B9AF5C00A9922F /* PacFileResponse.m */; };
 		9D83D36811B9AF5C00A9922F /* HTTPResponseHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D83D36311B9AF5C00A9922F /* HTTPResponseHandler.m */; };
@@ -688,37 +662,11 @@
 				9D83D36711B9AF5C00A9922F /* PacFileResponse.m in Sources */,
 				9D83D36811B9AF5C00A9922F /* HTTPResponseHandler.m in Sources */,
 				9D83D36911B9AF5C00A9922F /* HTTPServer.m in Sources */,
-				9D71D7EC1237A598008538A1 /* atom.c in Sources */,
-				9D71D7ED1237A598008538A1 /* auth.c in Sources */,
-				9D71D7EE1237A598008538A1 /* chunk.c in Sources */,
-				9D71D7EF1237A598008538A1 /* client.c in Sources */,
-				9D71D7F01237A598008538A1 /* config.c in Sources */,
-				9D71D7F11237A598008538A1 /* diskcache.c in Sources */,
-				9D71D7F21237A598008538A1 /* dns.c in Sources */,
-				9D71D7F31237A598008538A1 /* event.c in Sources */,
-				9D71D7F41237A598008538A1 /* forbidden.c in Sources */,
-				9D71D7F51237A598008538A1 /* fts_compat.c in Sources */,
-				9D71D7F61237A598008538A1 /* ftsimport.c in Sources */,
-				9D71D7F71237A598008538A1 /* http_parse.c in Sources */,
-				9D71D7F81237A598008538A1 /* http.c in Sources */,
-				9D71D7F91237A598008538A1 /* io.c in Sources */,
-				9D71D7FA1237A598008538A1 /* local.c in Sources */,
-				9D71D7FB1237A598008538A1 /* log.c in Sources */,
-				9D71D7FC1237A598008538A1 /* main.c in Sources */,
-				9D71D7FD1237A598008538A1 /* md5.c in Sources */,
-				9D71D7FF1237A598008538A1 /* mingw.c in Sources */,
-				9D71D8001237A598008538A1 /* object.c in Sources */,
-				9D71D8011237A598008538A1 /* parse_time.c in Sources */,
-				9D71D8021237A598008538A1 /* server.c in Sources */,
-				9D71D8031237A598008538A1 /* socks.c in Sources */,
-				9D71D8041237A598008538A1 /* tunnel.c in Sources */,
-				9D71D8051237A598008538A1 /* util.c in Sources */,
 				9DF66D6712482B170012D66D /* UIDeviceAdditions.m in Sources */,
 				9DF66DB0124830AF0012D66D /* UIViewAdditions.m in Sources */,
 				9DDA4C2E124E460D00BF30F3 /* InfoViewController.m in Sources */,
 				9D79C2BF124E7173008F7F98 /* NSStringAdditions.m in Sources */,
 				02501CC4126667EF00CE5CA9 /* GenericServer.m in Sources */,
-				02501CC71266680900CE5CA9 /* HTTPProxyServer.m in Sources */,
 				02501CCA1266681800CE5CA9 /* SocksProxyServer.m in Sources */,
 				02ED14C21266836A00595AA0 /* UIColorAdditions.m in Sources */,
 				02E7545F1274E8C400D55958 /* auth-pwd.c in Sources */,

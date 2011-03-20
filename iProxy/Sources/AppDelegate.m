@@ -16,7 +16,7 @@
 
 #import "AppDelegate.h"
 #import "MainViewController.h"
-#import "HTTPProxyServer.h"
+//#import "HTTPProxyServer.h"
 #import "SocksProxyServer.h"
 
 @interface UIApplication (PrivateAPI)
@@ -33,6 +33,10 @@
 {
     [window addSubview:statusViewController.view];
     [window makeKeyAndVisible];
+    
+    proxyServers = [[NSMutableArray alloc] init];
+//    [proxyServers addObject:[HTTPProxyServer sharedServer]];
+    [proxyServers addObject:[SocksProxyServer sharedServer]];
 
     // setup fake audio
     
@@ -95,13 +99,14 @@
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-	if (([HTTPProxyServer sharedHTTPProxyServer].state == SERVER_STATE_STOPPED || [HTTPProxyServer sharedHTTPProxyServer].state == SERVER_STATE_STOPPING) && ([SocksProxyServer sharedSocksProxyServer].state == SERVER_STATE_STOPPED || [SocksProxyServer sharedSocksProxyServer].state == SERVER_STATE_STOPPING)) {
+    BOOL running = FALSE;
+    
+    for (GenericServer *server in proxyServers) {
+        running = running || [server state] == SERVER_STATE_STOPPED;
+    }
+    if (!running) {
     	[[UIApplication sharedApplication] _terminateWithStatus:0];
     }
-}
-
-- (void)applicationWillTerminate:(UIApplication *)application
-{
 }
 
 - (void)dealloc
