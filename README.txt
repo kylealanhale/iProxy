@@ -15,3 +15,9 @@ ProxyCommand /usr/bin/nc -X 5 -x iPhone.local:1080 %h %p
 
 -----
 With xcode 4, if you have a problem to run the application (unknown iProxyAppDelegate class), delete the application (in the simulator or the iphone), and choose iOS 4.2 (instead of 4.3) and run again.
+
+
+to checkout the srelay submodule :
+git submodule update --init
+git branch --track iproxy origin/iproxy
+git checkout iproxy
