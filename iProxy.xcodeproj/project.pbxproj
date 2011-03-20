@@ -934,9 +934,9 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Sources/Prefix.pch;
+				GCC_PREFIX_HEADER = iProxy/Sources/Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
-				INFOPLIST_FILE = Resources/Info.plist;
+				INFOPLIST_FILE = iProxy/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1.3;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = iProxy;
@@ -956,9 +956,9 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Sources/Prefix.pch;
+				GCC_PREFIX_HEADER = iProxy/Sources/Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
-				INFOPLIST_FILE = Resources/Info.plist;
+				INFOPLIST_FILE = iProxy/Resources/Info.plist;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = iProxy;
 				PROVISIONING_PROFILE = "";
@@ -992,9 +992,9 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Sources/Prefix.pch;
+				GCC_PREFIX_HEADER = iProxy/Sources/Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
-				INFOPLIST_FILE = Resources/Info.plist;
+				INFOPLIST_FILE = iProxy/Resources/Info.plist;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = iProxy;
 				PROVISIONING_PROFILE = "";
