@@ -60,17 +60,12 @@ void socks_proxy_bandwidth_stat(u_long upload, u_long download)
 {
 	NSAutoreleasePool *pool;
     SOCKS_STATE state;
-    LOGINFO li;
-    NSValue *loginfoValue;
+    SOCK_INFO si;
     
     pool = [[NSAutoreleasePool alloc] init];
 	memset(&state, 0, sizeof(state));
-	memset(&li, 0, sizeof(li));
-    loginfoValue = [NSValue valueWithPointer:&li];
-    @synchronized (_logInfoValues) {
-    	[_logInfoValues addObject:loginfoValue];
-    }
-//	state.li = &li;
+    memset(&si, 0, sizeof(si));
+    state.si = &si;
     state.s = [fileHandle fileDescriptor];
     if (proto_socks(&state) == 0) {
 		if (state.sr.req == S5REQ_UDPA) {
@@ -79,9 +74,6 @@ void socks_proxy_bandwidth_stat(u_long upload, u_long download)
 			relay(&state);
 		}
 	    close(state.r);
-    }
-    @synchronized (_logInfoValues) {
-    	[_logInfoValues removeObject:loginfoValue];
     }
     [fileHandle closeFile];
     [self performSelectorOnMainThread:@selector(_closeConnexion:) withObject:fileHandle waitUntilDone:NO];
