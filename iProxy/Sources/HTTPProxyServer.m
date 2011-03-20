@@ -14,14 +14,9 @@ void polipo_exit();
 
 @implementation HTTPProxyServer
 
-+ (HTTPProxyServer *)sharedHTTPProxyServer
++ (NSString *)pacFilePath
 {
-	static HTTPProxyServer *shared = nil;
-    
-    if (!shared) {
-    	shared = [[HTTPProxyServer alloc] init];
-    }
-    return shared;
+    return @"/http.pac";
 }
 
 - (NSString	*)serviceDomaine
@@ -32,6 +27,11 @@ void polipo_exit();
 - (int)servicePort
 {
 	return HTTP_PROXY_PORT;
+}
+
+- (NSString *)pacFileContentWithCurrentIP:(NSString *)ip
+{
+    return [NSString stringWithFormat:@"function FindProxyForURL(url, host) { return \"PROXY %@:%d\"; }", ip, [self servicePort]];
 }
 
 - (BOOL)_starting

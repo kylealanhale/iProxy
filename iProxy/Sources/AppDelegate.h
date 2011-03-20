@@ -24,6 +24,8 @@
     IBOutlet UIWindow *window;
     IBOutlet MainViewController *statusViewController;
     AVAudioPlayer *player;
+    
+    NSMutableArray *proxyServers;
 }
 
 @property (nonatomic, retain) UIWindow *window;

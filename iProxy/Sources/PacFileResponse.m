@@ -54,6 +54,23 @@
     return YES;
 }
 
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        servers = [[NSMutableDictionary alloc] init];
+        [servers setObject:[SocksProxyServer sharedServer] forKey:[SocksProxyServer pacFilePath]];
+//        [servers setObject:[HTTPProxyServer sharedServer] forKey:[HTTPProxyServer pacFilePath]];
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [servers release];
+    [super dealloc];
+}
+
 //
 // startResponse
 //
@@ -64,21 +81,11 @@
 {
     NSData *fileData = nil;
     NSString *currentIP = [self serverIPForRequest];
-    
     NSString *requestPath = [url path];
     
-    if ([@"/http.pac" isEqualToString:requestPath] && currentIP) {
-        fileData = [[NSString stringWithFormat:
-            @"function FindProxyForURL(url, host) { return \"PROXY %@:%d\"; }",
-            currentIP, [HTTPProxyServer sharedHTTPProxyServer].servicePort] dataUsingEncoding:NSUTF8StringEncoding];
+    if (currentIP && [servers objectForKey:requestPath]) {
+        fileData = [[[servers objectForKey:requestPath] pacFileContentWithCurrentIP:currentIP] dataUsingEncoding:NSUTF8StringEncoding];
     }
-    
-    if ([@"/socks.pac" isEqualToString:requestPath] && currentIP) {
-        fileData = [[NSString stringWithFormat:
-            @"function FindProxyForURL(url, host) { return \"SOCKS %@:%d\"; }",
-            currentIP, [SocksProxyServer sharedSocksProxyServer].servicePort] dataUsingEncoding:NSUTF8StringEncoding];
-    }
-    
     if (fileData) {
         CFHTTPMessageRef response = CFHTTPMessageCreateResponse(kCFAllocatorDefault, 
                                     200, 

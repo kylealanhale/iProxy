@@ -12,6 +12,4 @@
 {
 }
 
-+ (HTTPProxyServer *)sharedHTTPProxyServer;
-
 @end
