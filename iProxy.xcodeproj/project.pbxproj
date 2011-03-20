@@ -39,7 +39,6 @@
 		02E754D512752A5200D55958 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754571274E8C400D55958 /* init.c */; };
 		02E754D612752A5400D55958 /* get-bind.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754561274E8C400D55958 /* get-bind.c */; };
 		02E754D712752A5500D55958 /* auth-pwd.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754551274E8C400D55958 /* auth-pwd.c */; };
-		02E754DC12752A9900D55958 /* srelay-tool-main.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754D912752A7400D55958 /* srelay-tool-main.c */; };
 		02ED14C21266836A00595AA0 /* UIColorAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 02ED14C11266836A00595AA0 /* UIColorAdditions.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -130,7 +129,6 @@
 		02E7545D1274E8C400D55958 /* util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = util.c; sourceTree = "<group>"; };
 		02E7545E1274E8C400D55958 /* v6defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = v6defs.h; sourceTree = "<group>"; };
 		02E7548E1274EC1A00D55958 /* route.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = route.h; sourceTree = "<group>"; };
-		02E754D912752A7400D55958 /* srelay-tool-main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "srelay-tool-main.c"; sourceTree = "<group>"; };
 		02ED13FD12667DFF00595AA0 /* SharedHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedHeader.h; sourceTree = "<group>"; };
 		02ED14C01266836A00595AA0 /* UIColorAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIColorAdditions.h; path = Sources/UIColorAdditions.h; sourceTree = "<group>"; };
 		02ED14C11266836A00595AA0 /* UIColorAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIColorAdditions.m; path = Sources/UIColorAdditions.m; sourceTree = "<group>"; };
@@ -326,7 +324,6 @@
 				02E7545C1274E8C400D55958 /* srelay.h */,
 				02E7545D1274E8C400D55958 /* util.c */,
 				02E7545E1274E8C400D55958 /* v6defs.h */,
-				02E754D912752A7400D55958 /* srelay-tool-main.c */,
 			);
 			path = srelay;
 			sourceTree = "<group>";
@@ -678,7 +675,6 @@
 				02E754D512752A5200D55958 /* init.c in Sources */,
 				02E754D612752A5400D55958 /* get-bind.c in Sources */,
 				02E754D712752A5500D55958 /* auth-pwd.c in Sources */,
-				02E754DC12752A9900D55958 /* srelay-tool-main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
