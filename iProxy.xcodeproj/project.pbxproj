@@ -270,7 +270,8 @@
 				02E7544F1274E8A500D55958 /* srelay */,
 				9D71D7AD1237A53C008538A1 /* polipo */,
 			);
-			path = Librairies;
+			name = Librairies;
+			path = Libraries;
 			sourceTree = "<group>";
 		};
 		02E203DC133176A50007CA2C /* iProxy */ = {
