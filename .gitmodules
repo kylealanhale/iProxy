@@ -1,0 +1,3 @@
+[submodule "Librairies/srelay"]
+	path = Librairies/srelay
+	url = git@github.com:jeromelebel/srelay.git
