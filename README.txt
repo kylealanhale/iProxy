@@ -19,5 +19,6 @@ With xcode 4, if you have a problem to run the application (unknown iProxyAppDel
 
 to checkout the srelay submodule :
 git submodule update --init
+cd Libraries/srelay
 git branch --track iproxy origin/iproxy
 git checkout iproxy
