@@ -16,9 +16,7 @@
 
 // urls
 #define URL_HELP    @"http://github.com/tcurdt/iProxy/wiki/Configuring-iProxy"
-#define URL_ISSUES  @"http://github.com/tcurdt/iProxy/issues"
-#define URL_LIKE    @"http://vafer.org/log/iproxy?%@"
-#define URL_DONATE  @"https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=tcurdt%40vafer.org&item_name=Thanks%20for%20iProxy&currency_code=EUR&lc=US"
+#define URL_ISSUES  @"http://github.com/jeromelebel/iProxy/issues"
 
 #import "InfoViewController.h"
 #import "NSStringAdditions.h"
@@ -81,11 +79,6 @@
 - (IBAction) actionIssues
 {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString: URL_ISSUES]];
-}
-
-- (IBAction) actionDonate
-{
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString: URL_DONATE]];
 }
 
 - (void) dismiss
