@@ -39,38 +39,6 @@
     self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismiss)] autorelease];
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
-{
-    if ([(NSHTTPURLResponse*)response statusCode] == 200) {
-
-        [connection release];
-
-        UIAlertView *view = [[UIAlertView alloc] initWithTitle: @"Like It!"
-            message: @"Thanks for the feedback!"
-            delegate: self cancelButtonTitle: @"OK" otherButtonTitles: nil];
-     
-        [view show];
-        [view release];
-
-        return;
-    }
-
-    [self connection:connection didFailWithError:nil];
-}
-
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
-{
-    [connection release];
-
-    UIAlertView *view = [[UIAlertView alloc] initWithTitle: @"Like It!"
-        message: @"That somehow did not get through. But thanks for trying!"
-        delegate: self cancelButtonTitle: @"OK" otherButtonTitles: nil];
- 
-    [view show];
-    [view release];
-}
-
-
 - (IBAction) actionHelp
 {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString: URL_HELP]];
