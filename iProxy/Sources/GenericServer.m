@@ -236,9 +236,11 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
     
     if (CFSocketSetAddress(_sockets[0], addressData) != kCFSocketSuccess) {
 	    CFRelease(addressData);
-        CFSocketInvalidate(_sockets[0]);
-    	CFRelease(_sockets[0]);
-        _sockets[0] = nil;
+        if (_sockets[0]) {
+            CFSocketInvalidate(_sockets[0]);
+            CFRelease(_sockets[0]);
+            _sockets[0] = nil;
+        }
         [self _setLastErrorWithMessage:@"Unable to bind socket to address."];
         return NO;
     }
@@ -260,9 +262,11 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
     // Set the local binding which causes the socket to start listening.
 	if (CFSocketSetAddress(_sockets[1], addressData) != kCFSocketSuccess) {
 	    CFRelease(addressData);
-        CFSocketInvalidate(_sockets[1]);
-    	CFRelease(_sockets[1]);
-        _sockets[1] = nil;
+        if (_sockets[1]) {
+            CFSocketInvalidate(_sockets[1]);
+            CFRelease(_sockets[1]);
+            _sockets[1] = nil;
+        }
         [self _setLastErrorWithMessage:@"Unable to bind socket to address6."];
         return NO;
     }
@@ -370,7 +374,7 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
 	[[info objectForKey:@"handle"] closeFile];
     connexions = [_connexions objectForKey:[info objectForKey:@"ip"]];
     [connexions removeObject:[info objectForKey:@"handle"]];
-    if ([connexions count] == 0) {
+    if (connexions && [connexions count] == 0) {
         NSLog(@"no more ip %@", [info objectForKey:@"ip"]);
         [_connexions removeObjectForKey:[info objectForKey:@"ip"]];
     }
