@@ -48,7 +48,7 @@ typedef enum
 	NSError *_lastError;
 	CFSocketRef _sockets[2];
     CFRunLoopSourceRef _runLoopSource[2];
-    NSMutableArray *_connexions;
+    NSMutableDictionary *_connexions;
 }
 
 @property(readonly) NSUInteger connexionCount;
@@ -56,9 +56,9 @@ typedef enum
 - (NSError *)lastError;
 - (void)_setLastErrorWithMessage:(NSString *)message;
 - (void)_closeSocket;
-- (void)_receiveIncomingConnection:(NSFileHandle *)incomingFileHandle;
-- (void)_closeConnexion:(NSFileHandle *)handle;
-- (void)newReceiveIncomingConnection:(NSFileHandle *)handle;
+- (void)_receiveIncomingConnectionWithInfo:(NSDictionary *)info;
+- (void)_closeConnexion:(NSDictionary  *)handle;
+- (void)newReceiveIncomingConnectionWithInfo:(NSDictionary *)info;
 - (void)socketCallbackWithSocket:(CFSocketRef)sock type:(CFSocketCallBackType)type address:(CFDataRef)address data:(const void *)data;
 
 @end

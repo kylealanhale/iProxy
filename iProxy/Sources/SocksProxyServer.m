@@ -14,11 +14,6 @@ int proto_socks(SOCKS_STATE *state);
 void relay(SOCKS_STATE *state);
 extern u_long idle_timeout;
 
-void socks_proxy_bandwidth_stat(u_long upload, u_long download)
-{
-//	[[SocksProxyServer sharedSocksProxyServer] _addBandwidthStatWithUpload:upload download:download];
-}
-
 @implementation SocksProxyServer
 
 + (NSString *)pacFilePath
@@ -51,12 +46,13 @@ void socks_proxy_bandwidth_stat(u_long upload, u_long download)
 	return SOCKS_PROXY_PORT;
 }
 
-- (void)processIncomingConnection:(NSFileHandle *)fileHandle
+- (void)processIncomingConnection:(NSDictionary *)info
 {
 	NSAutoreleasePool *pool;
     SOCKS_STATE state;
     loginfo li;
     NSValue *loginfoValue;
+    NSFileHandle *fileHandle = [info objectForKey:@"handle"];
     
     pool = [[NSAutoreleasePool alloc] init];
 	memset(&state, 0, sizeof(state));
@@ -79,13 +75,13 @@ void socks_proxy_bandwidth_stat(u_long upload, u_long download)
     	[_logInfoValues removeObject:loginfoValue];
     }
     [fileHandle closeFile];
-    [self performSelectorOnMainThread:@selector(_closeConnexion:) withObject:fileHandle waitUntilDone:NO];
+    [self performSelectorOnMainThread:@selector(_closeConnexion:) withObject:info waitUntilDone:NO];
     [pool drain];
 }
 
-- (void)_receiveIncomingConnection:(NSFileHandle *)handle
+- (void)_receiveIncomingConnectionWithInfo:(NSDictionary *)info
 {
-	[NSThread detachNewThreadSelector:@selector(processIncomingConnection:) toTarget:self withObject:handle];
+	[NSThread detachNewThreadSelector:@selector(processIncomingConnection:) toTarget:self withObject:info];
 }
 
 - (void)getBandwidthStatWithUpload:(UInt64 *)upload download:(UInt64 *)download

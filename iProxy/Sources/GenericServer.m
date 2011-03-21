@@ -11,7 +11,8 @@
 #import <sys/socket.h>
 #import <netinet/in.h>
 #import <CFNetwork/CFNetwork.h>
-
+#include <arpa/inet.h>
+#import "NSStringAdditions.h"
 
 static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRef address, const void *data, SocketServer* server)
 {
@@ -146,7 +147,7 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
 {
 	self = [super init];
 	if (self != nil) {
-		_connexions = [[NSMutableSet alloc] init];
+		_connexions = [[NSMutableDictionary alloc] init];
 	}
 	return self;
 }
@@ -274,8 +275,10 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleConnectionAcceptedNotification object:nil];
     
-    for (NSFileHandle *handle in _connexions) {
-		[handle closeFile];
+    for (NSMutableSet *connexions in [_connexions allValues]) {
+        for (NSFileHandle *handle in connexions) {
+            [handle closeFile];
+        }
     }
     [_connexions removeAllObjects];
 	
@@ -316,22 +319,6 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
     [self _stopped];
 }
 
-//
-// receiveIncomingConnectionNotification:
-//
-// Receive the notification for a new incoming request. This method starts
-// receiving data from the incoming request's file handle and creates a
-// new CFHTTPMessageRef to store the incoming data..
-//
-// Parameters:
-//    notification - the new connection notification
-//
-- (void)receiveIncomingConnectionNotification:(NSNotification *)notification
-{
-	[self newReceiveIncomingConnection:[[notification userInfo] objectForKey:NSFileHandleNotificationFileHandleItem]];
-}
-
-
 - (void)socketCallbackWithSocket:(CFSocketRef)sock type:(CFSocketCallBackType)type address:(CFDataRef)address data:(const void *)data
 {
 	assert((sock == _sockets[0]) || (sock == _sockets[1]));
@@ -340,33 +327,54 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
     if (type == kCFSocketAcceptCallBack) {
     	int description;
         NSFileHandle *handle;
+        NSDictionary *info;
         
 		assert((data != NULL) && (*((CFSocketNativeHandle*)data) != -1));
 		
         description = *(CFSocketNativeHandle*)data;
         handle = [[NSFileHandle alloc] initWithFileDescriptor:description];
-        [self newReceiveIncomingConnection:handle];
+        info = [[NSDictionary alloc] initWithObjectsAndKeys:handle, @"handle", address, @"address", [NSString addressFromData:(NSData *)address], @"ip", nil];
+        [self newReceiveIncomingConnectionWithInfo:info];
+        [info release];
         [handle release];
 	}
 }
 
-- (void)newReceiveIncomingConnection:(NSFileHandle *)handle
+- (void)newReceiveIncomingConnectionWithInfo:(NSDictionary *)info
 {
+    NSMutableArray *connexions;
+    
     [self willChangeValueForKey:@"connexionCount"];
-    [_connexions addObject:handle];
-    [self _receiveIncomingConnection:handle];
+    connexions = [_connexions objectForKey:[info objectForKey:@"ip"]];
+    if (!connexions) {
+        NSLog(@"new ip %@", [info objectForKey:@"ip"]);
+        connexions = [[NSMutableSet alloc] init];
+        [_connexions setObject:connexions forKey:[info objectForKey:@"ip"]];
+        [connexions autorelease];
+    }
+    [connexions addObject:[info objectForKey:@"handle"]];
+    [self _receiveIncomingConnectionWithInfo:info];
     [self didChangeValueForKey:@"connexionCount"];
 }
 
-- (void)_receiveIncomingConnection:(NSFileHandle *)incomingFileHandle
+- (void)_receiveIncomingConnectionWithInfo:(NSDictionary *)info
 {
 	NSAssert(NO, @"should be implemented in sub class");
 }
 
-- (void)_closeConnexion:(NSFileHandle *)handle
+- (void)_closeConnexion:(NSDictionary *)info
 {
-	[handle closeFile];
-    [_connexions removeObject:handle];
+    NSMutableSet *connexions;
+    
+    [self willChangeValueForKey:@"connexionCount"];
+	[[info objectForKey:@"handle"] closeFile];
+    connexions = [_connexions objectForKey:[info objectForKey:@"ip"]];
+    [connexions removeObject:[info objectForKey:@"handle"]];
+    if ([connexions count] == 0) {
+        NSLog(@"no more ip %@", [info objectForKey:@"ip"]);
+        [_connexions removeObjectForKey:[info objectForKey:@"ip"]];
+    }
+    [self didChangeValueForKey:@"connexionCount"];
 }
 
 - (NSUInteger)connexionCount

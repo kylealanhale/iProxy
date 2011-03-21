@@ -77,16 +77,6 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
     }
 }
 
-//
-// receiveIncomingConnectionNotification:
-//
-// Receive the notification for a new incoming request. This method starts
-// receiving data from the incoming request's file handle and creates a
-// new CFHTTPMessageRef to store the incoming data..
-//
-// Parameters:
-//    notification - the new connection notification
-//
 - (void)_receiveIncomingConnection:(NSFileHandle *)incomingFileHandle
 {
     if(incomingFileHandle) {
