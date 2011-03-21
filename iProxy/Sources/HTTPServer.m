@@ -77,22 +77,22 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
     }
 }
 
-- (void)_receiveIncomingConnection:(NSFileHandle *)incomingFileHandle
+- (void)_receiveIncomingConnectionWithInfo:(NSDictionary *)info
 {
-    if(incomingFileHandle) {
+    if(info) {
     	CFHTTPMessageRef message;
         
         message = CFHTTPMessageCreateEmpty(kCFAllocatorDefault, TRUE);
-		[incomingRequests setObject:(id)message forKey:incomingFileHandle];
+		[incomingRequests setObject:(id)message forKey:[info objectForKey:@"handle"]];
         CFRelease(message);
 		
 		[[NSNotificationCenter defaultCenter]
 			addObserver:self
 			selector:@selector(receiveIncomingDataNotification:)
 			name:NSFileHandleDataAvailableNotification
-			object:incomingFileHandle];
+			object:[info objectForKey:@"handle"]];
 		
-        [incomingFileHandle waitForDataInBackgroundAndNotify];
+        [[info objectForKey:@"handle"] waitForDataInBackgroundAndNotify];
     }
 }
 
