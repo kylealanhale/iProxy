@@ -16,9 +16,7 @@
 
 // urls
 #define URL_HELP    @"http://github.com/tcurdt/iProxy/wiki/Configuring-iProxy"
-#define URL_ISSUES  @"http://github.com/tcurdt/iProxy/issues"
-#define URL_LIKE    @"http://vafer.org/log/iproxy?%@"
-#define URL_DONATE  @"https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=tcurdt%40vafer.org&item_name=Thanks%20for%20iProxy&currency_code=EUR&lc=US"
+#define URL_ISSUES  @"http://github.com/jeromelebel/iProxy/issues"
 
 #import "InfoViewController.h"
 #import "NSStringAdditions.h"
@@ -41,38 +39,6 @@
     self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismiss)] autorelease];
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
-{
-    if ([(NSHTTPURLResponse*)response statusCode] == 200) {
-
-        [connection release];
-
-        UIAlertView *view = [[UIAlertView alloc] initWithTitle: @"Like It!"
-            message: @"Thanks for the feedback!"
-            delegate: self cancelButtonTitle: @"OK" otherButtonTitles: nil];
-     
-        [view show];
-        [view release];
-
-        return;
-    }
-
-    [self connection:connection didFailWithError:nil];
-}
-
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
-{
-    [connection release];
-
-    UIAlertView *view = [[UIAlertView alloc] initWithTitle: @"Like It!"
-        message: @"That somehow did not get through. But thanks for trying!"
-        delegate: self cancelButtonTitle: @"OK" otherButtonTitles: nil];
- 
-    [view show];
-    [view release];
-}
-
-
 - (IBAction) actionHelp
 {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString: URL_HELP]];
@@ -81,11 +47,6 @@
 - (IBAction) actionIssues
 {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString: URL_ISSUES]];
-}
-
-- (IBAction) actionDonate
-{
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString: URL_DONATE]];
 }
 
 - (void) dismiss

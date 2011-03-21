@@ -99,12 +99,12 @@
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    BOOL running = FALSE;
+    BOOL shoudQuit = NO;
     
     for (GenericServer *server in proxyServers) {
-        running = running || [server state] == SERVER_STATE_STOPPED;
+        shoudQuit = shoudQuit || [server state] == SERVER_STATE_STOPPED;
     }
-    if (!running) {
+    if (shoudQuit) {
     	[[UIApplication sharedApplication] _terminateWithStatus:0];
     }
 }

@@ -1,7 +1,36 @@
 #import "NSStringAdditions.h"
 #import <CommonCrypto/CommonDigest.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
 
 @implementation NSString (NSStringAdditions)
+
++ (NSString *)addressFromData:(NSData *)data
+{
+    struct sockaddr *genericIP;
+    struct sockaddr_in *ipv4;
+    struct sockaddr_in6 *ipv6;
+    NSString *result = nil;
+    char buffer[255];
+    
+    memset(buffer, 0, sizeof(buffer));
+    genericIP = (void *)[data bytes];
+    switch (genericIP->sa_family) {
+        case AF_INET:
+            ipv4 = (struct sockaddr_in *)genericIP;
+            inet_ntop(genericIP->sa_family, (void *)&(ipv4->sin_addr), buffer, sizeof(buffer) - 1);
+            break;
+        case AF_INET6:
+            ipv6 = (struct sockaddr_in6 *)genericIP;
+            inet_ntop(genericIP->sa_family, (void *)&(ipv6->sin6_addr), buffer, sizeof(buffer) - 1);
+            break;
+        default:
+            NSAssert(NO, @"unknown %d", genericIP->sa_family);
+            break;
+    }
+    result = [NSString stringWithFormat:@"%s", buffer];
+    return result;
+}
 
 - (NSString*) URLEncodedString
 {
