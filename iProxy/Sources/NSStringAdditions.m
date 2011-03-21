@@ -1,7 +1,29 @@
 #import "NSStringAdditions.h"
 #import <CommonCrypto/CommonDigest.h>
+#include <arpa/inet.h>
 
 @implementation NSString (NSStringAdditions)
+
++ (NSString *)addressFromData:(NSData *)data
+{
+    struct sockaddr_storage *addressStorage;
+    NSString *result = nil;
+    char buffer[255];
+    
+    memset(buffer, 0, sizeof(buffer));
+    addressStorage = (void *)[data bytes];
+    switch (addressStorage->ss_family) {
+        case AF_INET:
+        case AF_INET6:
+            inet_ntop(addressStorage->ss_family, (void *)addressStorage, buffer, sizeof(buffer) - 1);
+            break;
+        default:
+            NSAssert(NO, @"unknown %d", addressStorage->ss_family);
+            break;
+    }
+    result = [NSString stringWithFormat:@"%s", buffer];
+    return result;
+}
 
 - (NSString*) URLEncodedString
 {
