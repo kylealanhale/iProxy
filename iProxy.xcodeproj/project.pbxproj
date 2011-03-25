@@ -8,9 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		020BC9CE124ADBD000E2E1F2 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 020BC9CD124ADBD000E2E1F2 /* MobileCoreServices.framework */; };
-		02326EF2133AC16E00B90EB7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02326EEF133AC16E00B90EB7 /* Security.framework */; };
-		02326EF3133AC16E00B90EB7 /* SecurityFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02326EF0133AC16E00B90EB7 /* SecurityFoundation.framework */; };
-		02326EF4133AC16E00B90EB7 /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02326EF1133AC16E00B90EB7 /* SecurityInterface.framework */; };
 		02326F16133B374000B90EB7 /* PMSSSHFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 02326F15133B374000B90EB7 /* PMSSSHFileController.m */; };
 		02326F25133C66CD00B90EB7 /* PMSPreferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02326F24133C66CD00B90EB7 /* PMSPreferences.xib */; };
 		02326F28133C676B00B90EB7 /* PMSPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 02326F27133C676A00B90EB7 /* PMSPreferences.m */; };
@@ -221,9 +218,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				02326EF2133AC16E00B90EB7 /* Security.framework in Frameworks */,
-				02326EF3133AC16E00B90EB7 /* SecurityFoundation.framework in Frameworks */,
-				02326EF4133AC16E00B90EB7 /* SecurityInterface.framework in Frameworks */,
 				0267229D12444EA000A2EACF /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -336,9 +330,6 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				02326EEF133AC16E00B90EB7 /* Security.framework */,
-				02326EF0133AC16E00B90EB7 /* SecurityFoundation.framework */,
-				02326EF1133AC16E00B90EB7 /* SecurityInterface.framework */,
 				02ED13FD12667DFF00595AA0 /* SharedHeader.h */,
 				0220C6B81328C9ED00962EF9 /* README.txt */,
 				02E203DC133176A50007CA2C /* iProxy */,
