@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		020BC9CE124ADBD000E2E1F2 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 020BC9CD124ADBD000E2E1F2 /* MobileCoreServices.framework */; };
+		02326EF2133AC16E00B90EB7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02326EEF133AC16E00B90EB7 /* Security.framework */; };
+		02326EF3133AC16E00B90EB7 /* SecurityFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02326EF0133AC16E00B90EB7 /* SecurityFoundation.framework */; };
+		02326EF4133AC16E00B90EB7 /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02326EF1133AC16E00B90EB7 /* SecurityInterface.framework */; };
+		02326F16133B374000B90EB7 /* PMSSSHFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 02326F15133B374000B90EB7 /* PMSSSHFileController.m */; };
+		02326F25133C66CD00B90EB7 /* PMSPreferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02326F24133C66CD00B90EB7 /* PMSPreferences.xib */; };
+		02326F28133C676B00B90EB7 /* PMSPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 02326F27133C676A00B90EB7 /* PMSPreferences.m */; };
 		02501CC4126667EF00CE5CA9 /* GenericServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 02501CC3126667EF00CE5CA9 /* GenericServer.m */; };
 		02501CCA1266681800CE5CA9 /* SocksProxyServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 02501CC91266681800CE5CA9 /* SocksProxyServer.m */; };
 		02501D61126674DB00CE5CA9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 02501D60126674DB00CE5CA9 /* InfoPlist.strings */; };
@@ -74,6 +80,14 @@
 /* Begin PBXFileReference section */
 		020BC9CD124ADBD000E2E1F2 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		0220C6B81328C9ED00962EF9 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
+		02326EEF133AC16E00B90EB7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = ../../../../../System/Library/Frameworks/Security.framework; sourceTree = "<group>"; };
+		02326EF0133AC16E00B90EB7 /* SecurityFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityFoundation.framework; path = ../../../../../System/Library/Frameworks/SecurityFoundation.framework; sourceTree = "<group>"; };
+		02326EF1133AC16E00B90EB7 /* SecurityInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityInterface.framework; path = ../../../../../System/Library/Frameworks/SecurityInterface.framework; sourceTree = "<group>"; };
+		02326F14133B374000B90EB7 /* PMSSSHFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMSSSHFileController.h; sourceTree = "<group>"; };
+		02326F15133B374000B90EB7 /* PMSSSHFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMSSSHFileController.m; sourceTree = "<group>"; };
+		02326F24133C66CD00B90EB7 /* PMSPreferences.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PMSPreferences.xib; sourceTree = "<group>"; };
+		02326F26133C676A00B90EB7 /* PMSPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMSPreferences.h; sourceTree = "<group>"; };
+		02326F27133C676A00B90EB7 /* PMSPreferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMSPreferences.m; sourceTree = "<group>"; };
 		02501CC2126667EF00CE5CA9 /* GenericServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericServer.h; path = Sources/GenericServer.h; sourceTree = "<group>"; };
 		02501CC3126667EF00CE5CA9 /* GenericServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GenericServer.m; path = Sources/GenericServer.m; sourceTree = "<group>"; };
 		02501CC51266680900CE5CA9 /* HTTPProxyServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTPProxyServer.h; path = Sources/HTTPProxyServer.h; sourceTree = "<group>"; };
@@ -209,6 +223,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02326EF2133AC16E00B90EB7 /* Security.framework in Frameworks */,
+				02326EF3133AC16E00B90EB7 /* SecurityFoundation.framework in Frameworks */,
+				02326EF4133AC16E00B90EB7 /* SecurityInterface.framework in Frameworks */,
 				0267229D12444EA000A2EACF /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -245,8 +262,12 @@
 			children = (
 				0274FA8E12444D8F00173784 /* PMSAppDelegate.h */,
 				0274FA8F12444D8F00173784 /* PMSAppDelegate.m */,
+				02326F14133B374000B90EB7 /* PMSSSHFileController.h */,
+				02326F15133B374000B90EB7 /* PMSSSHFileController.m */,
 				0267243C1245646C00A2EACF /* PMSUIController.h */,
 				0267243D1245646C00A2EACF /* PMSUIController.m */,
+				02326F26133C676A00B90EB7 /* PMSPreferences.h */,
+				02326F27133C676A00B90EB7 /* PMSPreferences.m */,
 				0274FA8912444D1200173784 /* Resources */,
 				0274FA9112444D9B00173784 /* main.m */,
 			);
@@ -258,6 +279,7 @@
 			children = (
 				02501D60126674DB00CE5CA9 /* InfoPlist.strings */,
 				02501D62126674E200CE5CA9 /* MainMenu.xib */,
+				02326F24133C66CD00B90EB7 /* PMSPreferences.xib */,
 				0274FA6512444A5D00173784 /* iProxyMacSetup-Info.plist */,
 			);
 			path = Resources;
@@ -317,6 +339,9 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				02326EEF133AC16E00B90EB7 /* Security.framework */,
+				02326EF0133AC16E00B90EB7 /* SecurityFoundation.framework */,
+				02326EF1133AC16E00B90EB7 /* SecurityInterface.framework */,
 				02ED13FD12667DFF00595AA0 /* SharedHeader.h */,
 				0220C6B81328C9ED00962EF9 /* README.txt */,
 				02E203DC133176A50007CA2C /* iProxy */,
@@ -584,6 +609,7 @@
 			files = (
 				02501D61126674DB00CE5CA9 /* InfoPlist.strings in Resources */,
 				02501D63126674E200CE5CA9 /* MainMenu.xib in Resources */,
+				02326F25133C66CD00B90EB7 /* PMSPreferences.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -637,6 +663,8 @@
 				0274FA9012444D8F00173784 /* PMSAppDelegate.m in Sources */,
 				0274FA9212444D9B00173784 /* main.m in Sources */,
 				0267243E1245646C00A2EACF /* PMSUIController.m in Sources */,
+				02326F16133B374000B90EB7 /* PMSSSHFileController.m in Sources */,
+				02326F28133C676B00B90EB7 /* PMSPreferences.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
