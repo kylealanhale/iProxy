@@ -8,6 +8,8 @@
 
 #import "PMSAppDelegate.h"
 #import "SharedHeader.h"
+#import "PMSSSHFileController.h"
+#import "PMSPreferences.h"
 
 #define NETWORKSETUP_PATH @"/usr/sbin/networksetup"
 #define ROUTE_PATH @"/sbin/route"
@@ -30,10 +32,14 @@
     browsing = NO;
     resolvingServiceCount = 0;
     self.automatic = [[[NSUserDefaults standardUserDefaults] valueForKey:@"AUTOMATIC"] boolValue];
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:SSH_CONFIG_PREF_KEY]) {
+        sshFileController = [[PMSSSHFileController alloc] init];
+    }
     [self startBrowsingServices];
     [self fetchDeviceList];
     [self addObserver:self forKeyPath:@"proxyServiceList" options:NSKeyValueObservingOptionNew context:nil];
     [self addObserver:self forKeyPath:@"resolvingServiceCount" options:NSKeyValueObservingOptionNew context:nil];
+    [[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:SSH_CONFIG_PREF_KEY options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)notification
@@ -70,6 +76,18 @@
     	if ([keyPath isEqualToString:@"proxyServiceList"] || [keyPath isEqualToString:@"resolvingServiceCount"]) {
         	[self _updateAutomatic];
         }
+    } else if (object == [NSUserDefaults standardUserDefaults] && [keyPath isEqualToString:SSH_CONFIG_PREF_KEY]) {
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:SSH_CONFIG_PREF_KEY]) {
+            NSAssert(!sshFileController, @"ssh controller already exists");
+            sshFileController = [[PMSSSHFileController alloc] init];
+            [sshFileController setupProxy:currentProxyServer port:currentProxyPort];
+        } else {
+            NSAssert(sshFileController, @"doesn't exists");
+            [sshFileController release];
+            sshFileController = nil;
+        }
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
 }
 
@@ -310,12 +328,15 @@ NSString *parseDevice(NSString *line)
 {
 	NSTask *task;
     
+    currentProxyServer = [server copy];
+    currentProxyPort = port;
     task = [self taskWithLaunchPath:NETWORKSETUP_PATH arguments:[NSArray arrayWithObjects:@"-setsocksfirewallproxy", interface, server, [NSString stringWithFormat:@"%d", port], @"off", nil]];
     [task launch];
     [task waitUntilExit];
     task = [self taskWithLaunchPath:NETWORKSETUP_PATH arguments:[NSArray arrayWithObjects:@"-setsocksfirewallproxystate", interface, @"on", nil]];
     [task launch];
     [task waitUntilExit];
+    [sshFileController setupProxy:server port:port];
 }
 
 - (void)enableProxy:(NSDictionary *)proxy
@@ -340,9 +361,13 @@ NSString *parseDevice(NSString *line)
 {
 	NSTask *task;
     
+    [currentProxyServer release];
+    currentProxyServer = nil;
+    currentProxyPort = 0;
     task = [self taskWithLaunchPath:NETWORKSETUP_PATH arguments:[NSArray arrayWithObjects:@"-setsocksfirewallproxystate", interface, @"off", nil]];
     [task launch];
     [task waitUntilExit];
+    [sshFileController cleanupProxy];
 }
 
 - (void)disableCurrentProxy
@@ -394,6 +419,11 @@ NSString *parseDevice(NSString *line)
     
     proxyService = [proxy objectForKey:PROXY_SERVICE_KEY];
 	return [proxyService port] != -1 && [proxyService port] != 0 && [proxy objectForKey:PROXY_HOST_NAME_KEY] && [deviceList objectForKey:[proxy objectForKey:PROXY_DEVICE_KEY]];
+}
+
+- (IBAction)openPreferences:(id)sender
+{
+    [[PMSPreferences alloc] init];
 }
 
 @end

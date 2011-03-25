@@ -17,16 +17,23 @@
 #define PROXY_DEVICE_KEY @"device"
 #define PROXY_RESOLVING_KEY @"resolving"
 
+#define SSH_CONFIG_PREF_KEY @"SSH_CONFIG"
+
+@class PMSSSHFileController;
+
 @interface PMSAppDelegate : NSObject <NSApplicationDelegate, NSNetServiceBrowserDelegate, NSNetServiceDelegate>
 {
 	NSMutableArray *proxyServiceList;
     NSMutableDictionary *deviceList;
+    PMSSSHFileController *sshFileController;
     
     BOOL browsing;
     BOOL automatic;
     NSUInteger resolvingServiceCount;
     
     NSString *proxyEnabledInterfaceName;
+    NSString *currentProxyServer;
+    NSUInteger currentProxyPort;
     BOOL proxyEnabled;
 }
 
@@ -41,5 +48,7 @@
 - (void)disableCurrentProxy;
 
 - (BOOL)isProxyReady:(NSDictionary *)proxy;
+
+- (IBAction)openPreferences:(id)sender;
 
 @end
