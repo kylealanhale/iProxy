@@ -6,17 +6,9 @@ Easy way to get an internet connection on your computer without jailbreaking. It
 + open iProxyMacSetup on your mac
 + click on "Start"
 
-
-To use ssh on you computer, add this line in /etc/ssh_config
-ProxyCommand /usr/bin/nc -X 5 -x iPhone.local:1080 %h %p
-
-(replace iPhone.local by the name of iphone)
-
+If you need ssh, open the preferences from iProxyMacSetup and check the ssh checkbox.
 
 -----
-With xcode 4, if you have a problem to run the application (unknown iProxyAppDelegate class), delete the application (in the simulator or the iphone), and choose iOS 4.2 (instead of 4.3) and run again.
-
-
 to checkout the srelay submodule :
 git submodule update --init
 cd Libraries/srelay
