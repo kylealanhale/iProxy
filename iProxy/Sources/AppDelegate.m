@@ -20,6 +20,11 @@
 #import "HTTPProxyServer.h"
 #endif
 #import "SocksProxyServer.h"
+#import "HTTPServer.h"
+#import <netinet/in.h>
+#import <AudioToolbox/AudioToolbox.h>
+
+#define ReachableDirectWWAN               (1 << 18)
 
 @interface UIApplication (PrivateAPI)
 - (void)_terminateWithStatus:(int)status;
@@ -27,28 +32,38 @@
 
 @interface AppDelegate ()
 - (void)_checkServerStatus;
+- (BOOL)setupReachabilityNotification;
+- (void)_reachabilityNotificationWithFlags:(SCNetworkReachabilityFlags)flags;
 @end
+
+static void reachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReachabilityFlags flags, void *info)
+{
+	[(AppDelegate *)info _reachabilityNotificationWithFlags:flags];
+}
 
 @implementation AppDelegate
 
 @synthesize window;
 @synthesize statusViewController;
+@synthesize hasNetwork = _hasNetwork;
+@synthesize hasWifi = _hasWifi;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [window addSubview:statusViewController.view];
     [window makeKeyAndVisible];
     
-    proxyServers = [[NSMutableArray alloc] init];
+    _proxyServers = [[NSMutableArray alloc] init];
 #if HTTP_PROXY_ENABLED
-    [proxyServers addObject:[HTTPProxyServer sharedServer]];
+    [_proxyServers addObject:[HTTPProxyServer sharedServer]];
 #endif
-    [proxyServers addObject:[SocksProxyServer sharedServer]];
+    [_proxyServers addObject:[SocksProxyServer sharedServer]];
 
-    for (GenericServer *server in proxyServers) {
+    for (GenericServer *server in _proxyServers) {
         [server addObserver:self forKeyPath:@"state" options:NSKeyValueObservingOptionNew context:nil];
     }
     [self _checkServerStatus];
+    [self setupReachabilityNotification];
     
     return YES;
 }
@@ -56,13 +71,10 @@
 
 - (void)beginInterruption
 {
-    NSLog(@"audio interruption started");
 }
 
 - (void)endInterruption
 {
-    NSLog(@"audio interruption ended");
-
     AVAudioSession *session = [AVAudioSession sharedInstance];
 
     NSError *error = nil;
@@ -90,7 +102,7 @@
 {
 }
 
-- (void)_startPlaying
+- (void)_serverRunning
 {
     NSError *error = nil;
     AVAudioSession *session = [AVAudioSession sharedInstance];
@@ -106,39 +118,43 @@
     
     NSString *sample = [[NSBundle mainBundle] pathForResource:@"silence" ofType:@"wav"];
     NSURL *url = [NSURL URLWithString:sample];
-    player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
-    player.numberOfLoops = -1;
-    player.volume = 0.00;
-    [player prepareToPlay];
-    [player play];
+    _player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
+    _player.numberOfLoops = -1;
+    _player.volume = 0.00;
+    [_player prepareToPlay];
+    [_player play];
+    [[HTTPServer sharedHTTPServer] start];
+    _serverRunning = YES;
 }
 
-- (void)_stopPlaying
+- (void)_serverStopped
 {
     NSError *error = nil;
     
-    [player stop];
-    [player release];
-    player = nil;
+    [_player stop];
+    [_player release];
+    _player = nil;
 
     AVAudioSession *session = [AVAudioSession sharedInstance];
     session.delegate = nil;
     if (![session setActive:NO error:&error]) {
         NSLog(@"ERROR: audio active %@", error);
     }
+    [[HTTPServer sharedHTTPServer] stop];
+    _serverRunning = NO;
 }
 
 - (void)_checkServerStatus
 {
     BOOL serverRunning = NO;
     
-    for (GenericServer *server in proxyServers) {
+    for (GenericServer *server in _proxyServers) {
         serverRunning = serverRunning || [server state] != SERVER_STATE_STOPPED;
     }
-    if (serverRunning && !player) {
-        [self _startPlaying];
-    } else if (!serverRunning && player && player.playing) {
-        [self _stopPlaying];
+    if (serverRunning && !_serverRunning) {
+        [self _serverRunning];
+    } else if (!serverRunning && _serverRunning) {
+        [self _serverStopped];
     }
 }
 
@@ -152,6 +168,61 @@
     [statusViewController release];
     [window release];
     [super dealloc];
+}
+
+- (void)unsetupReachabilityNotification
+{
+    if (_defaultRouteReachability) {
+    	SCNetworkReachabilityUnscheduleFromRunLoop(_defaultRouteReachability, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+        SCNetworkReachabilitySetCallback(_defaultRouteReachability, NULL, NULL);
+        CFRelease(_defaultRouteReachability);
+        _defaultRouteReachability = NULL;
+    }
+}
+
+- (void)_reachabilityNotificationWithFlags:(SCNetworkReachabilityFlags)flags
+{
+	BOOL newHasNetwork;
+    BOOL newHasWifi;
+    
+    newHasNetwork = (flags & kSCNetworkFlagsReachable) ? YES : NO;
+    newHasWifi = (flags & ReachableDirectWWAN) ? NO : newHasNetwork;
+    if (newHasNetwork != _hasNetwork) {
+		AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+    }
+    self.hasNetwork = newHasNetwork;
+    self.hasWifi = newHasWifi;
+}
+
+- (BOOL)setupReachabilityNotification
+{
+    // Create zero addy
+    struct sockaddr_in zeroAddress;
+    bzero(&zeroAddress, sizeof(zeroAddress));
+    zeroAddress.sin_len = sizeof(zeroAddress);
+    zeroAddress.sin_family = AF_INET;
+    SCNetworkReachabilityContext context = { 0, self, NULL, NULL, NULL };
+    BOOL result = NO;
+	
+    // Recover reachability flags
+    _defaultRouteReachability = SCNetworkReachabilityCreateWithAddress(NULL, (struct sockaddr *)&zeroAddress);
+    
+	if (_defaultRouteReachability
+    	&& SCNetworkReachabilitySetCallback(_defaultRouteReachability, reachabilityCallback, &context)
+        && SCNetworkReachabilityScheduleWithRunLoop(_defaultRouteReachability, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode)) {
+        result = YES;
+    }
+    if (!result && _defaultRouteReachability) {
+    	[self unsetupReachabilityNotification];
+    } else if (result) {
+		SCNetworkReachabilityFlags flags;
+        
+		if (SCNetworkReachabilityGetFlags(_defaultRouteReachability, &flags)) {
+        	self.hasNetwork = YES;
+			[self _reachabilityNotificationWithFlags:flags];
+		}
+    }
+    return result;
 }
 
 @end
