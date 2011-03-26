@@ -80,7 +80,6 @@ void reachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReachability
 	
     // Recover reachability flags
     defaultRouteReachability = SCNetworkReachabilityCreateWithAddress(NULL, (struct sockaddr *)&zeroAddress);
-//	defaultRouteReachability = SCNetworkReachabilityCreateWithName(NULL, "169.254.255.255");
 
 	if (defaultRouteReachability
     	&& SCNetworkReachabilitySetCallback(defaultRouteReachability, reachabilityCallback, &context)
@@ -110,8 +109,6 @@ void reachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReachability
     if (newHasNetwork != hasNetwork) {
 		AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
     }
-//    NSLog(@"%d %d %d %d", newHasNetwork, newHasWifi, hasNetwork, hasWifi);
-//    NSLog(@"%d", flags);
     self.hasNetwork = newHasNetwork;
     self.hasWifi = newHasWifi;
 }
@@ -121,8 +118,11 @@ void reachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReachability
 	NSString *hostName;
 	
     [self setupReachabilityNotification];
-//    httpSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey: KEY_HTTP_ON];
+#if HTTP_PROXY_ENABLED
+    httpSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey: KEY_HTTP_ON];
+#else
     httpSwitch.on = NO;
+#endif
     socksSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey: KEY_SOCKS_ON];
 
     connectView.backgroundColor = [UIColor clearColor];
@@ -137,9 +137,12 @@ void reachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReachability
     [self.view.layer insertSublayer:gradient atIndex:0];
     
     hostName = [[NSProcessInfo processInfo] hostName];
-//    httpAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, [[HTTPProxyServer sharedServer] servicePort]];
-//    httpPacLabel.text = [NSString stringWithFormat:@"http://%@:%d%@", hostName, [HTTPServer sharedHTTPServer].servicePort, [HTTPProxyServer pacFilePath]];
-//    [[HTTPProxyServer sharedServer] addObserver:self forKeyPath:@"state" options:NSKeyValueObservingOptionNew context:nil];
+    
+#if HTTP_PROXY_ENABLED
+    httpAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, [[HTTPProxyServer sharedServer] servicePort]];
+    httpPacLabel.text = [NSString stringWithFormat:@"http://%@:%d%@", hostName, [HTTPServer sharedHTTPServer].servicePort, [HTTPProxyServer pacFilePath]];
+    [[HTTPProxyServer sharedServer] addObserver:self forKeyPath:@"state" options:NSKeyValueObservingOptionNew context:nil];
+#endif
 
     socksAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, [[SocksProxyServer sharedServer] servicePort]];
     socksPacLabel.text = [NSString stringWithFormat:@"http://%@:%d%@", hostName, [HTTPServer sharedHTTPServer].servicePort, [SocksProxyServer pacFilePath]];
@@ -187,25 +190,27 @@ static NSDate *date = nil;
 
 - (void)updateHTTPProxy
 {
-//    if (httpSwitch.on) {
-//        [(GenericServer *)[HTTPProxyServer sharedServer] start];
-//
-//        httpAddressLabel.alpha = 1.0;
-//        httpPacLabel.alpha = 1.0;
-//        httpPacButton.enabled = YES;
-//
-//    } else {
-//        [[HTTPProxyServer sharedServer] stop];
-//
-//        httpAddressLabel.alpha = 0.1;
-//        httpPacLabel.alpha = 0.1;
-//        httpPacButton.enabled = NO;
-//    }
-//    if (httpSwitch.on || socksSwitch.on) {
-//        [[HTTPServer sharedHTTPServer] start];
-//    } else {
-//        [[HTTPServer sharedHTTPServer] stop];
-//    }
+#if HTTP_PROXY_ENABLED
+    if (httpSwitch.on) {
+        [(GenericServer *)[HTTPProxyServer sharedServer] start];
+
+        httpAddressLabel.alpha = 1.0;
+        httpPacLabel.alpha = 1.0;
+        httpPacButton.enabled = YES;
+
+    } else {
+        [[HTTPProxyServer sharedServer] stop];
+
+        httpAddressLabel.alpha = 0.1;
+        httpPacLabel.alpha = 0.1;
+        httpPacButton.enabled = NO;
+    }
+    if (httpSwitch.on || socksSwitch.on) {
+        [[HTTPServer sharedHTTPServer] start];
+    } else {
+        [[HTTPServer sharedHTTPServer] stop];
+    }
+#endif
 }
 
 - (void)updateSocksProxy

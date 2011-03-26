@@ -17,6 +17,8 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
+#define HTTP_PROXY_ENABLED 0
+
 @class MainViewController;
 
 @interface AppDelegate : NSObject <UIApplicationDelegate, AVAudioSessionDelegate>

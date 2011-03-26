@@ -16,13 +16,18 @@
 
 #import "AppDelegate.h"
 #import "MainViewController.h"
-//#import "HTTPProxyServer.h"
+#if HTTP_PROXY_ENABLED
+#import "HTTPProxyServer.h"
+#endif
 #import "SocksProxyServer.h"
 
 @interface UIApplication (PrivateAPI)
 - (void)_terminateWithStatus:(int)status;
 @end
 
+@interface AppDelegate ()
+- (void)_checkServerStatus;
+@end
 
 @implementation AppDelegate
 
@@ -35,31 +40,15 @@
     [window makeKeyAndVisible];
     
     proxyServers = [[NSMutableArray alloc] init];
-//    [proxyServers addObject:[HTTPProxyServer sharedServer]];
+#if HTTP_PROXY_ENABLED
+    [proxyServers addObject:[HTTPProxyServer sharedServer]];
+#endif
     [proxyServers addObject:[SocksProxyServer sharedServer]];
 
-    // setup fake audio
-    
-    NSError *error = nil;
-
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-    session.delegate = self;
-
-    if (![session setCategory:AVAudioSessionCategoryPlayback error:&error]) {
-        NSLog(@"ERROR: audio category %@", error);
+    for (GenericServer *server in proxyServers) {
+        [server addObserver:self forKeyPath:@"state" options:NSKeyValueObservingOptionNew context:nil];
     }
-    
-    if (![session setActive:YES error:&error]) {
-        NSLog(@"ERROR: audio active %@", error);
-    }
-
-    NSString *sample = [[NSBundle mainBundle] pathForResource:@"silence" ofType:@"wav"];
-    NSURL *url = [NSURL URLWithString:sample];
-    player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
-    player.numberOfLoops = -1;
-    player.volume = 0.00;
-    [player prepareToPlay];
-    [player play];
+    [self _checkServerStatus];
     
     return YES;
 }
@@ -99,14 +88,65 @@
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    BOOL shoudQuit = NO;
+}
+
+- (void)_startPlaying
+{
+    NSError *error = nil;
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    
+    session.delegate = self;
+    if (![session setCategory:AVAudioSessionCategoryPlayback error:&error]) {
+        NSLog(@"ERROR: audio category %@", error);
+    }
+    
+    if (![session setActive:YES error:&error]) {
+        NSLog(@"ERROR: audio active %@", error);
+    }
+    
+    NSString *sample = [[NSBundle mainBundle] pathForResource:@"silence" ofType:@"wav"];
+    NSURL *url = [NSURL URLWithString:sample];
+    player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
+    player.numberOfLoops = -1;
+    player.volume = 0.00;
+    [player prepareToPlay];
+    [player play];
+    NSLog(@"playing");
+}
+
+- (void)_stopPlaying
+{
+    NSError *error = nil;
+    
+    [player stop];
+    [player release];
+    player = nil;
+
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    session.delegate = nil;
+    if (![session setActive:NO error:&error]) {
+        NSLog(@"ERROR: audio active %@", error);
+    }
+    NSLog(@"stopped");
+}
+
+- (void)_checkServerStatus
+{
+    BOOL serverRunning = NO;
     
     for (GenericServer *server in proxyServers) {
-        shoudQuit = shoudQuit || [server state] == SERVER_STATE_STOPPED;
+        serverRunning = serverRunning || [server state] != SERVER_STATE_STOPPED;
     }
-    if (shoudQuit) {
-    	[[UIApplication sharedApplication] _terminateWithStatus:0];
+    if (serverRunning && !player) {
+        [self _startPlaying];
+    } else if (!serverRunning && player && player.playing) {
+        [self _stopPlaying];
     }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    [self _checkServerStatus];
 }
 
 - (void)dealloc
