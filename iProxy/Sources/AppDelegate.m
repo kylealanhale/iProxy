@@ -111,7 +111,6 @@
     player.volume = 0.00;
     [player prepareToPlay];
     [player play];
-    NSLog(@"playing");
 }
 
 - (void)_stopPlaying
@@ -127,7 +126,6 @@
     if (![session setActive:NO error:&error]) {
         NSLog(@"ERROR: audio active %@", error);
     }
-    NSLog(@"stopped");
 }
 
 - (void)_checkServerStatus
