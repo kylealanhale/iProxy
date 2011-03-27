@@ -9,7 +9,7 @@ Easy way to get an internet connection on your computer without jailbreaking. It
 If you need ssh, open the preferences from iProxyMacSetup and check the ssh checkbox.
 
 -----
-to checkout the srelay submodule :
+to checkout the srelay submodule (but this should be done by the iProxy target, so no need to do it yourself) :
 git submodule update --init
 cd Libraries/srelay
 git branch --track iproxy origin/iproxy
