@@ -553,10 +553,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "iProxy" */;
 			buildPhases = (
+				02D854C1133FF4BD0055475B /* get srelay submodule */,
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
 				1D60588F0D05DD3D006BFB54 /* Frameworks */,
-				9D2225261105EC06003F4E04 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -630,19 +630,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		9D2225261105EC06003F4E04 /* ShellScript */ = {
+		02D854C1133FF4BD0055475B /* get srelay submodule */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "get srelay submodule";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ROOT=`pwd`\nVERSION=`/usr/libexec/PlistBuddy -c \"Print :CFBundleVersion\" Resources/Info.plist`\n\nrm -f $ROOT/build/$PRODUCT_NAME.zip\n\nif [ -f \"$ROOT/Distribution.mobileprovision\" ]; then\n  cp $ROOT/Distribution.mobileprovision $TARGET_BUILD_DIR\nfi\n\n/usr/bin/ditto -c -k --sequesterRsrc \"$TARGET_BUILD_DIR\" \"$ROOT/build/$PRODUCT_NAME-$VERSION.zip\"";
-			showEnvVarsInLog = 0;
+			shellScript = "git submodule update --init\ncd Libraries/srelay\ngit branch --track iproxy origin/iproxy\ngit checkout iproxy\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
