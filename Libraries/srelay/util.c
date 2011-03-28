@@ -68,8 +68,7 @@ void msg_out(int severity, const char *fmt, ...)
     priority = SYSLOGFAC|LOG_INFO;
     break;
   }
-  
-  return;
+
   va_start(ap, fmt);
   if (!forcesyslog && isatty(fileno(stderr))) {
     vfprintf(stderr, fmt, ap);

@@ -32,10 +32,16 @@
 @interface MainViewController()
 - (void)updateHTTPProxy;
 - (void)updateSocksProxy;
+- (void)updateTransfer;
 @end
 
 @implementation MainViewController
 
+extern unsigned long long total_bytes_out;
+extern unsigned long long total_bytes_in;
+
+@synthesize transferDown;
+@synthesize transferUp;
 @synthesize httpSwitch;
 @synthesize httpAddressLabel;
 @synthesize httpPacLabel;
@@ -46,9 +52,33 @@
 @synthesize runningView;
 @synthesize socksConnextionCountLabel;
 
+- (void)updateTransfer {
+	static unsigned long long oldIn = 0;
+	static unsigned long long oldOut = 0;
+	
+	if ((oldIn != total_bytes_in) || (oldOut != total_bytes_out)) {
+		oldIn = total_bytes_in;
+		oldOut = total_bytes_out;
+
+		[self.transferUp setText:[NSString stringWithFormat:@"%0.2f kB", ((float)total_bytes_out / 1024.0f)]];
+		[self.transferDown setText:[NSString stringWithFormat:@"%0.2f kB", ((float)total_bytes_in / 1024.0f)]];
+		
+		NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+		[prefs setObject:[NSNumber numberWithUnsignedLongLong:total_bytes_in] forKey:@"trafficIn"];
+		[prefs setObject:[NSNumber numberWithUnsignedLongLong:total_bytes_out] forKey:@"trafficOut"];
+		[prefs synchronize];
+		
+		[NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(updateTransfer) userInfo:nil repeats:NO];
+	} else {
+		[NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(updateTransfer) userInfo:nil repeats:NO];	
+	}
+}
+
 - (void) viewWillAppear:(BOOL)animated
 {
 	NSString *hostName;
+	
+	[NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(updateTransfer) userInfo:nil repeats:NO];
 	
 #if HTTP_PROXY_ENABLED
     httpSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey: KEY_HTTP_ON];
@@ -80,6 +110,10 @@
     [self.view addTaggedSubview:runningView];
     [[SocksProxyServer sharedServer] addObserver:self forKeyPath:@"connexionCount" options:NSKeyValueObservingOptionNew context:nil];
     
+	[self.transferUp setText:[NSString stringWithFormat:@"%0.2f kB", ((float)total_bytes_out / 1024.0f)]];
+	[self.transferDown setText:[NSString stringWithFormat:@"%0.2f kB", ((float)total_bytes_in / 1024.0f)]];
+
+	
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(scheduleSocksProxyInfoTimer) name:HTTPProxyServerNewBandwidthStatNotification object:nil];
     [self updateHTTPProxy];
     [self updateSocksProxy];
@@ -104,6 +138,7 @@
 }
 
 static NSDate *date = nil;
+
 - (void)updateSocksProxyInfo
 {
 	UInt64 upload = 0, download = 0;
@@ -115,10 +150,11 @@ static NSDate *date = nil;
         
         lapse = [now timeIntervalSinceDate:date];
 	    NSLog(@"upload %f download %f", upload / lapse, download / lapse);
-    }
+	}
     [date release];
     date = [now retain];
     socksConnextionCountLabel.text = [NSString stringWithFormat:@"%d", [[SocksProxyServer sharedServer] connexionCount]];
+
     socksProxyInfoTimer = nil;
 }
 
@@ -184,6 +220,20 @@ static NSDate *date = nil;
     [viewController release];
 }
 
+- (IBAction)resetTransfer:(id)sender {
+	total_bytes_in = 0;
+	total_bytes_out = 0;
+
+	[self.transferUp setText:[NSString stringWithFormat:@"%0.2f kB", (total_bytes_out / 1024)]];
+	[self.transferDown setText:[NSString stringWithFormat:@"%0.2f kB", (total_bytes_in / 1024)]];
+
+	NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+	[prefs setObject:[NSNumber numberWithUnsignedLongLong:total_bytes_in] forKey:@"trafficIn"];
+	[prefs setObject:[NSNumber numberWithUnsignedLongLong:total_bytes_out] forKey:@"trafficOut"];
+	[prefs synchronize];
+
+}
+
 #pragma mark socks proxy
 
 - (void) httpURLAction:(id)sender
@@ -247,4 +297,14 @@ static NSDate *date = nil;
 	[self dismissModalViewControllerAnimated:YES];
 }
 
+- (void)dealloc {
+    [transferUp release];
+    [transferDown release];
+    [super dealloc];
+}
+- (void)viewDidUnload {
+    [self setTransferUp:nil];
+    [self setTransferDown:nil];
+    [super viewDidUnload];
+}
 @end

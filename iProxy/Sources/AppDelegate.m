@@ -43,6 +43,9 @@ static void reachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 
 @implementation AppDelegate
 
+extern unsigned long long total_bytes_out;
+extern unsigned long long total_bytes_in;
+
 @synthesize window;
 @synthesize statusViewController;
 @synthesize hasNetwork = _hasNetwork;
@@ -64,7 +67,12 @@ static void reachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
     }
     [self _checkServerStatus];
     [self setupReachabilityNotification];
-    
+
+	NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+	NSNumber *bytesIn = [prefs objectForKey:@"trafficIn"];
+	NSNumber *bytesOut = [prefs objectForKey:@"trafficOut"];
+	total_bytes_in = [bytesIn unsignedLongLongValue];
+	total_bytes_out = [bytesOut unsignedLongLongValue];
     return YES;
 }
 

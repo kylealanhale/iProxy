@@ -52,6 +52,9 @@ enum { UP, DOWN };		/* udp relay direction */
 
 int resolv_client;
 
+unsigned long long total_bytes_out = 0;
+unsigned long long total_bytes_in = 0;
+
 /* proto types */
 void readn	 __P((rlyinfo *));
 void writen	 __P((rlyinfo *));
@@ -207,33 +210,45 @@ void relay(SOCKS_STATE *state)
 	ri.from = state->r; ri.to = state->s; ri.flags = 0;
 	if ((wc = forward(&ri)) <= 0)
 	  done++;
-	else
-	  state->li->bc += wc; state->li->dnl += wc;
-
+	else {
+	  state->li->bc += wc;
+	  state->li->dnl += wc;
+	  total_bytes_in += wc;
+	}
+		  
 	FD_CLR(state->r, &rfds);
       }
       if (FD_ISSET(state->r, &xfds)) {
 	ri.from = state->r; ri.to = state->s; ri.flags = MSG_OOB;
 	if ((wc = forward(&ri)) <= 0)
 	  done++;
-	else
-	  state->li->bc += wc; state->li->dnl += wc;
+	else {
+	  state->li->bc += wc;
+	  state->li->dnl += wc;
+	  total_bytes_in += wc;
+	}
 	FD_CLR(state->r, &xfds);
       }
       if (FD_ISSET(state->s, &rfds)) {
 	ri.from = state->s; ri.to = state->r; ri.flags = 0;
 	if ((wc = forward(&ri)) <= 0)
 	  done++;
-	else
-	  state->li->bc += wc; state->li->upl += wc;
+	else {
+	  state->li->bc += wc;
+	  state->li->upl += wc;
+	  total_bytes_out += wc;
+	}
 	FD_CLR(state->s, &rfds);
       }
       if (FD_ISSET(state->s, &xfds)) {
 	ri.from = state->s; ri.to = state->r; ri.flags = MSG_OOB;
 	if ((wc = forward(&ri)) <= 0)
 	  done++;
-	else
-	  state->li->bc += wc; state->li->upl += wc;
+	else {
+	  state->li->bc += wc;
+	  state->li->upl += wc;
+	  total_bytes_out += wc;
+	}
 	FD_CLR(state->s, &xfds);
       }
       if (done > 0)
@@ -303,8 +318,11 @@ void relay_udp(SOCKS_STATE *state)
 	ri.dir = UP;
 	if ((wc = forward_udp(state, &ri)) <= 0)
 	  done++;
-	else
-	  state->li->bc += wc; state->li->upl += wc;
+	else {
+	  state->li->bc += wc;
+	  state->li->upl += wc;
+	  total_bytes_out += wc;
+	}
 	FD_CLR(state->udp.d, &rfds);
       }
       if (FD_ISSET(state->udp.u, &rfds)) {
@@ -312,8 +330,11 @@ void relay_udp(SOCKS_STATE *state)
 	ri.dir = DOWN;
 	if ((wc = forward_udp(state, &ri)) <= 0)
 	  done++;
-	else
-	  state->li->bc += wc; state->li->dnl += wc;
+	else {
+	  state->li->bc += wc;
+	  state->li->dnl += wc;
+	  total_bytes_in += wc;
+	}
 	FD_CLR(state->udp.d, &rfds);
       }
       /* packets on TCP channel may indicate
@@ -393,8 +414,8 @@ int log_transfer(loginfo *li)
 		      prs_ip, sizeof(prs_ip),
 		      prs_port, sizeof(prs_port),
 		      NI_NUMERICHOST|NI_NUMERICSERV);
-
-  msg_out(norm, "%s:%s-%s/%s-%s:%s %u(%u/%u) %u.%06u",
+	
+	msg_out(norm, "%s:%s-%s/%s-%s:%s %u(%u/%u) %u.%06u",
 	  prc_ip, prc_port, myc_port,
 	  mys_port, prs_ip, prs_port,
 	  li->bc, li->upl, li->dnl,
