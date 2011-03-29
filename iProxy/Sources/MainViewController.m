@@ -25,6 +25,9 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <QuartzCore/QuartzCore.h>
 
+#define OFTEN_UPDATE_PERIOD             0.5
+#define NOT_SO_OFTEN_UPDATE_PERIOD      2.0
+
 // defaults keys
 #define KEY_SOCKS_ON    @"socks.on"
 #define KEY_HTTP_ON     @"http.on"
@@ -61,9 +64,9 @@
     [_bandwidthUpload setText:[NSString stringWithFormat:@"%0.2f kB/s", (uploadBandwidth / 1024.0f)]];
     [_bandwidthDownload setText:[NSString stringWithFormat:@"%0.2f kB/s", (downloadBandwidth / 1024.0f)]];
 	if ((uploadBandwidth != 0) || (downloadBandwidth != 0)) {
-		[NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(updateTransfer) userInfo:nil repeats:NO];
+		[NSTimer scheduledTimerWithTimeInterval:OFTEN_UPDATE_PERIOD target:self selector:@selector(updateTransfer) userInfo:nil repeats:NO];
 	} else {
-		[NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(updateTransfer) userInfo:nil repeats:NO];	
+		[NSTimer scheduledTimerWithTimeInterval:NOT_SO_OFTEN_UPDATE_PERIOD target:self selector:@selector(updateTransfer) userInfo:nil repeats:NO];	
 	}
 }
 
@@ -71,7 +74,7 @@
 {
 	NSString *hostName;
 	
-	[NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(updateTransfer) userInfo:nil repeats:NO];
+	[NSTimer scheduledTimerWithTimeInterval:OFTEN_UPDATE_PERIOD target:self selector:@selector(updateTransfer) userInfo:nil repeats:NO];
 	
 #if HTTP_PROXY_ENABLED
     httpSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey: KEY_HTTP_ON];
@@ -102,10 +105,6 @@
     socksPacLabel.text = [NSString stringWithFormat:@"http://%@:%d%@", hostName, [HTTPServer sharedHTTPServer].servicePort, [SocksProxyServer pacFilePath]];
     [self.view addTaggedSubview:runningView];
     [[SocksProxyServer sharedServer] addObserver:self forKeyPath:@"connectionCount" options:NSKeyValueObservingOptionNew context:nil];
-    
-	[_totalUpload setText:@"0 kB"];
-	[_totalDownload setText:@"0 kB"];
-
 	
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(scheduleSocksProxyInfoTimer) name:HTTPProxyServerNewBandwidthStatNotification object:nil];
     [self updateHTTPProxy];
@@ -119,7 +118,7 @@
 - (void)scheduleSocksProxyInfoTimer
 {
     if (!socksProxyInfoTimer) {
-        socksProxyInfoTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(updateSocksProxyInfo) userInfo:nil repeats:NO];
+        socksProxyInfoTimer = [NSTimer scheduledTimerWithTimeInterval:OFTEN_UPDATE_PERIOD target:self selector:@selector(updateSocksProxyInfo) userInfo:nil repeats:NO];
     }
 }
 
