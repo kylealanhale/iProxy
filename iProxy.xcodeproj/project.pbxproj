@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0200DA4F134248440049713F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0200DA4E134248440049713F /* Security.framework */; };
 		020BC9CE124ADBD000E2E1F2 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 020BC9CD124ADBD000E2E1F2 /* MobileCoreServices.framework */; };
 		02326F16133B374000B90EB7 /* PMSSSHFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 02326F15133B374000B90EB7 /* PMSSSHFileController.m */; };
 		02326F25133C66CD00B90EB7 /* PMSPreferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02326F24133C66CD00B90EB7 /* PMSPreferences.xib */; };
@@ -74,9 +75,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0200DA4E134248440049713F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		020BC9CD124ADBD000E2E1F2 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		0220C6B81328C9ED00962EF9 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
-		02326EEF133AC16E00B90EB7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		02326EF0133AC16E00B90EB7 /* SecurityFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityFoundation.framework; path = /System/Library/Frameworks/SecurityFoundation.framework; sourceTree = "<absolute>"; };
 		02326EF1133AC16E00B90EB7 /* SecurityInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityInterface.framework; path = /System/Library/Frameworks/SecurityInterface.framework; sourceTree = "<absolute>"; };
 		02326F14133B374000B90EB7 /* PMSSSHFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMSSSHFileController.h; sourceTree = "<group>"; };
@@ -218,6 +219,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0200DA4F134248440049713F /* Security.framework in Frameworks */,
 				0267229D12444EA000A2EACF /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -379,7 +381,7 @@
 				020BC9CD124ADBD000E2E1F2 /* MobileCoreServices.framework */,
 				9D3437F812420C5A00629728 /* AVFoundation.framework */,
 				9DF66E4B124839050012D66D /* QuartzCore.framework */,
-				02326EEF133AC16E00B90EB7 /* Security.framework */,
+				0200DA4E134248440049713F /* Security.framework */,
 				02326EF0133AC16E00B90EB7 /* SecurityFoundation.framework */,
 				02326EF1133AC16E00B90EB7 /* SecurityInterface.framework */,
 			);
