@@ -37,7 +37,9 @@
 - (void)dealloc
 {
     [self cleanupProxy];
-    AuthorizationFree(_authorization, kAuthorizationFlagDestroyRights);
+    if (_authorization) {
+        AuthorizationFree(_authorization, kAuthorizationFlagDestroyRights);
+    }
     [_sshConfigContent release];
     [_sshConfigSavePath release];
     [super dealloc];
