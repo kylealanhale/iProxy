@@ -41,12 +41,6 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
     return server;
 }
 
-+ (NSString *)pacFilePath
-{
-    NSAssert(FALSE, @"not implemented");
-    return nil;
-}
-
 - (id)init
 {
 	self = [super init];
@@ -70,12 +64,6 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
 - (int)servicePort
 {
 	return 0;
-}
-
-- (NSString *)pacFileContentWithCurrentIP:(NSString *)ip
-{
-    NSAssert(FALSE, @"not implemented");
-    return nil;
 }
 
 - (BOOL)_starting

@@ -10,7 +10,7 @@
 
 #define HTTPProxyServerNewBandwidthStatNotification @"HTTPProxyServerNewBandwidthStatNotification"
 
-@interface SocksProxyServer : SocketServer <NSNetServiceDelegate>
+@interface SocksProxyServer : SocketServer <NSNetServiceDelegate, ProxyServer>
 {
     UInt64 _download;
     UInt64 _upload;

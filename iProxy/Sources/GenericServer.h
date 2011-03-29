@@ -29,11 +29,9 @@ typedef enum
 @property (readonly, getter = servicePort) int servicePort;
 
 + (id)sharedServer;
-+ (NSString *)pacFilePath;
 
 - (BOOL)start;
 - (void)stop;
-- (NSString *)pacFileContentWithCurrentIP:(NSString *)ip;
 
 - (void)_started;
 - (void)_failedStarting;
@@ -63,5 +61,12 @@ typedef enum
 - (void)closeConnection:(NSDictionary  *)handle;
 - (void)newReceiveIncomingConnectionWithInfo:(NSDictionary *)info;
 - (void)socketCallbackWithSocket:(CFSocketRef)sock type:(CFSocketCallBackType)type address:(CFDataRef)address data:(const void *)data;
+
+@end
+
+@protocol ProxyServer
+
++ (NSString *)pacFilePath;
+- (NSString *)pacFileContentWithCurrentIP:(NSString *)ip;
 
 @end

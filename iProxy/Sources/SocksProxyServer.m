@@ -177,4 +177,10 @@ static void my_log_tmp_transfer_callback(SOCK_INFO *si, LOGINFO *li, ssize_t dow
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithUnsignedLongLong:_totalDownload] forKey:TOTAL_DOWNLOAD_KEY];
 }
 
+
+- (NSString *)pacFileContentWithCurrentIP:(NSString *)ip
+{
+    return [NSString stringWithFormat:@"function FindProxyForURL(url, host) { return \"SOCKS %@:%d\"; }", ip, self.servicePort];
+}
+
 @end

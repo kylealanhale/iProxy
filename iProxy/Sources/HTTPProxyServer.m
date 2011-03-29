@@ -31,7 +31,7 @@ void polipo_exit();
 
 - (NSString *)pacFileContentWithCurrentIP:(NSString *)ip
 {
-    return [NSString stringWithFormat:@"function FindProxyForURL(url, host) { return \"PROXY %@:%d\"; }", ip, [self servicePort]];
+    return [NSString stringWithFormat:@"function FindProxyForURL(url, host) { return \"PROXY %@:%d\"; }", ip, self.servicePort];
 }
 
 - (BOOL)_starting
