@@ -25,11 +25,6 @@ extern void (*log_tmp_transfer_callback)(SOCK_INFO *si, LOGINFO *li, ssize_t dow
 
 static void my_log_end_transfer_callback(SOCK_INFO *si, LOGINFO *li, struct timeval elp, const char *prc_ip, const char *prc_port, const char *myc_ip, const char *myc_port, const char *mys_ip, const char *mys_port, const char *prs_ip, const char *prs_port)
 {
-    NSLog(@"%s:%s-%s:%s/%s:%s-%s:%s %lu(%lu/%lu) %ld.%06u",
-            prc_ip, prc_port, myc_ip, myc_port,
-            mys_ip, mys_port, prs_ip, prs_port,
-            li->bc, li->upl, li->dnl,
-            elp.tv_sec, elp.tv_usec);
 //    [(SocksProxyServer *)[SocksProxyServer sharedServer] updateEndTransferWithSocket:si logInfo:li];
 }
 

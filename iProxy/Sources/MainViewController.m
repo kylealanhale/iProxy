@@ -131,7 +131,6 @@
 - (void)updateSocksProxyInfo
 {
     socksConnextionCountLabel.text = [NSString stringWithFormat:@"%d", [[SocksProxyServer sharedServer] connexionCount]];
-    NSLog(@"%d", [[SocksProxyServer sharedServer] connexionCount]);
     socksProxyInfoTimer = nil;
 }
 
