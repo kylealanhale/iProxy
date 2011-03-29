@@ -16,6 +16,9 @@
 
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
+#import <SystemConfiguration/SCNetworkReachability.h>
+
+#define HTTP_PROXY_ENABLED 0
 
 @class MainViewController;
 
@@ -23,12 +26,18 @@
 {
     IBOutlet UIWindow *window;
     IBOutlet MainViewController *statusViewController;
-    AVAudioPlayer *player;
+    AVAudioPlayer *_player;
     
-    NSMutableArray *proxyServers;
+    NSMutableArray *_proxyServers;
+    BOOL _serverRunning;
+    BOOL _hasNetwork;
+    BOOL _hasWifi;
+    SCNetworkReachabilityRef _defaultRouteReachability;
 }
 
 @property (nonatomic, retain) UIWindow *window;
 @property (nonatomic, retain) MainViewController *statusViewController;
+@property (nonatomic, assign) BOOL hasNetwork;
+@property (nonatomic, assign) BOOL hasWifi;
 
 @end

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 #import <MessageUI/MFMailComposeViewController.h>
-#import <SystemConfiguration/SCNetworkReachability.h>
 
 @interface MainViewController : UIViewController <UIActionSheetDelegate, MFMailComposeViewControllerDelegate, NSNetServiceDelegate> {
 
@@ -35,10 +34,6 @@
 	
 	NSString *emailBody;
 	NSString *emailURL;
-    
-    SCNetworkReachabilityRef defaultRouteReachability;
-    BOOL hasNetwork;
-    BOOL hasWifi;
 }
 
 - (IBAction) switchedHttp:(id)sender;
@@ -46,8 +41,6 @@
 - (IBAction) httpURLAction:(id)sender;
 - (IBAction) socksURLAction:(id)sender;
 - (IBAction) showInfo;
-
-- (void)reachabilityNotificationWithFlags:(SCNetworkReachabilityFlags)flags;
 
 @property (nonatomic, retain) UISwitch *httpSwitch;
 @property (nonatomic, retain) UILabel *httpAddressLabel;
@@ -58,8 +51,6 @@
 @property (nonatomic, retain) UILabel *socksConnextionCountLabel;
 @property (nonatomic, retain) UIView *connectView;
 @property (nonatomic, retain) UIView *runningView;
-@property (nonatomic, assign) BOOL hasNetwork;
-@property (nonatomic, assign) BOOL hasWifi;
 
 @end
 
