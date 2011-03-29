@@ -13,7 +13,9 @@
 @interface SocksProxyServer : SocketServer <NSNetServiceDelegate>
 {
     UInt32 _currentStat;
-    NSMutableArray *_logInfoValues;
+    NSMutableDictionary *_logInfoValues;
+    ssize_t _download;
+    ssize_t _upload;
 }
 
 - (void)getBandwidthStatWithUpload:(UInt64 *)upload download:(UInt64 *)download;
