@@ -104,8 +104,6 @@ static void my_log_tmp_transfer_callback(SOCK_INFO *si, LOGINFO *li, ssize_t dow
 
 - (void)didCloseConnection:(NSDictionary *)info
 {
-    [_lastBandwidthQueryDate release];
-    _lastBandwidthQueryDate = nil;
 }
 
 - (void)getBandwidthStatWithUpload:(double *)uploadBandwidth download:(double *)downloadBandwidth
