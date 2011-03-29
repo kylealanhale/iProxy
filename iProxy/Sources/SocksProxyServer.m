@@ -84,7 +84,7 @@ static void my_log_tmp_transfer_callback(SOCK_INFO *si, LOGINFO *li, ssize_t dow
 	    close(state.r);
     }
     [fileHandle closeFile];
-    [self performSelectorOnMainThread:@selector(closeConnexion:) withObject:info waitUntilDone:NO];
+    [self performSelectorOnMainThread:@selector(closeConnection:) withObject:info waitUntilDone:NO];
     [pool drain];
 }
 

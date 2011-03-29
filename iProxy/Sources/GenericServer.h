@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#define CONNEXION_COUNT_MAX 50
+#define CONNECTION_COUNT_MAX 50
 
 typedef enum
 {
@@ -48,11 +48,11 @@ typedef enum
 	NSError *_lastError;
 	CFSocketRef _sockets[2];
     CFRunLoopSourceRef _runLoopSource[2];
-    NSMutableDictionary *_connexionPerIP;
-    NSUInteger _connexionCount;
+    NSMutableDictionary *_connectionPerIP;
+    NSUInteger _connectionCount;
 }
 
-@property(readonly) NSUInteger connexionCount;
+@property(readonly) NSUInteger connectionCount;
 @property(readonly) NSUInteger ipCount;
 
 - (NSError *)lastError;
@@ -60,7 +60,7 @@ typedef enum
 - (void)_closeSocket;
 - (void)didOpenConnection:(NSDictionary *)info;
 - (void)didCloseConnection:(NSDictionary *)info;
-- (void)closeConnexion:(NSDictionary  *)handle;
+- (void)closeConnection:(NSDictionary  *)handle;
 - (void)newReceiveIncomingConnectionWithInfo:(NSDictionary *)info;
 - (void)socketCallbackWithSocket:(CFSocketRef)sock type:(CFSocketCallBackType)type address:(CFDataRef)address data:(const void *)data;
 

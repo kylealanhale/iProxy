@@ -147,14 +147,14 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
 {
 	self = [super init];
 	if (self != nil) {
-		_connexionPerIP = [[NSMutableDictionary alloc] init];
+		_connectionPerIP = [[NSMutableDictionary alloc] init];
 	}
 	return self;
 }
 
 - (void)dealloc
 {
-	[_connexionPerIP release];
+	[_connectionPerIP release];
 	[super dealloc];
 }
 
@@ -279,12 +279,12 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleConnectionAcceptedNotification object:nil];
     
-    for (NSMutableSet *connexions in [_connexionPerIP allValues]) {
-        for (NSFileHandle *handle in connexions) {
+    for (NSMutableSet *connections in [_connectionPerIP allValues]) {
+        for (NSFileHandle *handle in connections) {
             [handle closeFile];
         }
     }
-    [_connexionPerIP removeAllObjects];
+    [_connectionPerIP removeAllObjects];
 	
 	CFRunLoopRef rl = CFRunLoopGetCurrent();
     for (int ii = 0; ii < sizeof(_sockets) / sizeof(_sockets[0]); ii++) {
@@ -346,21 +346,21 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
 
 - (void)newReceiveIncomingConnectionWithInfo:(NSDictionary *)info
 {
-    NSMutableArray *connexions;
+    NSMutableArray *connections;
     
-    [self willChangeValueForKey:@"connexionCount"];
-    _connexionCount++;
-    connexions = [_connexionPerIP objectForKey:[info objectForKey:@"ip"]];
-    if (!connexions) {
+    [self willChangeValueForKey:@"connectionCount"];
+    _connectionCount++;
+    connections = [_connectionPerIP objectForKey:[info objectForKey:@"ip"]];
+    if (!connections) {
         [self willChangeValueForKey:@"computerCount"];
-        connexions = [[NSMutableSet alloc] init];
-        [_connexionPerIP setObject:connexions forKey:[info objectForKey:@"ip"]];
-        [connexions autorelease];
+        connections = [[NSMutableSet alloc] init];
+        [_connectionPerIP setObject:connections forKey:[info objectForKey:@"ip"]];
+        [connections autorelease];
         [self didChangeValueForKey:@"computerCount"];
     }
-    [connexions addObject:[info objectForKey:@"handle"]];
+    [connections addObject:[info objectForKey:@"handle"]];
     [self didOpenConnection:info];
-    [self didChangeValueForKey:@"connexionCount"];
+    [self didChangeValueForKey:@"connectionCount"];
 }
 
 - (void)didOpenConnection:(NSDictionary *)info
@@ -368,36 +368,36 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
 	NSAssert(NO, @"should be implemented in sub class");
 }
 
-- (void)closeConnexion:(NSDictionary *)info
+- (void)closeConnection:(NSDictionary *)info
 {
-    NSMutableSet *connexions;
+    NSMutableSet *connections;
     
-    [self willChangeValueForKey:@"connexionCount"];
-    _connexionCount--;
+    [self willChangeValueForKey:@"connectionCount"];
+    _connectionCount--;
 	[[info objectForKey:@"handle"] closeFile];
-    connexions = [_connexionPerIP objectForKey:[info objectForKey:@"ip"]];
-    [connexions removeObject:[info objectForKey:@"handle"]];
-    if (connexions && [connexions count] == 0) {
+    connections = [_connectionPerIP objectForKey:[info objectForKey:@"ip"]];
+    [connections removeObject:[info objectForKey:@"handle"]];
+    if (connections && [connections count] == 0) {
         [self willChangeValueForKey:@"computerCount"];
-        [_connexionPerIP removeObjectForKey:[info objectForKey:@"ip"]];
+        [_connectionPerIP removeObjectForKey:[info objectForKey:@"ip"]];
         [self didChangeValueForKey:@"computerCount"];
     }
     [self didCloseConnection:info];
-    [self didChangeValueForKey:@"connexionCount"];
+    [self didChangeValueForKey:@"connectionCount"];
 }
 
 - (void)didCloseConnection:(NSDictionary *)info
 {
 }
 
-- (NSUInteger)connexionCount
+- (NSUInteger)connectionCount
 {
-	return _connexionCount;
+	return _connectionCount;
 }
 
 - (NSUInteger)ipCount
 {
-    return [_connexionPerIP count];
+    return [_connectionPerIP count];
 }
 
 @end

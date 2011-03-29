@@ -45,7 +45,7 @@
 @synthesize socksPacLabel;
 @synthesize connectView;
 @synthesize runningView;
-@synthesize socksConnextionCountLabel;
+@synthesize socksConnectionCountLabel;
 
 - (void)updateTransfer
 {
@@ -101,7 +101,7 @@
     socksAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, [[SocksProxyServer sharedServer] servicePort]];
     socksPacLabel.text = [NSString stringWithFormat:@"http://%@:%d%@", hostName, [HTTPServer sharedHTTPServer].servicePort, [SocksProxyServer pacFilePath]];
     [self.view addTaggedSubview:runningView];
-    [[SocksProxyServer sharedServer] addObserver:self forKeyPath:@"connexionCount" options:NSKeyValueObservingOptionNew context:nil];
+    [[SocksProxyServer sharedServer] addObserver:self forKeyPath:@"connectionCount" options:NSKeyValueObservingOptionNew context:nil];
     
 	[_totalUpload setText:@"0 kB"];
 	[_totalDownload setText:@"0 kB"];
@@ -125,14 +125,14 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-	if (object == [SocksProxyServer sharedServer] && [keyPath isEqualToString:@"connexionCount"]) {
+	if (object == [SocksProxyServer sharedServer] && [keyPath isEqualToString:@"connectionCount"]) {
     	[self scheduleSocksProxyInfoTimer];
     }
 }
 
 - (void)updateSocksProxyInfo
 {
-    socksConnextionCountLabel.text = [NSString stringWithFormat:@"%d", [[SocksProxyServer sharedServer] connexionCount]];
+    socksConnectionCountLabel.text = [NSString stringWithFormat:@"%d", [[SocksProxyServer sharedServer] connectionCount]];
     socksIPCountLabel.text = [NSString stringWithFormat:@"%d", [[SocksProxyServer sharedServer] ipCount]];
     socksProxyInfoTimer = nil;
 }
@@ -172,7 +172,7 @@
         socksAddressLabel.alpha = 0.1;
         socksPacLabel.alpha = 0.1;
         socksPacButton.enabled = NO;
-        socksConnextionCountLabel.text = @"";
+        socksConnectionCountLabel.text = @"";
         [socksProxyInfoTimer invalidate];
         socksProxyInfoTimer = nil;
     }
