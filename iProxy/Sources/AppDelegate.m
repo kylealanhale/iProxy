@@ -88,10 +88,45 @@ static void reachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
+    [(SocksProxyServer *)[SocksProxyServer sharedServer] saveTotalBytes];
+    if (_serverRunning) {
+        NSError *error = nil;
+        AVAudioSession *session = [AVAudioSession sharedInstance];
+        
+        session.delegate = self;
+        if (![session setCategory:AVAudioSessionCategoryPlayback error:&error]) {
+            NSLog(@"ERROR: audio category %@", error);
+        }
+        
+        if (![session setActive:YES error:&error]) {
+            NSLog(@"ERROR: audio active %@", error);
+        }
+        
+        NSString *sample = [[NSBundle mainBundle] pathForResource:@"silence" ofType:@"wav"];
+        NSURL *url = [NSURL URLWithString:sample];
+        _player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
+        _player.numberOfLoops = -1;
+        _player.volume = 0.00;
+        [_player prepareToPlay];
+        [_player play];
+    }
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
+    if (_player) {
+        NSError *error = nil;
+        
+        [_player stop];
+        [_player release];
+        _player = nil;
+        
+        AVAudioSession *session = [AVAudioSession sharedInstance];
+        session.delegate = nil;
+        if (![session setActive:NO error:&error]) {
+            NSLog(@"ERROR: audio active %@", error);
+        }
+    }
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
@@ -100,47 +135,16 @@ static void reachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    [(SocksProxyServer *)[SocksProxyServer sharedServer] saveTotalBytes];
 }
 
 - (void)_serverRunning
 {
-    NSError *error = nil;
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-    
-    session.delegate = self;
-    if (![session setCategory:AVAudioSessionCategoryPlayback error:&error]) {
-        NSLog(@"ERROR: audio category %@", error);
-    }
-    
-    if (![session setActive:YES error:&error]) {
-        NSLog(@"ERROR: audio active %@", error);
-    }
-    
-    NSString *sample = [[NSBundle mainBundle] pathForResource:@"silence" ofType:@"wav"];
-    NSURL *url = [NSURL URLWithString:sample];
-    _player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
-    _player.numberOfLoops = -1;
-    _player.volume = 0.00;
-    [_player prepareToPlay];
-    [_player play];
     [[HTTPServer sharedHTTPServer] start];
     _serverRunning = YES;
 }
 
 - (void)_serverStopped
 {
-    NSError *error = nil;
-    
-    [_player stop];
-    [_player release];
-    _player = nil;
-
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-    session.delegate = nil;
-    if (![session setActive:NO error:&error]) {
-        NSLog(@"ERROR: audio active %@", error);
-    }
     [[HTTPServer sharedHTTPServer] stop];
     _serverRunning = NO;
 }
