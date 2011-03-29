@@ -100,6 +100,7 @@ static void reachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
+    [(SocksProxyServer *)[SocksProxyServer sharedServer] saveTotalBytes];
 }
 
 - (void)_serverRunning

@@ -10,6 +10,9 @@
 #import "SharedHeader.h"
 #include "srelay.h"
 
+#define TOTAL_UPLOAD_KEY @"SocksProxyServer.totalDUpload"
+#define TOTAL_DOWNLOAD_KEY @"SocksProxyServer.totalDownload"
+
 @interface SocksProxyServer()
 - (void)updateTmpTransferWithSocket:(SOCK_INFO *)si logInfo:(LOGINFO *)li download:(ssize_t)download upload:(ssize_t)upload;
 @end
@@ -46,16 +49,16 @@ static void my_log_tmp_transfer_callback(SOCK_INFO *si, LOGINFO *li, ssize_t dow
 {
 	self = [super init];
     if (self) {
-        _logInfoValues = [[NSMutableDictionary alloc] init];
         log_end_transfer_callback = my_log_end_transfer_callback;
         log_tmp_transfer_callback = my_log_tmp_transfer_callback;
+        _totalUpload = [[[NSUserDefaults standardUserDefaults] objectForKey:TOTAL_UPLOAD_KEY] unsignedLongLongValue];
+        _totalDownload = [[[NSUserDefaults standardUserDefaults] objectForKey:TOTAL_DOWNLOAD_KEY] unsignedLongLongValue];
     }
     return self;
 }
 
 - (void)dealloc
 {
-	[_logInfoValues release];
 	[super dealloc];
 }
 
@@ -97,7 +100,7 @@ static void my_log_tmp_transfer_callback(SOCK_INFO *si, LOGINFO *li, ssize_t dow
 
 - (void)getBandwidthStatWithUpload:(UInt64 *)upload download:(UInt64 *)download
 {
-	@synchronized (_logInfoValues) {
+	@synchronized (self) {
         *upload = _upload;
         *download = _download;
         _upload = 0;
@@ -107,10 +110,34 @@ static void my_log_tmp_transfer_callback(SOCK_INFO *si, LOGINFO *li, ssize_t dow
 
 - (void)updateTmpTransferWithSocket:(SOCK_INFO *)si logInfo:(LOGINFO *)li download:(ssize_t)download upload:(ssize_t)upload
 {
-    @synchronized(_logInfoValues) {
-        _download += download;
+    @synchronized(self) {
         _upload += upload;
+        _download += download;
+        _totalUpload += upload;
+        _totalDownload += download;
     }
+}
+
+- (void)getTotalBytesWithUpload:(UInt64 *)upload download:(UInt64 *)download
+{
+    @synchronized(self) {
+        *upload = _totalUpload;
+        *download = _totalDownload;
+    }
+}
+
+- (void)resetTotalBytes
+{
+    @synchronized(self) {
+        _totalUpload = 0;
+        _totalDownload = 0;
+    }
+}
+
+- (void)saveTotalBytes
+{
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithUnsignedLongLong:_totalUpload] forKey:TOTAL_UPLOAD_KEY];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithUnsignedLongLong:_totalDownload] forKey:TOTAL_DOWNLOAD_KEY];
 }
 
 @end

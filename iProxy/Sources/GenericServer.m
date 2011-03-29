@@ -147,14 +147,14 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
 {
 	self = [super init];
 	if (self != nil) {
-		_connexions = [[NSMutableDictionary alloc] init];
+		_connexionPerIP = [[NSMutableDictionary alloc] init];
 	}
 	return self;
 }
 
 - (void)dealloc
 {
-	[_connexions release];
+	[_connexionPerIP release];
 	[super dealloc];
 }
 
@@ -279,12 +279,12 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleConnectionAcceptedNotification object:nil];
     
-    for (NSMutableSet *connexions in [_connexions allValues]) {
+    for (NSMutableSet *connexions in [_connexionPerIP allValues]) {
         for (NSFileHandle *handle in connexions) {
             [handle closeFile];
         }
     }
-    [_connexions removeAllObjects];
+    [_connexionPerIP removeAllObjects];
 	
 	CFRunLoopRef rl = CFRunLoopGetCurrent();
     for (int ii = 0; ii < sizeof(_sockets) / sizeof(_sockets[0]); ii++) {
@@ -349,12 +349,14 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
     NSMutableArray *connexions;
     
     [self willChangeValueForKey:@"connexionCount"];
-    connexions = [_connexions objectForKey:[info objectForKey:@"ip"]];
+    _connexionCount++;
+    connexions = [_connexionPerIP objectForKey:[info objectForKey:@"ip"]];
     if (!connexions) {
-        NSLog(@"new ip %@", [info objectForKey:@"ip"]);
+        [self willChangeValueForKey:@"computerCount"];
         connexions = [[NSMutableSet alloc] init];
-        [_connexions setObject:connexions forKey:[info objectForKey:@"ip"]];
+        [_connexionPerIP setObject:connexions forKey:[info objectForKey:@"ip"]];
         [connexions autorelease];
+        [self didChangeValueForKey:@"computerCount"];
     }
     [connexions addObject:[info objectForKey:@"handle"]];
     [self _receiveIncomingConnectionWithInfo:info];
@@ -371,19 +373,26 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
     NSMutableSet *connexions;
     
     [self willChangeValueForKey:@"connexionCount"];
+    _connexionCount--;
 	[[info objectForKey:@"handle"] closeFile];
-    connexions = [_connexions objectForKey:[info objectForKey:@"ip"]];
+    connexions = [_connexionPerIP objectForKey:[info objectForKey:@"ip"]];
     [connexions removeObject:[info objectForKey:@"handle"]];
     if (connexions && [connexions count] == 0) {
-        NSLog(@"no more ip %@", [info objectForKey:@"ip"]);
-        [_connexions removeObjectForKey:[info objectForKey:@"ip"]];
+        [self willChangeValueForKey:@"computerCount"];
+        [_connexionPerIP removeObjectForKey:[info objectForKey:@"ip"]];
+        [self didChangeValueForKey:@"computerCount"];
     }
     [self didChangeValueForKey:@"connexionCount"];
 }
 
 - (NSUInteger)connexionCount
 {
-	return [_connexions count];
+	return _connexionCount;
+}
+
+- (NSUInteger)computerCount
+{
+    return [_connexionPerIP count];
 }
 
 @end

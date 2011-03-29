@@ -34,6 +34,10 @@
 	
 	NSString *emailBody;
 	NSString *emailURL;
+	UILabel *transferUp;
+	UILabel *transferDown;
+	
+	NSTimer *updateTransferTimer;
 }
 
 - (IBAction) switchedHttp:(id)sender;
@@ -41,7 +45,10 @@
 - (IBAction) httpURLAction:(id)sender;
 - (IBAction) socksURLAction:(id)sender;
 - (IBAction) showInfo;
+- (IBAction) resetTransfer:(id)sender;
 
+@property (nonatomic, retain) IBOutlet UILabel *transferDown;
+@property (nonatomic, retain) IBOutlet UILabel *transferUp;
 @property (nonatomic, retain) UISwitch *httpSwitch;
 @property (nonatomic, retain) UILabel *httpAddressLabel;
 @property (nonatomic, retain) UILabel *httpPacLabel;

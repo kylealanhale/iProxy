@@ -48,10 +48,12 @@ typedef enum
 	NSError *_lastError;
 	CFSocketRef _sockets[2];
     CFRunLoopSourceRef _runLoopSource[2];
-    NSMutableDictionary *_connexions;
+    NSMutableDictionary *_connexionPerIP;
+    NSUInteger _connexionCount;
 }
 
 @property(readonly) NSUInteger connexionCount;
+@property(readonly) NSUInteger computerCount;
 
 - (NSError *)lastError;
 - (void)_setLastErrorWithMessage:(NSString *)message;

@@ -32,10 +32,13 @@
 @interface MainViewController()
 - (void)updateHTTPProxy;
 - (void)updateSocksProxy;
+- (void)updateTransfer;
 @end
 
 @implementation MainViewController
 
+@synthesize transferDown;
+@synthesize transferUp;
 @synthesize httpSwitch;
 @synthesize httpAddressLabel;
 @synthesize httpPacLabel;
@@ -46,9 +49,27 @@
 @synthesize runningView;
 @synthesize socksConnextionCountLabel;
 
+- (void)updateTransfer {
+	UInt64 oldIn = 0;
+	UInt64 oldOut = 0;
+	
+    [[SocksProxyServer sharedServer] getBandwidthStatWithUpload:&oldOut download:&oldIn];
+    [[SocksProxyServer sharedServer] getTotalBytesWithUpload:&oldOut download:&oldIn];
+	if ((oldIn != 0) || (oldOut != 0)) {
+		[self.transferUp setText:[NSString stringWithFormat:@"%0.2f kB", ((float)oldOut / 1024.0f)]];
+		[self.transferDown setText:[NSString stringWithFormat:@"%0.2f kB", ((float)oldIn / 1024.0f)]];
+		
+		[NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(updateTransfer) userInfo:nil repeats:NO];
+	} else {
+		[NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(updateTransfer) userInfo:nil repeats:NO];	
+	}
+}
+
 - (void) viewWillAppear:(BOOL)animated
 {
 	NSString *hostName;
+	
+	[NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(updateTransfer) userInfo:nil repeats:NO];
 	
 #if HTTP_PROXY_ENABLED
     httpSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey: KEY_HTTP_ON];
@@ -80,6 +101,10 @@
     [self.view addTaggedSubview:runningView];
     [[SocksProxyServer sharedServer] addObserver:self forKeyPath:@"connexionCount" options:NSKeyValueObservingOptionNew context:nil];
     
+	[self.transferUp setText:@"0 kB"];
+	[self.transferDown setText:@"0 kB"];
+
+	
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(scheduleSocksProxyInfoTimer) name:HTTPProxyServerNewBandwidthStatNotification object:nil];
     [self updateHTTPProxy];
     [self updateSocksProxy];
@@ -103,22 +128,10 @@
     }
 }
 
-static NSDate *date = nil;
 - (void)updateSocksProxyInfo
 {
-	UInt64 upload = 0, download = 0;
-    NSDate *now = [NSDate date];
-    
-    [[SocksProxyServer sharedServer] getBandwidthStatWithUpload:&upload download:&download];
-    if (date) {
-    	NSTimeInterval lapse;
-        
-        lapse = [now timeIntervalSinceDate:date];
-	    NSLog(@"upload %f download %f", upload / lapse, download / lapse);
-    }
-    [date release];
-    date = [now retain];
     socksConnextionCountLabel.text = [NSString stringWithFormat:@"%d", [[SocksProxyServer sharedServer] connexionCount]];
+    NSLog(@"%d", [[SocksProxyServer sharedServer] connexionCount]);
     socksProxyInfoTimer = nil;
 }
 
@@ -184,6 +197,11 @@ static NSDate *date = nil;
     [viewController release];
 }
 
+- (IBAction)resetTransfer:(id)sender
+{
+    [[SocksProxyServer sharedServer] resetTotalBytes];
+}
+
 #pragma mark socks proxy
 
 - (void) httpURLAction:(id)sender
@@ -247,4 +265,13 @@ static NSDate *date = nil;
 	[self dismissModalViewControllerAnimated:YES];
 }
 
+- (void)dealloc {
+    [super dealloc];
+}
+
+- (void)viewDidUnload {
+    [self setTransferUp:nil];
+    [self setTransferDown:nil];
+    [super viewDidUnload];
+}
 @end
