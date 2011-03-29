@@ -174,31 +174,4 @@
     }
 }
 
-//- (void)test:(id)unused
-//{
-//    AuthorizationRef authorization;
-//    OSStatus status;
-//    
-//    status = AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment, kAuthorizationFlagDefaults, &authorization);
-//    NSLog(@"err %d %p", status, authorization);
-//    char *tool = "/bin/cat";
-//    char *args[] = {NULL};
-//    FILE *pipe = NULL;
-//    
-//    status = AuthorizationExecuteWithPrivileges(authorization, tool, kAuthorizationFlagDefaults, args, &pipe);
-//    
-//    char readBuffer[128];
-//    if (status == errAuthorizationSuccess) {
-//        for (;;) {
-//            int bytesRead = read(fileno(pipe), readBuffer, sizeof(readBuffer));
-//            if (bytesRead < 1) break;
-//            readBuffer[bytesRead] = 0;
-//            NSLog(@"%s", readBuffer);
-//        }
-//    } else {
-//        NSLog(@"Authorization Result Code: %d", status);
-//    }
-//    status = AuthorizationFree(authorization, kAuthorizationFlagDestroyRights);
-//}
-
 @end
