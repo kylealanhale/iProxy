@@ -53,13 +53,14 @@ typedef enum
 }
 
 @property(readonly) NSUInteger connexionCount;
-@property(readonly) NSUInteger computerCount;
+@property(readonly) NSUInteger ipCount;
 
 - (NSError *)lastError;
 - (void)_setLastErrorWithMessage:(NSString *)message;
 - (void)_closeSocket;
-- (void)_receiveIncomingConnectionWithInfo:(NSDictionary *)info;
-- (void)_closeConnexion:(NSDictionary  *)handle;
+- (void)didOpenConnection:(NSDictionary *)info;
+- (void)didCloseConnection:(NSDictionary *)info;
+- (void)closeConnexion:(NSDictionary  *)handle;
 - (void)newReceiveIncomingConnectionWithInfo:(NSDictionary *)info;
 - (void)socketCallbackWithSocket:(CFSocketRef)sock type:(CFSocketCallBackType)type address:(CFDataRef)address data:(const void *)data;
 

@@ -37,8 +37,6 @@
 
 @implementation MainViewController
 
-@synthesize transferDown;
-@synthesize transferUp;
 @synthesize httpSwitch;
 @synthesize httpAddressLabel;
 @synthesize httpPacLabel;
@@ -49,16 +47,20 @@
 @synthesize runningView;
 @synthesize socksConnextionCountLabel;
 
-- (void)updateTransfer {
+- (void)updateTransfer
+{
+    double uploadBandwidth;
+    double downloadBandwidth;
 	UInt64 oldIn = 0;
 	UInt64 oldOut = 0;
 	
-    [[SocksProxyServer sharedServer] getBandwidthStatWithUpload:&oldOut download:&oldIn];
+    [[SocksProxyServer sharedServer] getBandwidthStatWithUpload:&uploadBandwidth download:&downloadBandwidth];
     [[SocksProxyServer sharedServer] getTotalBytesWithUpload:&oldOut download:&oldIn];
-	if ((oldIn != 0) || (oldOut != 0)) {
-		[self.transferUp setText:[NSString stringWithFormat:@"%0.2f kB", ((float)oldOut / 1024.0f)]];
-		[self.transferDown setText:[NSString stringWithFormat:@"%0.2f kB", ((float)oldIn / 1024.0f)]];
-		
+    [_totalUpload setText:[NSString stringWithFormat:@"%0.2f kB", ((float)oldOut / 1024.0f)]];
+    [_totalDownload setText:[NSString stringWithFormat:@"%0.2f kB", ((float)oldIn / 1024.0f)]];
+    [_bandwidthUpload setText:[NSString stringWithFormat:@"%0.2f kB/s", (uploadBandwidth / 1024.0f)]];
+    [_bandwidthDownload setText:[NSString stringWithFormat:@"%0.2f kB/s", (downloadBandwidth / 1024.0f)]];
+	if ((uploadBandwidth != 0) || (downloadBandwidth != 0)) {
 		[NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(updateTransfer) userInfo:nil repeats:NO];
 	} else {
 		[NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(updateTransfer) userInfo:nil repeats:NO];	
@@ -101,8 +103,8 @@
     [self.view addTaggedSubview:runningView];
     [[SocksProxyServer sharedServer] addObserver:self forKeyPath:@"connexionCount" options:NSKeyValueObservingOptionNew context:nil];
     
-	[self.transferUp setText:@"0 kB"];
-	[self.transferDown setText:@"0 kB"];
+	[_totalUpload setText:@"0 kB"];
+	[_totalDownload setText:@"0 kB"];
 
 	
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(scheduleSocksProxyInfoTimer) name:HTTPProxyServerNewBandwidthStatNotification object:nil];
@@ -131,6 +133,7 @@
 - (void)updateSocksProxyInfo
 {
     socksConnextionCountLabel.text = [NSString stringWithFormat:@"%d", [[SocksProxyServer sharedServer] connexionCount]];
+    socksIPCountLabel.text = [NSString stringWithFormat:@"%d", [[SocksProxyServer sharedServer] ipCount]];
     socksProxyInfoTimer = nil;
 }
 
@@ -258,19 +261,9 @@
     }
 }
 
-
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error 
 {
 	[self dismissModalViewControllerAnimated:YES];
 }
 
-- (void)dealloc {
-    [super dealloc];
-}
-
-- (void)viewDidUnload {
-    [self setTransferUp:nil];
-    [self setTransferDown:nil];
-    [super viewDidUnload];
-}
 @end

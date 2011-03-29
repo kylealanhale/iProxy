@@ -16,9 +16,10 @@
     UInt64 _upload;
     UInt64 _totalDownload;
     UInt64 _totalUpload;
+    NSDate *_lastBandwidthQueryDate;
 }
 
-- (void)getBandwidthStatWithUpload:(UInt64 *)upload download:(UInt64 *)download;
+- (void)getBandwidthStatWithUpload:(double *)upload download:(double *)download;
 - (void)getTotalBytesWithUpload:(UInt64 *)upload download:(UInt64 *)download;
 - (void)resetTotalBytes;
 - (void)saveTotalBytes;

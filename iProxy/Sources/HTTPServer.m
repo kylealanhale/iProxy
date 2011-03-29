@@ -77,7 +77,7 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
     }
 }
 
-- (void)_receiveIncomingConnectionWithInfo:(NSDictionary *)info
+- (void)didOpenConnection:(NSDictionary *)info
 {
     if(info) {
     	CFHTTPMessageRef message;

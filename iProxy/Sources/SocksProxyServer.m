@@ -84,22 +84,64 @@ static void my_log_tmp_transfer_callback(SOCK_INFO *si, LOGINFO *li, ssize_t dow
 	    close(state.r);
     }
     [fileHandle closeFile];
-    [self performSelectorOnMainThread:@selector(_closeConnexion:) withObject:info waitUntilDone:NO];
+    [self performSelectorOnMainThread:@selector(closeConnexion:) withObject:info waitUntilDone:NO];
     [pool drain];
 }
 
-- (void)_receiveIncomingConnectionWithInfo:(NSDictionary *)info
+- (void)didOpenConnection:(NSDictionary *)info
 {
+    if (!_lastBandwidthQueryDate) {
+        _lastBandwidthQueryDate = [[NSDate date] retain];
+    }
 	[NSThread detachNewThreadSelector:@selector(processIncomingConnection:) toTarget:self withObject:info];
 }
 
-- (void)getBandwidthStatWithUpload:(UInt64 *)upload download:(UInt64 *)download
+- (void)didCloseConnection:(NSDictionary *)info
 {
+    [_lastBandwidthQueryDate release];
+    _lastBandwidthQueryDate = nil;
+}
+
+- (void)getBandwidthStatWithUpload:(double *)uploadBandwidth download:(double *)downloadBandwidth
+{
+    UInt64 upload;
+    UInt64 download;
+    
 	@synchronized (self) {
-        *upload = _upload;
-        *download = _download;
+        upload = _upload;
+        download = _download;
+    }
+    if (_lastBandwidthQueryDate) {
+        NSDate *now;
+        NSTimeInterval interval;
+        
+        now = [NSDate date];
+        interval = [now timeIntervalSinceDate:_lastBandwidthQueryDate];
+        if (uploadBandwidth) {
+            if (interval) {
+                *uploadBandwidth = _upload / interval;
+            } else {
+                *uploadBandwidth = 0;
+            }
+        }
+        if (downloadBandwidth) {
+            if (interval) {
+                *downloadBandwidth = _download / interval;
+            } else {
+                *downloadBandwidth = 0;
+            }
+        }
         _upload = 0;
         _download = 0;
+        [_lastBandwidthQueryDate release];
+        _lastBandwidthQueryDate = [now retain];
+    } else {
+        if (uploadBandwidth) {
+            *uploadBandwidth = 0;
+        }
+        if (downloadBandwidth) {
+            *downloadBandwidth = 0;
+        }
     }
 }
 

@@ -27,6 +27,7 @@
     IBOutlet UILabel *socksPacLabel;
     IBOutlet UIButton *socksPacButton;
     IBOutlet UILabel *socksConnextionCountLabel;
+    IBOutlet UILabel *socksIPCountLabel;
     NSTimer *socksProxyInfoTimer;
 
     IBOutlet UIView *connectView;
@@ -34,10 +35,10 @@
 	
 	NSString *emailBody;
 	NSString *emailURL;
-	UILabel *transferUp;
-	UILabel *transferDown;
-	
-	NSTimer *updateTransferTimer;
+	IBOutlet UILabel *_totalUpload;
+	IBOutlet UILabel *_totalDownload;
+	IBOutlet UILabel *_bandwidthUpload;
+	IBOutlet UILabel *_bandwidthDownload;
 }
 
 - (IBAction) switchedHttp:(id)sender;
@@ -47,8 +48,6 @@
 - (IBAction) showInfo;
 - (IBAction) resetTransfer:(id)sender;
 
-@property (nonatomic, retain) IBOutlet UILabel *transferDown;
-@property (nonatomic, retain) IBOutlet UILabel *transferUp;
 @property (nonatomic, retain) UISwitch *httpSwitch;
 @property (nonatomic, retain) UILabel *httpAddressLabel;
 @property (nonatomic, retain) UILabel *httpPacLabel;

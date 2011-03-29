@@ -359,16 +359,16 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
         [self didChangeValueForKey:@"computerCount"];
     }
     [connexions addObject:[info objectForKey:@"handle"]];
-    [self _receiveIncomingConnectionWithInfo:info];
+    [self didOpenConnection:info];
     [self didChangeValueForKey:@"connexionCount"];
 }
 
-- (void)_receiveIncomingConnectionWithInfo:(NSDictionary *)info
+- (void)didOpenConnection:(NSDictionary *)info
 {
 	NSAssert(NO, @"should be implemented in sub class");
 }
 
-- (void)_closeConnexion:(NSDictionary *)info
+- (void)closeConnexion:(NSDictionary *)info
 {
     NSMutableSet *connexions;
     
@@ -382,7 +382,12 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
         [_connexionPerIP removeObjectForKey:[info objectForKey:@"ip"]];
         [self didChangeValueForKey:@"computerCount"];
     }
+    [self didCloseConnection:info];
     [self didChangeValueForKey:@"connexionCount"];
+}
+
+- (void)didCloseConnection:(NSDictionary *)info
+{
 }
 
 - (NSUInteger)connexionCount
@@ -390,7 +395,7 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
 	return _connexionCount;
 }
 
-- (NSUInteger)computerCount
+- (NSUInteger)ipCount
 {
     return [_connexionPerIP count];
 }
