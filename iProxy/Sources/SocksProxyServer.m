@@ -67,6 +67,12 @@ static void my_log_tmp_transfer_callback(SOCK_INFO *si, LOGINFO *li, ssize_t dow
 	return SOCKS_PROXY_PORT;
 }
 
+- (void)_stopped
+{
+    [self saveTotalBytes];
+    [super _stopped];
+}
+
 - (void)processIncomingConnection:(NSDictionary *)info
 {
 	NSAutoreleasePool *pool;
