@@ -32,10 +32,10 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
     if (!servers) {
     	servers = [[NSMutableDictionary alloc] init];
     }
-    server = [servers objectForKey:NSStringFromClass([self class])];
+    server = [servers objectForKey:[self class]];
     if (!server) {
         server = [[[self class] alloc] init];
-        [servers setObject:server forKey:NSStringFromClass([self class])];
+        [servers setObject:server forKey:[self class]];
         [server autorelease];
     }
     return server;
