@@ -20,7 +20,6 @@
 - (void)fetchDeviceList;
 
 @end
-
 @implementation PMSAppDelegate
 
 @synthesize browsing, resolvingServiceCount, proxyServiceList, proxyEnabled;
