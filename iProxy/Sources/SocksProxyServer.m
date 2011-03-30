@@ -114,6 +114,8 @@ static void my_log_tmp_transfer_callback(SOCK_INFO *si, LOGINFO *li, ssize_t dow
 	@synchronized (self) {
         upload = _upload;
         download = _download;
+        _upload = 0;
+        _download = 0;
     }
     if (_lastBandwidthQueryDate) {
         NSDate *now;
@@ -123,20 +125,18 @@ static void my_log_tmp_transfer_callback(SOCK_INFO *si, LOGINFO *li, ssize_t dow
         interval = [now timeIntervalSinceDate:_lastBandwidthQueryDate];
         if (uploadBandwidth) {
             if (interval) {
-                *uploadBandwidth = _upload / interval;
+                *uploadBandwidth = upload / interval;
             } else {
                 *uploadBandwidth = 0;
             }
         }
         if (downloadBandwidth) {
             if (interval) {
-                *downloadBandwidth = _download / interval;
+                *downloadBandwidth = download / interval;
             } else {
                 *downloadBandwidth = 0;
             }
         }
-        _upload = 0;
-        _download = 0;
         [_lastBandwidthQueryDate release];
         _lastBandwidthQueryDate = [now retain];
     } else {
