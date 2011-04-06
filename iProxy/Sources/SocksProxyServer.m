@@ -59,7 +59,7 @@ static void my_log_tmp_transfer_callback(SOCK_INFO *si, LOGINFO *li, ssize_t dow
 	[super dealloc];
 }
 
-- (NSString *)serviceDomaine
+- (NSString *)serviceDomain
 {
 	return SOCKS_PROXY_DOMAIN;
 }

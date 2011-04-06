@@ -49,7 +49,7 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
     [super dealloc];
 }
 
-- (NSString *)serviceDomaine
+- (NSString *)serviceDomain
 {
 	return HTTP_SERVER_DOMAIN;
 }

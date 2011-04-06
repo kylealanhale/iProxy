@@ -56,7 +56,7 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
 	[super dealloc];
 }
 
-- (NSString *)serviceDomaine
+- (NSString *)serviceDomain
 {
 	return nil;
 }
@@ -73,7 +73,7 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
 
 - (void)_started
 {
-    _netService = [[NSNetService alloc] initWithDomain:@"" type:self.serviceDomaine name:@"" port:self.servicePort];
+    _netService = [[NSNetService alloc] initWithDomain:@"" type:self.serviceDomain name:@"" port:self.servicePort];
     _netService.delegate = self;
     [_netService publish];
     [self willChangeValueForKey:@"state"];

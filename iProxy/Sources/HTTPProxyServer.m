@@ -19,7 +19,7 @@ void polipo_exit();
     return @"/http.pac";
 }
 
-- (NSString	*)serviceDomaine
+- (NSString *)serviceDomain
 {
 	return HTTP_PROXY_DOMAIN;
 }
