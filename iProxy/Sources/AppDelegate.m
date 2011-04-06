@@ -48,6 +48,44 @@ static void reachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 @synthesize hasNetwork = _hasNetwork;
 @synthesize hasWifi = _hasWifi;
 
+- (void)_enableBackgroundAliveApplication
+{
+    NSError *error = nil;
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    
+    session.delegate = self;
+    if (![session setCategory:AVAudioSessionCategoryPlayback error:&error]) {
+        NSLog(@"ERROR: audio category %@", error);
+    }
+    
+    if (![session setActive:YES error:&error]) {
+        NSLog(@"ERROR: audio active 2 %@", error);
+    }
+    
+    NSString *sample = [[NSBundle mainBundle] pathForResource:@"silence" ofType:@"wav"];
+    NSURL *url = [NSURL URLWithString:sample];
+    _player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
+    _player.numberOfLoops = -1;
+    _player.volume = 0.00;
+    [_player prepareToPlay];
+    [_player play];
+}
+
+- (void)_disableBackgroundAliveApplication
+{
+    NSError *error = nil;
+    
+    [_player stop];
+    [_player release];
+    _player = nil;
+    
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    session.delegate = nil;
+    if (![session setActive:NO error:&error]) {
+        NSLog(@"ERROR: audio active 3 %@", error);
+    }
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [window addSubview:statusViewController.view];
@@ -80,7 +118,7 @@ static void reachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
     NSError *error = nil;
 
     if (![session setActive:YES error:&error]) {
-        NSLog(@"ERROR: audio active %@", error);
+        NSLog(@"ERROR: audio active 1 %@", error);
     }
     
     // resume playback
@@ -90,42 +128,12 @@ static void reachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 {
     [(SocksProxyServer *)[SocksProxyServer sharedServer] saveTotalBytes];
     if (_serverRunning) {
-        NSError *error = nil;
-        AVAudioSession *session = [AVAudioSession sharedInstance];
-        
-        session.delegate = self;
-        if (![session setCategory:AVAudioSessionCategoryPlayback error:&error]) {
-            NSLog(@"ERROR: audio category %@", error);
-        }
-        
-        if (![session setActive:YES error:&error]) {
-            NSLog(@"ERROR: audio active %@", error);
-        }
-        
-        NSString *sample = [[NSBundle mainBundle] pathForResource:@"silence" ofType:@"wav"];
-        NSURL *url = [NSURL URLWithString:sample];
-        _player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
-        _player.numberOfLoops = -1;
-        _player.volume = 0.00;
-        [_player prepareToPlay];
-        [_player play];
     }
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     if (_player) {
-        NSError *error = nil;
-        
-        [_player stop];
-        [_player release];
-        _player = nil;
-        
-        AVAudioSession *session = [AVAudioSession sharedInstance];
-        session.delegate = nil;
-        if (![session setActive:NO error:&error]) {
-            NSLog(@"ERROR: audio active %@", error);
-        }
     }
 }
 
@@ -141,12 +149,14 @@ static void reachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 {
     [[HTTPServer sharedHTTPServer] start];
     _serverRunning = YES;
+    [self _enableBackgroundAliveApplication];
 }
 
 - (void)_serverStopped
 {
     [[HTTPServer sharedHTTPServer] stop];
     _serverRunning = NO;
+    [self _disableBackgroundAliveApplication];
 }
 
 - (void)_checkServerStatus
