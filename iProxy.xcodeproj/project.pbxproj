@@ -644,7 +644,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "git submodule update --init\ncd Libraries/srelay\ngit branch --track iproxy origin/iproxy\ngit checkout iproxy\n";
+			shellScript = "files=`ls Libraries/srelay`\nif [ \"${files}\" = \"\" ] ; then\n  if [ -d .git ] ; then\n    git submodule update --init\n    cd Libraries/srelay\n    git branch --track iproxy origin/iproxy\n    git checkout iproxy\n  else\n    cd Libraries/srelay\n    curl -o srelay.zip -L \"https://nodeload.github.com/jeromelebel/srelay/zipball/iproxy\"\n    unzip srelay.zip\n    rm srelay.zip\n    srelay_dir=`ls`\n    cd \"${srelay_dir}\"\n    mv * ..\n    cd ..\n    rmdir \"${srelay_dir}\"\n  fi\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
