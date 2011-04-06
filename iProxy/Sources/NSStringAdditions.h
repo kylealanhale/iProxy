@@ -3,6 +3,7 @@
 @interface NSString (NSStringAdditions)
 
 + (NSString *)addressFromData:(NSData *)data;
++ (NSString *)addressFromSockaddr:(struct sockaddr *)data;
 
 - (NSString*) URLEncodedString;
 - (NSString*) URLDecodedString;

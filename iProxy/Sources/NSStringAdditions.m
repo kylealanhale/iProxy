@@ -7,14 +7,17 @@
 
 + (NSString *)addressFromData:(NSData *)data
 {
-    struct sockaddr *genericIP;
+    return [self addressFromSockaddr:(struct sockaddr *)[data bytes]];
+}
+     
++ (NSString *)addressFromSockaddr:(struct sockaddr *)genericIP
+{
     struct sockaddr_in *ipv4;
     struct sockaddr_in6 *ipv6;
     NSString *result = nil;
     char buffer[255];
     
     memset(buffer, 0, sizeof(buffer));
-    genericIP = (void *)[data bytes];
     switch (genericIP->sa_family) {
         case AF_INET:
             ipv4 = (struct sockaddr_in *)genericIP;
@@ -24,11 +27,15 @@
             ipv6 = (struct sockaddr_in6 *)genericIP;
             inet_ntop(genericIP->sa_family, (void *)&(ipv6->sin6_addr), buffer, sizeof(buffer) - 1);
             break;
+        case AF_UNSPEC:
+            break;
         default:
             NSAssert(NO, @"unknown %d", genericIP->sa_family);
             break;
     }
-    result = [NSString stringWithFormat:@"%s", buffer];
+    if (buffer[0]) {
+        result = [NSString stringWithFormat:@"%s", buffer];
+    }
     return result;
 }
 
