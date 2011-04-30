@@ -26,6 +26,31 @@
 		0275613E124AD4AD00B64593 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0275613D124AD4AD00B64593 /* MessageUI.framework */; };
 		02774268128B591700064370 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02774267128B591700064370 /* SystemConfiguration.framework */; };
 		0277431C128B857600064370 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0277431B128B857600064370 /* AudioToolbox.framework */; };
+		027E0826136C85A000124AD2 /* atom.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07D9136C845C00124AD2 /* atom.c */; };
+		027E0827136C85A000124AD2 /* auth.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07DB136C845C00124AD2 /* auth.c */; };
+		027E0828136C85A000124AD2 /* chunk.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07DE136C845C00124AD2 /* chunk.c */; };
+		027E0829136C85A000124AD2 /* client.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07E0136C845C00124AD2 /* client.c */; };
+		027E082A136C85A000124AD2 /* config.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07E2136C845C00124AD2 /* config.c */; };
+		027E082B136C85A000124AD2 /* diskcache.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07E6136C845C00124AD2 /* diskcache.c */; };
+		027E082C136C85A000124AD2 /* dns.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07E8136C845C00124AD2 /* dns.c */; };
+		027E082D136C85A000124AD2 /* event.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07EA136C845C00124AD2 /* event.c */; };
+		027E082E136C85A000124AD2 /* forbidden.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07EC136C845C00124AD2 /* forbidden.c */; };
+		027E082F136C85A000124AD2 /* fts_compat.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07EF136C845C00124AD2 /* fts_compat.c */; };
+		027E0830136C85A000124AD2 /* ftsimport.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07F1136C845C00124AD2 /* ftsimport.c */; };
+		027E0831136C85A000124AD2 /* http_parse.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07F3136C845C00124AD2 /* http_parse.c */; };
+		027E0832136C85A000124AD2 /* http.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07F5136C845C00124AD2 /* http.c */; };
+		027E0833136C85A000124AD2 /* io.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07F8136C845C00124AD2 /* io.c */; };
+		027E0834136C85A000124AD2 /* local.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07FA136C845C00124AD2 /* local.c */; };
+		027E0835136C85A000124AD2 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07FD136C845C00124AD2 /* log.c */; };
+		027E0836136C85A000124AD2 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07FF136C845C00124AD2 /* main.c */; };
+		027E0838136C85A000124AD2 /* md5import.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E0803136C845C00124AD2 /* md5import.c */; };
+		027E0839136C85A000124AD2 /* mingw.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E0805136C845C00124AD2 /* mingw.c */; };
+		027E083A136C85A000124AD2 /* object.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E0807136C845C00124AD2 /* object.c */; };
+		027E083B136C85A000124AD2 /* parse_time.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E0809136C845C00124AD2 /* parse_time.c */; };
+		027E083C136C85A000124AD2 /* server.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E0810136C845C00124AD2 /* server.c */; };
+		027E083D136C85A000124AD2 /* socks.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E0812136C845C00124AD2 /* socks.c */; };
+		027E083E136C85A000124AD2 /* tunnel.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E0814136C845C00124AD2 /* tunnel.c */; };
+		027E083F136C85A000124AD2 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E0816136C845C00124AD2 /* util.c */; };
 		02E7545F1274E8C400D55958 /* auth-pwd.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754551274E8C400D55958 /* auth-pwd.c */; };
 		02E754601274E8C400D55958 /* get-bind.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754561274E8C400D55958 /* get-bind.c */; };
 		02E754611274E8C400D55958 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754571274E8C400D55958 /* init.c */; };
@@ -73,6 +98,18 @@
 		9DF66E4C124839050012D66D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DF66E4B124839050012D66D /* QuartzCore.framework */; };
 		9DF66E8B12483BE30012D66D /* Icon-72-transparent.png in Resources */ = {isa = PBXBuildFile; fileRef = 9DF66E8A12483BE30012D66D /* Icon-72-transparent.png */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		027E081A136C856C00124AD2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0200DA4E134248440049713F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
@@ -145,7 +182,6 @@
 		027E07FF136C845C00124AD2 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main.c; path = Libraries/polipo/main.c; sourceTree = SOURCE_ROOT; };
 		027E0800136C845C00124AD2 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; name = Makefile; path = Libraries/polipo/Makefile; sourceTree = SOURCE_ROOT; };
 		027E0801136C845C00124AD2 /* md5.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = md5.c; path = Libraries/polipo/md5.c; sourceTree = SOURCE_ROOT; };
-		027E0802136C845C00124AD2 /* md5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = md5.h; path = Libraries/polipo/md5.h; sourceTree = SOURCE_ROOT; };
 		027E0803136C845C00124AD2 /* md5import.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = md5import.c; path = Libraries/polipo/md5import.c; sourceTree = SOURCE_ROOT; };
 		027E0804136C845C00124AD2 /* md5import.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = md5import.h; path = Libraries/polipo/md5import.h; sourceTree = SOURCE_ROOT; };
 		027E0805136C845C00124AD2 /* mingw.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mingw.c; path = Libraries/polipo/mingw.c; sourceTree = SOURCE_ROOT; };
@@ -167,6 +203,8 @@
 		027E0815136C845C00124AD2 /* tunnel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = tunnel.h; path = Libraries/polipo/tunnel.h; sourceTree = SOURCE_ROOT; };
 		027E0816136C845C00124AD2 /* util.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = util.c; path = Libraries/polipo/util.c; sourceTree = SOURCE_ROOT; };
 		027E0817136C845C00124AD2 /* util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = util.h; path = Libraries/polipo/util.h; sourceTree = SOURCE_ROOT; };
+		027E081C136C856C00124AD2 /* polipo (useless, just to test) */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "polipo (useless, just to test)"; sourceTree = BUILT_PRODUCTS_DIR; };
+		027E0848136C8AF900124AD2 /* md5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = md5.h; path = Libraries/polipo/md5.h; sourceTree = SOURCE_ROOT; };
 		02E754551274E8C400D55958 /* auth-pwd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "auth-pwd.c"; sourceTree = "<group>"; };
 		02E754561274E8C400D55958 /* get-bind.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "get-bind.c"; sourceTree = "<group>"; };
 		02E754571274E8C400D55958 /* init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = init.c; sourceTree = "<group>"; };
@@ -234,6 +272,13 @@
 			files = (
 				0200DA4F134248440049713F /* Security.framework in Frameworks */,
 				0267229D12444EA000A2EACF /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		027E0819136C856C00124AD2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,6 +383,7 @@
 			children = (
 				1D6058910D05DD3D006BFB54 /* iProxy.app */,
 				0274FA6312444A5D00173784 /* iProxyMacSetup.app */,
+				027E081C136C856C00124AD2 /* polipo (useless, just to test) */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -479,7 +525,7 @@
 				027E07FF136C845C00124AD2 /* main.c */,
 				027E0800136C845C00124AD2 /* Makefile */,
 				027E0801136C845C00124AD2 /* md5.c */,
-				027E0802136C845C00124AD2 /* md5.h */,
+				027E0848136C8AF900124AD2 /* md5.h */,
 				027E0803136C845C00124AD2 /* md5import.c */,
 				027E0804136C845C00124AD2 /* md5import.h */,
 				027E0805136C845C00124AD2 /* mingw.c */,
@@ -562,6 +608,23 @@
 			productReference = 0274FA6312444A5D00173784 /* iProxyMacSetup.app */;
 			productType = "com.apple.product-type.application";
 		};
+		027E081B136C856C00124AD2 /* polipo (useless, just to test) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 027E0822136C856D00124AD2 /* Build configuration list for PBXNativeTarget "polipo (useless, just to test)" */;
+			buildPhases = (
+				027E0818136C856C00124AD2 /* Sources */,
+				027E0819136C856C00124AD2 /* Frameworks */,
+				027E081A136C856C00124AD2 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "polipo (useless, just to test)";
+			productName = polipo;
+			productReference = 027E081C136C856C00124AD2 /* polipo (useless, just to test) */;
+			productType = "com.apple.product-type.tool";
+		};
 		02E754CC12752A3700D55958 /* srelay (useless, just to test) */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 02E754DB12752A7400D55958 /* Build configuration list for PBXNativeTarget "srelay (useless, just to test)" */;
@@ -618,6 +681,7 @@
 				1D6058900D05DD3D006BFB54 /* iProxy */,
 				0274FA6212444A5D00173784 /* iProxyMacSetup */,
 				02E754CC12752A3700D55958 /* srelay (useless, just to test) */,
+				027E081B136C856C00124AD2 /* polipo (useless, just to test) */,
 			);
 		};
 /* End PBXProject section */
@@ -699,6 +763,38 @@
 				0267243E1245646C00A2EACF /* PMSUIController.m in Sources */,
 				02326F16133B374000B90EB7 /* PMSSSHFileController.m in Sources */,
 				02326F28133C676B00B90EB7 /* PMSPreferences.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		027E0818136C856C00124AD2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				027E0826136C85A000124AD2 /* atom.c in Sources */,
+				027E0827136C85A000124AD2 /* auth.c in Sources */,
+				027E0828136C85A000124AD2 /* chunk.c in Sources */,
+				027E0829136C85A000124AD2 /* client.c in Sources */,
+				027E082A136C85A000124AD2 /* config.c in Sources */,
+				027E082B136C85A000124AD2 /* diskcache.c in Sources */,
+				027E082C136C85A000124AD2 /* dns.c in Sources */,
+				027E082D136C85A000124AD2 /* event.c in Sources */,
+				027E082E136C85A000124AD2 /* forbidden.c in Sources */,
+				027E082F136C85A000124AD2 /* fts_compat.c in Sources */,
+				027E0830136C85A000124AD2 /* ftsimport.c in Sources */,
+				027E0831136C85A000124AD2 /* http_parse.c in Sources */,
+				027E0832136C85A000124AD2 /* http.c in Sources */,
+				027E0833136C85A000124AD2 /* io.c in Sources */,
+				027E0834136C85A000124AD2 /* local.c in Sources */,
+				027E0835136C85A000124AD2 /* log.c in Sources */,
+				027E0836136C85A000124AD2 /* main.c in Sources */,
+				027E0838136C85A000124AD2 /* md5import.c in Sources */,
+				027E0839136C85A000124AD2 /* mingw.c in Sources */,
+				027E083A136C85A000124AD2 /* object.c in Sources */,
+				027E083B136C85A000124AD2 /* parse_time.c in Sources */,
+				027E083C136C85A000124AD2 /* server.c in Sources */,
+				027E083D136C85A000124AD2 /* socks.c in Sources */,
+				027E083E136C85A000124AD2 /* tunnel.c in Sources */,
+				027E083F136C85A000124AD2 /* util.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -858,6 +954,60 @@
 			};
 			name = "Ad-hoc";
 		};
+		027E0823136C856D00124AD2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = iProxy/Sources/Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		027E0824136C856D00124AD2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = iProxy/Sources/Prefix.pch;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		027E0825136C856D00124AD2 /* Ad-hoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = iProxy/Sources/Prefix.pch;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "Ad-hoc";
+		};
 		02E754CD12752A3900D55958 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -869,7 +1019,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Sources/Prefix.pch;
+				GCC_PREFIX_HEADER = iProxy/Sources/Prefix.pch;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -879,8 +1029,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = srelay;
-				SDKROOT = macosx10.6;
-				VALID_ARCHS = i386;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -894,7 +1043,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Sources/Prefix.pch;
+				GCC_PREFIX_HEADER = iProxy/Sources/Prefix.pch;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -904,8 +1053,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = srelay;
-				SDKROOT = macosx10.6;
-				VALID_ARCHS = i386;
+				SDKROOT = macosx;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -918,7 +1066,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Sources/Prefix.pch;
+				GCC_PREFIX_HEADER = iProxy/Sources/Prefix.pch;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -928,8 +1076,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = srelay;
-				SDKROOT = macosx10.6;
-				VALID_ARCHS = i386;
+				SDKROOT = macosx;
 			};
 			name = "Ad-hoc";
 		};
@@ -1050,6 +1197,15 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		027E0822136C856D00124AD2 /* Build configuration list for PBXNativeTarget "polipo (useless, just to test)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				027E0823136C856D00124AD2 /* Debug */,
+				027E0824136C856D00124AD2 /* Release */,
+				027E0825136C856D00124AD2 /* Ad-hoc */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		02E754DB12752A7400D55958 /* Build configuration list for PBXNativeTarget "srelay (useless, just to test)" */ = {
 			isa = XCConfigurationList;
