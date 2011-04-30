@@ -104,6 +104,69 @@
 		0275613D124AD4AD00B64593 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		02774267128B591700064370 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		0277431B128B857600064370 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		027E07D9136C845C00124AD2 /* atom.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = atom.c; path = Libraries/polipo/atom.c; sourceTree = SOURCE_ROOT; };
+		027E07DA136C845C00124AD2 /* atom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = atom.h; path = Libraries/polipo/atom.h; sourceTree = SOURCE_ROOT; };
+		027E07DB136C845C00124AD2 /* auth.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = auth.c; path = Libraries/polipo/auth.c; sourceTree = SOURCE_ROOT; };
+		027E07DC136C845C00124AD2 /* auth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = auth.h; path = Libraries/polipo/auth.h; sourceTree = SOURCE_ROOT; };
+		027E07DD136C845C00124AD2 /* CHANGES */ = {isa = PBXFileReference; lastKnownFileType = text; name = CHANGES; path = Libraries/polipo/CHANGES; sourceTree = SOURCE_ROOT; };
+		027E07DE136C845C00124AD2 /* chunk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = chunk.c; path = Libraries/polipo/chunk.c; sourceTree = SOURCE_ROOT; };
+		027E07DF136C845C00124AD2 /* chunk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = chunk.h; path = Libraries/polipo/chunk.h; sourceTree = SOURCE_ROOT; };
+		027E07E0136C845C00124AD2 /* client.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = client.c; path = Libraries/polipo/client.c; sourceTree = SOURCE_ROOT; };
+		027E07E1136C845C00124AD2 /* client.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = client.h; path = Libraries/polipo/client.h; sourceTree = SOURCE_ROOT; };
+		027E07E2136C845C00124AD2 /* config.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = config.c; path = Libraries/polipo/config.c; sourceTree = SOURCE_ROOT; };
+		027E07E3136C845C00124AD2 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = Libraries/polipo/config.h; sourceTree = SOURCE_ROOT; };
+		027E07E4136C845C00124AD2 /* config.sample */ = {isa = PBXFileReference; lastKnownFileType = text; name = config.sample; path = Libraries/polipo/config.sample; sourceTree = SOURCE_ROOT; };
+		027E07E5136C845C00124AD2 /* COPYING */ = {isa = PBXFileReference; lastKnownFileType = text; name = COPYING; path = Libraries/polipo/COPYING; sourceTree = SOURCE_ROOT; };
+		027E07E6136C845C00124AD2 /* diskcache.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = diskcache.c; path = Libraries/polipo/diskcache.c; sourceTree = SOURCE_ROOT; };
+		027E07E7136C845C00124AD2 /* diskcache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = diskcache.h; path = Libraries/polipo/diskcache.h; sourceTree = SOURCE_ROOT; };
+		027E07E8136C845C00124AD2 /* dns.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = dns.c; path = Libraries/polipo/dns.c; sourceTree = SOURCE_ROOT; };
+		027E07E9136C845C00124AD2 /* dns.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = dns.h; path = Libraries/polipo/dns.h; sourceTree = SOURCE_ROOT; };
+		027E07EA136C845C00124AD2 /* event.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = event.c; path = Libraries/polipo/event.c; sourceTree = SOURCE_ROOT; };
+		027E07EB136C845C00124AD2 /* event.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = event.h; path = Libraries/polipo/event.h; sourceTree = SOURCE_ROOT; };
+		027E07EC136C845C00124AD2 /* forbidden.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = forbidden.c; path = Libraries/polipo/forbidden.c; sourceTree = SOURCE_ROOT; };
+		027E07ED136C845C00124AD2 /* forbidden.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = forbidden.h; path = Libraries/polipo/forbidden.h; sourceTree = SOURCE_ROOT; };
+		027E07EE136C845C00124AD2 /* forbidden.sample */ = {isa = PBXFileReference; lastKnownFileType = text; name = forbidden.sample; path = Libraries/polipo/forbidden.sample; sourceTree = SOURCE_ROOT; };
+		027E07EF136C845C00124AD2 /* fts_compat.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = fts_compat.c; path = Libraries/polipo/fts_compat.c; sourceTree = SOURCE_ROOT; };
+		027E07F0136C845C00124AD2 /* fts_compat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = fts_compat.h; path = Libraries/polipo/fts_compat.h; sourceTree = SOURCE_ROOT; };
+		027E07F1136C845C00124AD2 /* ftsimport.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = ftsimport.c; path = Libraries/polipo/ftsimport.c; sourceTree = SOURCE_ROOT; };
+		027E07F2136C845C00124AD2 /* ftsimport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ftsimport.h; path = Libraries/polipo/ftsimport.h; sourceTree = SOURCE_ROOT; };
+		027E07F3136C845C00124AD2 /* http_parse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = http_parse.c; path = Libraries/polipo/http_parse.c; sourceTree = SOURCE_ROOT; };
+		027E07F4136C845C00124AD2 /* http_parse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = http_parse.h; path = Libraries/polipo/http_parse.h; sourceTree = SOURCE_ROOT; };
+		027E07F5136C845C00124AD2 /* http.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = http.c; path = Libraries/polipo/http.c; sourceTree = SOURCE_ROOT; };
+		027E07F6136C845C00124AD2 /* http.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = http.h; path = Libraries/polipo/http.h; sourceTree = SOURCE_ROOT; };
+		027E07F7136C845C00124AD2 /* INSTALL */ = {isa = PBXFileReference; lastKnownFileType = text; name = INSTALL; path = Libraries/polipo/INSTALL; sourceTree = SOURCE_ROOT; };
+		027E07F8136C845C00124AD2 /* io.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = io.c; path = Libraries/polipo/io.c; sourceTree = SOURCE_ROOT; };
+		027E07F9136C845C00124AD2 /* io.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = io.h; path = Libraries/polipo/io.h; sourceTree = SOURCE_ROOT; };
+		027E07FA136C845C00124AD2 /* local.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = local.c; path = Libraries/polipo/local.c; sourceTree = SOURCE_ROOT; };
+		027E07FB136C845C00124AD2 /* local.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = local.h; path = Libraries/polipo/local.h; sourceTree = SOURCE_ROOT; };
+		027E07FC136C845C00124AD2 /* localindex.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = localindex.html; path = Libraries/polipo/localindex.html; sourceTree = SOURCE_ROOT; };
+		027E07FD136C845C00124AD2 /* log.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = log.c; path = Libraries/polipo/log.c; sourceTree = SOURCE_ROOT; };
+		027E07FE136C845C00124AD2 /* log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = log.h; path = Libraries/polipo/log.h; sourceTree = SOURCE_ROOT; };
+		027E07FF136C845C00124AD2 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main.c; path = Libraries/polipo/main.c; sourceTree = SOURCE_ROOT; };
+		027E0800136C845C00124AD2 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; name = Makefile; path = Libraries/polipo/Makefile; sourceTree = SOURCE_ROOT; };
+		027E0801136C845C00124AD2 /* md5.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = md5.c; path = Libraries/polipo/md5.c; sourceTree = SOURCE_ROOT; };
+		027E0802136C845C00124AD2 /* md5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = md5.h; path = Libraries/polipo/md5.h; sourceTree = SOURCE_ROOT; };
+		027E0803136C845C00124AD2 /* md5import.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = md5import.c; path = Libraries/polipo/md5import.c; sourceTree = SOURCE_ROOT; };
+		027E0804136C845C00124AD2 /* md5import.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = md5import.h; path = Libraries/polipo/md5import.h; sourceTree = SOURCE_ROOT; };
+		027E0805136C845C00124AD2 /* mingw.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mingw.c; path = Libraries/polipo/mingw.c; sourceTree = SOURCE_ROOT; };
+		027E0806136C845C00124AD2 /* mingw.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mingw.h; path = Libraries/polipo/mingw.h; sourceTree = SOURCE_ROOT; };
+		027E0807136C845C00124AD2 /* object.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = object.c; path = Libraries/polipo/object.c; sourceTree = SOURCE_ROOT; };
+		027E0808136C845C00124AD2 /* object.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = object.h; path = Libraries/polipo/object.h; sourceTree = SOURCE_ROOT; };
+		027E0809136C845C00124AD2 /* parse_time.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = parse_time.c; path = Libraries/polipo/parse_time.c; sourceTree = SOURCE_ROOT; };
+		027E080A136C845C00124AD2 /* parse_time.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = parse_time.h; path = Libraries/polipo/parse_time.h; sourceTree = SOURCE_ROOT; };
+		027E080B136C845C00124AD2 /* polipo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = polipo.h; path = Libraries/polipo/polipo.h; sourceTree = SOURCE_ROOT; };
+		027E080C136C845C00124AD2 /* polipo.man */ = {isa = PBXFileReference; lastKnownFileType = text; name = polipo.man; path = Libraries/polipo/polipo.man; sourceTree = SOURCE_ROOT; };
+		027E080D136C845C00124AD2 /* polipo.texi */ = {isa = PBXFileReference; lastKnownFileType = text; name = polipo.texi; path = Libraries/polipo/polipo.texi; sourceTree = SOURCE_ROOT; };
+		027E080E136C845C00124AD2 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; name = README; path = Libraries/polipo/README; sourceTree = SOURCE_ROOT; };
+		027E080F136C845C00124AD2 /* README.Windows */ = {isa = PBXFileReference; lastKnownFileType = text; name = README.Windows; path = Libraries/polipo/README.Windows; sourceTree = SOURCE_ROOT; };
+		027E0810136C845C00124AD2 /* server.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = server.c; path = Libraries/polipo/server.c; sourceTree = SOURCE_ROOT; };
+		027E0811136C845C00124AD2 /* server.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = server.h; path = Libraries/polipo/server.h; sourceTree = SOURCE_ROOT; };
+		027E0812136C845C00124AD2 /* socks.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = socks.c; path = Libraries/polipo/socks.c; sourceTree = SOURCE_ROOT; };
+		027E0813136C845C00124AD2 /* socks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = socks.h; path = Libraries/polipo/socks.h; sourceTree = SOURCE_ROOT; };
+		027E0814136C845C00124AD2 /* tunnel.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = tunnel.c; path = Libraries/polipo/tunnel.c; sourceTree = SOURCE_ROOT; };
+		027E0815136C845C00124AD2 /* tunnel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = tunnel.h; path = Libraries/polipo/tunnel.h; sourceTree = SOURCE_ROOT; };
+		027E0816136C845C00124AD2 /* util.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = util.c; path = Libraries/polipo/util.c; sourceTree = SOURCE_ROOT; };
+		027E0817136C845C00124AD2 /* util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = util.h; path = Libraries/polipo/util.h; sourceTree = SOURCE_ROOT; };
 		02E754551274E8C400D55958 /* auth-pwd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "auth-pwd.c"; sourceTree = "<group>"; };
 		02E754561274E8C400D55958 /* get-bind.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "get-bind.c"; sourceTree = "<group>"; };
 		02E754571274E8C400D55958 /* init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = init.c; sourceTree = "<group>"; };
@@ -143,56 +206,6 @@
 		9D63174510FEACD30041EE37 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Resources/Info.plist; sourceTree = "<group>"; };
 		9D63174610FEACD30041EE37 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/MainViewController.xib; sourceTree = "<group>"; };
 		9D63174710FEACD30041EE37 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/MainWindow.xib; sourceTree = "<group>"; };
-		9D71D7B81237A598008538A1 /* atom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = atom.c; sourceTree = "<group>"; };
-		9D71D7B91237A598008538A1 /* atom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atom.h; sourceTree = "<group>"; };
-		9D71D7BA1237A598008538A1 /* auth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = auth.c; sourceTree = "<group>"; };
-		9D71D7BB1237A598008538A1 /* auth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = auth.h; sourceTree = "<group>"; };
-		9D71D7BC1237A598008538A1 /* chunk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = chunk.c; sourceTree = "<group>"; };
-		9D71D7BD1237A598008538A1 /* chunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chunk.h; sourceTree = "<group>"; };
-		9D71D7BE1237A598008538A1 /* client.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = client.c; sourceTree = "<group>"; };
-		9D71D7BF1237A598008538A1 /* client.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = client.h; sourceTree = "<group>"; };
-		9D71D7C01237A598008538A1 /* config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = config.c; sourceTree = "<group>"; };
-		9D71D7C11237A598008538A1 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		9D71D7C21237A598008538A1 /* diskcache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = diskcache.c; sourceTree = "<group>"; };
-		9D71D7C31237A598008538A1 /* diskcache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = diskcache.h; sourceTree = "<group>"; };
-		9D71D7C41237A598008538A1 /* dns.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dns.c; sourceTree = "<group>"; };
-		9D71D7C51237A598008538A1 /* dns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dns.h; sourceTree = "<group>"; };
-		9D71D7C61237A598008538A1 /* event.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = event.c; sourceTree = "<group>"; };
-		9D71D7C71237A598008538A1 /* event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event.h; sourceTree = "<group>"; };
-		9D71D7C81237A598008538A1 /* forbidden.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = forbidden.c; sourceTree = "<group>"; };
-		9D71D7C91237A598008538A1 /* forbidden.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = forbidden.h; sourceTree = "<group>"; };
-		9D71D7CA1237A598008538A1 /* fts_compat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fts_compat.c; sourceTree = "<group>"; };
-		9D71D7CB1237A598008538A1 /* fts_compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fts_compat.h; sourceTree = "<group>"; };
-		9D71D7CC1237A598008538A1 /* ftsimport.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ftsimport.c; sourceTree = "<group>"; };
-		9D71D7CD1237A598008538A1 /* ftsimport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftsimport.h; sourceTree = "<group>"; };
-		9D71D7CE1237A598008538A1 /* http_parse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = http_parse.c; sourceTree = "<group>"; };
-		9D71D7CF1237A598008538A1 /* http_parse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = http_parse.h; sourceTree = "<group>"; };
-		9D71D7D01237A598008538A1 /* http.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = http.c; sourceTree = "<group>"; };
-		9D71D7D11237A598008538A1 /* http.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = http.h; sourceTree = "<group>"; };
-		9D71D7D21237A598008538A1 /* io.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = io.c; sourceTree = "<group>"; };
-		9D71D7D31237A598008538A1 /* io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = io.h; sourceTree = "<group>"; };
-		9D71D7D41237A598008538A1 /* local.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = local.c; sourceTree = "<group>"; };
-		9D71D7D51237A598008538A1 /* local.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = local.h; sourceTree = "<group>"; };
-		9D71D7D61237A598008538A1 /* log.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = log.c; sourceTree = "<group>"; };
-		9D71D7D71237A598008538A1 /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = log.h; sourceTree = "<group>"; };
-		9D71D7D81237A598008538A1 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		9D71D7D91237A598008538A1 /* md5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = md5.c; sourceTree = "<group>"; };
-		9D71D7DA1237A598008538A1 /* md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md5.h; sourceTree = "<group>"; };
-		9D71D7DD1237A598008538A1 /* mingw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mingw.c; sourceTree = "<group>"; };
-		9D71D7DE1237A598008538A1 /* mingw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mingw.h; sourceTree = "<group>"; };
-		9D71D7DF1237A598008538A1 /* object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = object.c; sourceTree = "<group>"; };
-		9D71D7E01237A598008538A1 /* object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = object.h; sourceTree = "<group>"; };
-		9D71D7E11237A598008538A1 /* parse_time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parse_time.c; sourceTree = "<group>"; };
-		9D71D7E21237A598008538A1 /* parse_time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parse_time.h; sourceTree = "<group>"; };
-		9D71D7E31237A598008538A1 /* polipo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = polipo.h; sourceTree = "<group>"; };
-		9D71D7E41237A598008538A1 /* server.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = server.c; sourceTree = "<group>"; };
-		9D71D7E51237A598008538A1 /* server.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = server.h; sourceTree = "<group>"; };
-		9D71D7E61237A598008538A1 /* socks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = socks.c; sourceTree = "<group>"; };
-		9D71D7E71237A598008538A1 /* socks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = socks.h; sourceTree = "<group>"; };
-		9D71D7E81237A598008538A1 /* tunnel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tunnel.c; sourceTree = "<group>"; };
-		9D71D7E91237A598008538A1 /* tunnel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tunnel.h; sourceTree = "<group>"; };
-		9D71D7EA1237A598008538A1 /* util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = util.c; sourceTree = "<group>"; };
-		9D71D7EB1237A598008538A1 /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
 		9D79C2BD124E7173008F7F98 /* NSStringAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSStringAdditions.h; path = Sources/NSStringAdditions.h; sourceTree = "<group>"; };
 		9D79C2BE124E7173008F7F98 /* NSStringAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSStringAdditions.m; path = Sources/NSStringAdditions.m; sourceTree = "<group>"; };
 		9D83D36011B9AF5C00A9922F /* PacFileResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PacFileResponse.h; path = Sources/PacFileResponse.h; sourceTree = "<group>"; };
@@ -425,56 +438,69 @@
 		9D71D7AD1237A53C008538A1 /* polipo */ = {
 			isa = PBXGroup;
 			children = (
-				9D71D7B81237A598008538A1 /* atom.c */,
-				9D71D7B91237A598008538A1 /* atom.h */,
-				9D71D7BA1237A598008538A1 /* auth.c */,
-				9D71D7BB1237A598008538A1 /* auth.h */,
-				9D71D7BC1237A598008538A1 /* chunk.c */,
-				9D71D7BD1237A598008538A1 /* chunk.h */,
-				9D71D7BE1237A598008538A1 /* client.c */,
-				9D71D7BF1237A598008538A1 /* client.h */,
-				9D71D7C01237A598008538A1 /* config.c */,
-				9D71D7C11237A598008538A1 /* config.h */,
-				9D71D7C21237A598008538A1 /* diskcache.c */,
-				9D71D7C31237A598008538A1 /* diskcache.h */,
-				9D71D7C41237A598008538A1 /* dns.c */,
-				9D71D7C51237A598008538A1 /* dns.h */,
-				9D71D7C61237A598008538A1 /* event.c */,
-				9D71D7C71237A598008538A1 /* event.h */,
-				9D71D7C81237A598008538A1 /* forbidden.c */,
-				9D71D7C91237A598008538A1 /* forbidden.h */,
-				9D71D7CA1237A598008538A1 /* fts_compat.c */,
-				9D71D7CB1237A598008538A1 /* fts_compat.h */,
-				9D71D7CC1237A598008538A1 /* ftsimport.c */,
-				9D71D7CD1237A598008538A1 /* ftsimport.h */,
-				9D71D7CE1237A598008538A1 /* http_parse.c */,
-				9D71D7CF1237A598008538A1 /* http_parse.h */,
-				9D71D7D01237A598008538A1 /* http.c */,
-				9D71D7D11237A598008538A1 /* http.h */,
-				9D71D7D21237A598008538A1 /* io.c */,
-				9D71D7D31237A598008538A1 /* io.h */,
-				9D71D7D41237A598008538A1 /* local.c */,
-				9D71D7D51237A598008538A1 /* local.h */,
-				9D71D7D61237A598008538A1 /* log.c */,
-				9D71D7D71237A598008538A1 /* log.h */,
-				9D71D7D81237A598008538A1 /* main.c */,
-				9D71D7D91237A598008538A1 /* md5.c */,
-				9D71D7DA1237A598008538A1 /* md5.h */,
-				9D71D7DD1237A598008538A1 /* mingw.c */,
-				9D71D7DE1237A598008538A1 /* mingw.h */,
-				9D71D7DF1237A598008538A1 /* object.c */,
-				9D71D7E01237A598008538A1 /* object.h */,
-				9D71D7E11237A598008538A1 /* parse_time.c */,
-				9D71D7E21237A598008538A1 /* parse_time.h */,
-				9D71D7E31237A598008538A1 /* polipo.h */,
-				9D71D7E41237A598008538A1 /* server.c */,
-				9D71D7E51237A598008538A1 /* server.h */,
-				9D71D7E61237A598008538A1 /* socks.c */,
-				9D71D7E71237A598008538A1 /* socks.h */,
-				9D71D7E81237A598008538A1 /* tunnel.c */,
-				9D71D7E91237A598008538A1 /* tunnel.h */,
-				9D71D7EA1237A598008538A1 /* util.c */,
-				9D71D7EB1237A598008538A1 /* util.h */,
+				027E07D9136C845C00124AD2 /* atom.c */,
+				027E07DA136C845C00124AD2 /* atom.h */,
+				027E07DB136C845C00124AD2 /* auth.c */,
+				027E07DC136C845C00124AD2 /* auth.h */,
+				027E07DD136C845C00124AD2 /* CHANGES */,
+				027E07DE136C845C00124AD2 /* chunk.c */,
+				027E07DF136C845C00124AD2 /* chunk.h */,
+				027E07E0136C845C00124AD2 /* client.c */,
+				027E07E1136C845C00124AD2 /* client.h */,
+				027E07E2136C845C00124AD2 /* config.c */,
+				027E07E3136C845C00124AD2 /* config.h */,
+				027E07E4136C845C00124AD2 /* config.sample */,
+				027E07E5136C845C00124AD2 /* COPYING */,
+				027E07E6136C845C00124AD2 /* diskcache.c */,
+				027E07E7136C845C00124AD2 /* diskcache.h */,
+				027E07E8136C845C00124AD2 /* dns.c */,
+				027E07E9136C845C00124AD2 /* dns.h */,
+				027E07EA136C845C00124AD2 /* event.c */,
+				027E07EB136C845C00124AD2 /* event.h */,
+				027E07EC136C845C00124AD2 /* forbidden.c */,
+				027E07ED136C845C00124AD2 /* forbidden.h */,
+				027E07EE136C845C00124AD2 /* forbidden.sample */,
+				027E07EF136C845C00124AD2 /* fts_compat.c */,
+				027E07F0136C845C00124AD2 /* fts_compat.h */,
+				027E07F1136C845C00124AD2 /* ftsimport.c */,
+				027E07F2136C845C00124AD2 /* ftsimport.h */,
+				027E07F3136C845C00124AD2 /* http_parse.c */,
+				027E07F4136C845C00124AD2 /* http_parse.h */,
+				027E07F5136C845C00124AD2 /* http.c */,
+				027E07F6136C845C00124AD2 /* http.h */,
+				027E07F7136C845C00124AD2 /* INSTALL */,
+				027E07F8136C845C00124AD2 /* io.c */,
+				027E07F9136C845C00124AD2 /* io.h */,
+				027E07FA136C845C00124AD2 /* local.c */,
+				027E07FB136C845C00124AD2 /* local.h */,
+				027E07FC136C845C00124AD2 /* localindex.html */,
+				027E07FD136C845C00124AD2 /* log.c */,
+				027E07FE136C845C00124AD2 /* log.h */,
+				027E07FF136C845C00124AD2 /* main.c */,
+				027E0800136C845C00124AD2 /* Makefile */,
+				027E0801136C845C00124AD2 /* md5.c */,
+				027E0802136C845C00124AD2 /* md5.h */,
+				027E0803136C845C00124AD2 /* md5import.c */,
+				027E0804136C845C00124AD2 /* md5import.h */,
+				027E0805136C845C00124AD2 /* mingw.c */,
+				027E0806136C845C00124AD2 /* mingw.h */,
+				027E0807136C845C00124AD2 /* object.c */,
+				027E0808136C845C00124AD2 /* object.h */,
+				027E0809136C845C00124AD2 /* parse_time.c */,
+				027E080A136C845C00124AD2 /* parse_time.h */,
+				027E080B136C845C00124AD2 /* polipo.h */,
+				027E080C136C845C00124AD2 /* polipo.man */,
+				027E080D136C845C00124AD2 /* polipo.texi */,
+				027E080E136C845C00124AD2 /* README */,
+				027E080F136C845C00124AD2 /* README.Windows */,
+				027E0810136C845C00124AD2 /* server.c */,
+				027E0811136C845C00124AD2 /* server.h */,
+				027E0812136C845C00124AD2 /* socks.c */,
+				027E0813136C845C00124AD2 /* socks.h */,
+				027E0814136C845C00124AD2 /* tunnel.c */,
+				027E0815136C845C00124AD2 /* tunnel.h */,
+				027E0816136C845C00124AD2 /* util.c */,
+				027E0817136C845C00124AD2 /* util.h */,
 			);
 			name = polipo;
 			path = "polipo-20091115";
@@ -556,6 +582,7 @@
 			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "iProxy" */;
 			buildPhases = (
 				02D854C1133FF4BD0055475B /* get srelay submodule */,
+				027E07D7136C7D8700124AD2 /* get polipo submodule */,
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
 				1D60588F0D05DD3D006BFB54 /* Frameworks */,
@@ -632,6 +659,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		027E07D7136C7D8700124AD2 /* get polipo submodule */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "get polipo submodule";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "module_path=\"Libraries/polipo\"\nmodule_owner=\"jeromelebel\"\nmodule_name=\"polipo\"\nmodule_branch=\"iproxy\"\n\nfiles=`ls \"${module_path}\"`\nif [ \"${files}\" = \"\" ] ; then\n  if [ -d .git ] ; then\n    git submodule update --init\n    cd \"${module_path}\"\n    git branch --track \"${module_branch}\" \"origin/${module_branch}\"\n    git checkout \"${module_branch}\"\n  else\n    cd \"${module_path}\"\n    curl -o \"${module_name}.zip\" -L \"https://nodeload.github.com/${module_owner}/${module_name}/zipball/${module_branch}\"\n    unzip \"${module_name}.zip\"\n    rm \"${module_name}.zip\"\n    module_unzip_dir=`ls`\n    cd \"${module_unzip_dir}\"\n    mv * ..\n    cd ..\n    rmdir \"${module_unzip_dir}\"\n  fi\nfi\n";
+		};
 		02D854C1133FF4BD0055475B /* get srelay submodule */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
