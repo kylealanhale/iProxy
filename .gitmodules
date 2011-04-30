@@ -1,3 +1,6 @@
 [submodule "Libraries/srelay"]
 	path = Libraries/srelay
 	url = git@github.com:jeromelebel/srelay.git
+[submodule "Libraries/polipo"]
+	path = Libraries/polipo
+	url = git://git.wifi.pps.jussieu.fr/polipo
