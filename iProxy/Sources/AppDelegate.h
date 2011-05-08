@@ -18,7 +18,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <SystemConfiguration/SCNetworkReachability.h>
 
-#define HTTP_PROXY_ENABLED 0
+#define HTTP_PROXY_ENABLED 1
 
 @class MainViewController;
 

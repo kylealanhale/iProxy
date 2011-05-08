@@ -10,6 +10,7 @@
 
 @interface HTTPProxyServer : SocketServer <NSNetServiceDelegate, ProxyServer>
 {
+    void *_listener;
 }
 
 @end

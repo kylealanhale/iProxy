@@ -58,7 +58,7 @@ typedef enum
 - (void)_closeSocket;
 - (void)didOpenConnection:(NSDictionary *)info;
 - (void)didCloseConnection:(NSDictionary *)info;
-- (void)closeConnection:(NSDictionary  *)handle;
+- (void)closeConnection:(NSDictionary *)handle;
 - (void)newReceiveIncomingConnectionWithInfo:(NSDictionary *)info;
 - (void)socketCallbackWithSocket:(CFSocketRef)sock type:(CFSocketCallBackType)type address:(CFDataRef)address data:(const void *)data;
 

@@ -1,4 +1,3 @@
-
 // polipo
 #define HAS_STDINT_H
 #define NO_FANCY_RESOLVER

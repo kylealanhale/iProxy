@@ -9,9 +9,32 @@
 /* Begin PBXBuildFile section */
 		0200DA4F134248440049713F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0200DA4E134248440049713F /* Security.framework */; };
 		020BC9CE124ADBD000E2E1F2 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 020BC9CD124ADBD000E2E1F2 /* MobileCoreServices.framework */; };
+		0216CF66137468A900BAFB37 /* event.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07EA136C845C00124AD2 /* event.c */; };
 		02326F16133B374000B90EB7 /* PMSSSHFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 02326F15133B374000B90EB7 /* PMSSSHFileController.m */; };
 		02326F25133C66CD00B90EB7 /* PMSPreferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02326F24133C66CD00B90EB7 /* PMSPreferences.xib */; };
 		02326F28133C676B00B90EB7 /* PMSPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 02326F27133C676A00B90EB7 /* PMSPreferences.m */; };
+		024A6DD41373D2B8007E5D32 /* atom.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07D9136C845C00124AD2 /* atom.c */; };
+		024A6DD51373D2B8007E5D32 /* auth.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07DB136C845C00124AD2 /* auth.c */; };
+		024A6DD61373D2B8007E5D32 /* chunk.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07DE136C845C00124AD2 /* chunk.c */; };
+		024A6DD71373D2B8007E5D32 /* client.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07E0136C845C00124AD2 /* client.c */; };
+		024A6DD81373D2B8007E5D32 /* config.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07E2136C845C00124AD2 /* config.c */; };
+		024A6DD91373D2B8007E5D32 /* diskcache.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07E6136C845C00124AD2 /* diskcache.c */; };
+		024A6DDA1373D2B8007E5D32 /* dns.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07E8136C845C00124AD2 /* dns.c */; };
+		024A6DDC1373D2B8007E5D32 /* forbidden.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07EC136C845C00124AD2 /* forbidden.c */; };
+		024A6DDD1373D2B8007E5D32 /* fts_compat.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07EF136C845C00124AD2 /* fts_compat.c */; };
+		024A6DDE1373D2B8007E5D32 /* http_parse.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07F3136C845C00124AD2 /* http_parse.c */; };
+		024A6DDF1373D2B8007E5D32 /* http.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07F5136C845C00124AD2 /* http.c */; };
+		024A6DE01373D2B8007E5D32 /* io.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07F8136C845C00124AD2 /* io.c */; };
+		024A6DE11373D2B8007E5D32 /* local.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07FA136C845C00124AD2 /* local.c */; };
+		024A6DE21373D2B8007E5D32 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E07FD136C845C00124AD2 /* log.c */; };
+		024A6DE51373D2B8007E5D32 /* md5import.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E0803136C845C00124AD2 /* md5import.c */; };
+		024A6DE61373D2B8007E5D32 /* mingw.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E0805136C845C00124AD2 /* mingw.c */; };
+		024A6DE71373D2B8007E5D32 /* object.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E0807136C845C00124AD2 /* object.c */; };
+		024A6DE81373D2B8007E5D32 /* parse_time.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E0809136C845C00124AD2 /* parse_time.c */; };
+		024A6DE91373D2B8007E5D32 /* server.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E0810136C845C00124AD2 /* server.c */; };
+		024A6DEA1373D2B8007E5D32 /* socks.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E0812136C845C00124AD2 /* socks.c */; };
+		024A6DEB1373D2B8007E5D32 /* tunnel.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E0814136C845C00124AD2 /* tunnel.c */; };
+		024A6DEC1373D2B8007E5D32 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E0816136C845C00124AD2 /* util.c */; };
 		02501CC4126667EF00CE5CA9 /* GenericServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 02501CC3126667EF00CE5CA9 /* GenericServer.m */; };
 		02501CCA1266681800CE5CA9 /* SocksProxyServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 02501CC91266681800CE5CA9 /* SocksProxyServer.m */; };
 		02501D61126674DB00CE5CA9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 02501D60126674DB00CE5CA9 /* InfoPlist.strings */; };
@@ -51,6 +74,7 @@
 		027E083D136C85A000124AD2 /* socks.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E0812136C845C00124AD2 /* socks.c */; };
 		027E083E136C85A000124AD2 /* tunnel.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E0814136C845C00124AD2 /* tunnel.c */; };
 		027E083F136C85A000124AD2 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 027E0816136C845C00124AD2 /* util.c */; };
+		02E1E9E11373D609001D2EBC /* HTTPProxyServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 02501CC61266680900CE5CA9 /* HTTPProxyServer.m */; };
 		02E7545F1274E8C400D55958 /* auth-pwd.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754551274E8C400D55958 /* auth-pwd.c */; };
 		02E754601274E8C400D55958 /* get-bind.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754561274E8C400D55958 /* get-bind.c */; };
 		02E754611274E8C400D55958 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754571274E8C400D55958 /* init.c */; };
@@ -829,6 +853,7 @@
 				9D79C2BF124E7173008F7F98 /* NSStringAdditions.m in Sources */,
 				02501CC4126667EF00CE5CA9 /* GenericServer.m in Sources */,
 				02501CCA1266681800CE5CA9 /* SocksProxyServer.m in Sources */,
+				02E1E9E11373D609001D2EBC /* HTTPProxyServer.m in Sources */,
 				02ED14C21266836A00595AA0 /* UIColorAdditions.m in Sources */,
 				02E7545F1274E8C400D55958 /* auth-pwd.c in Sources */,
 				02E754601274E8C400D55958 /* get-bind.c in Sources */,
@@ -838,6 +863,29 @@
 				02E754651274E8C400D55958 /* socks.c in Sources */,
 				02E754661274E8C400D55958 /* util.c in Sources */,
 				02E754911274EC3000D55958 /* main.c in Sources */,
+				024A6DD41373D2B8007E5D32 /* atom.c in Sources */,
+				0216CF66137468A900BAFB37 /* event.c in Sources */,
+				024A6DD51373D2B8007E5D32 /* auth.c in Sources */,
+				024A6DD61373D2B8007E5D32 /* chunk.c in Sources */,
+				024A6DD71373D2B8007E5D32 /* client.c in Sources */,
+				024A6DD81373D2B8007E5D32 /* config.c in Sources */,
+				024A6DD91373D2B8007E5D32 /* diskcache.c in Sources */,
+				024A6DDA1373D2B8007E5D32 /* dns.c in Sources */,
+				024A6DDC1373D2B8007E5D32 /* forbidden.c in Sources */,
+				024A6DDD1373D2B8007E5D32 /* fts_compat.c in Sources */,
+				024A6DDE1373D2B8007E5D32 /* http_parse.c in Sources */,
+				024A6DDF1373D2B8007E5D32 /* http.c in Sources */,
+				024A6DE01373D2B8007E5D32 /* io.c in Sources */,
+				024A6DE11373D2B8007E5D32 /* local.c in Sources */,
+				024A6DE21373D2B8007E5D32 /* log.c in Sources */,
+				024A6DE51373D2B8007E5D32 /* md5import.c in Sources */,
+				024A6DE61373D2B8007E5D32 /* mingw.c in Sources */,
+				024A6DE71373D2B8007E5D32 /* object.c in Sources */,
+				024A6DE81373D2B8007E5D32 /* parse_time.c in Sources */,
+				024A6DE91373D2B8007E5D32 /* server.c in Sources */,
+				024A6DEA1373D2B8007E5D32 /* socks.c in Sources */,
+				024A6DEB1373D2B8007E5D32 /* tunnel.c in Sources */,
+				024A6DEC1373D2B8007E5D32 /* util.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1091,7 +1139,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iProxy/Sources/Prefix.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = "IPROXY=1";
 				INFOPLIST_FILE = iProxy/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1.3;
 				OTHER_LDFLAGS = "";
@@ -1113,7 +1161,7 @@
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iProxy/Sources/Prefix.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = "IPROXY=1";
 				INFOPLIST_FILE = iProxy/Resources/Info.plist;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = iProxy;
@@ -1148,7 +1196,7 @@
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iProxy/Sources/Prefix.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = "IPROXY=1";
 				INFOPLIST_FILE = iProxy/Resources/Info.plist;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = iProxy;
@@ -1206,6 +1254,7 @@
 				027E0825136C856D00124AD2 /* Ad-hoc */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		02E754DB12752A7400D55958 /* Build configuration list for PBXNativeTarget "srelay (useless, just to test)" */ = {
 			isa = XCConfigurationList;
