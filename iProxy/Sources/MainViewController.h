@@ -39,6 +39,11 @@
 	IBOutlet UILabel *_totalDownload;
 	IBOutlet UILabel *_bandwidthUpload;
 	IBOutlet UILabel *_bandwidthDownload;
+    
+    BOOL _applicationActive;
+    BOOL _windowVisible;
+    BOOL _viewVisible;
+    NSTimer *_updateTransferTimer;
 }
 
 - (IBAction) switchedHttp:(id)sender;

@@ -57,24 +57,83 @@
 	UInt64 oldIn = 0;
 	UInt64 oldOut = 0;
 	
+    _updateTransferTimer = nil;
     [[SocksProxyServer sharedServer] getBandwidthStatWithUpload:&uploadBandwidth download:&downloadBandwidth];
     [[SocksProxyServer sharedServer] getTotalBytesWithUpload:&oldOut download:&oldIn];
     [_totalUpload setText:[NSString stringWithFormat:@"%0.2f kB", ((float)oldOut / 1024.0f)]];
     [_totalDownload setText:[NSString stringWithFormat:@"%0.2f kB", ((float)oldIn / 1024.0f)]];
     [_bandwidthUpload setText:[NSString stringWithFormat:@"%0.2f kB/s", (uploadBandwidth / 1024.0f)]];
     [_bandwidthDownload setText:[NSString stringWithFormat:@"%0.2f kB/s", (downloadBandwidth / 1024.0f)]];
-	if ((uploadBandwidth != 0) || (downloadBandwidth != 0)) {
-		[NSTimer scheduledTimerWithTimeInterval:OFTEN_UPDATE_PERIOD target:self selector:@selector(updateTransfer) userInfo:nil repeats:NO];
-	} else {
-		[NSTimer scheduledTimerWithTimeInterval:NOT_SO_OFTEN_UPDATE_PERIOD target:self selector:@selector(updateTransfer) userInfo:nil repeats:NO];	
-	}
+    if (_applicationActive && _windowVisible && _viewVisible) {
+        if ((uploadBandwidth != 0) || (downloadBandwidth != 0)) {
+            _updateTransferTimer = [NSTimer scheduledTimerWithTimeInterval:OFTEN_UPDATE_PERIOD target:self selector:@selector(updateTransfer) userInfo:nil repeats:NO];
+        } else {
+            _updateTransferTimer = [NSTimer scheduledTimerWithTimeInterval:NOT_SO_OFTEN_UPDATE_PERIOD target:self selector:@selector(updateTransfer) userInfo:nil repeats:NO];	
+        }
+    }
+//    NSLog(@"application: %@ window: %@ view: %@", _applicationActive?@"active":@"not active", _windowVisible?@"visible":@"hidden", _viewVisible?@"visible":@"hidden");
 }
 
-- (void) viewWillAppear:(BOOL)animated
+- (void)viewDidLoad
+{
+    _applicationActive = YES;
+    _windowVisible = YES;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidBecomeVisible:) name:UIWindowDidBecomeVisibleNotification object:self.view.window];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidBecomeHidden:) name:UIWindowDidBecomeHiddenNotification object:self.view.window];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:[UIApplication sharedApplication]];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:[UIApplication sharedApplication]];
+}
+
+- (void)viewDidUnload
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)applicationWillResignActive:(NSNotification *)notification
+{
+    if (_applicationActive) {
+        _applicationActive = NO;
+        [_updateTransferTimer invalidate];
+        _updateTransferTimer = nil;
+    }
+//    NSLog(@"%@ application: %@ window: %@ view: %@", NSStringFromSelector(_cmd), _applicationActive?@"active":@"not active", _windowVisible?@"visible":@"hidden", _viewVisible?@"visible":@"hidden");
+}
+
+- (void)applicationDidBecomeActive:(NSNotification *)notification
+{
+    if (!_applicationActive) {
+        _applicationActive = YES;
+        if (_windowVisible && _viewVisible && !_updateTransferTimer) {
+            [self updateTransfer];
+        }
+    }
+//    NSLog(@"%@ application: %@ window: %@ view: %@", NSStringFromSelector(_cmd), _applicationActive?@"active":@"not active", _windowVisible?@"visible":@"hidden", _viewVisible?@"visible":@"hidden");
+}
+
+- (void)windowDidBecomeVisible:(NSNotification *)notification
+{
+    if (!_windowVisible) {
+        _windowVisible = YES;
+        if (_applicationActive && _viewVisible && !_updateTransferTimer) {
+            [self updateTransfer];
+        }
+    }
+//    NSLog(@"%@ application: %@ window: %@ view: %@", NSStringFromSelector(_cmd), _applicationActive?@"active":@"not active", _windowVisible?@"visible":@"hidden", _viewVisible?@"visible":@"hidden");
+}
+
+- (void)windowDidBecomeHidden:(NSNotification *)notification
+{
+    if (_windowVisible) {
+        _windowVisible = NO;
+        [_updateTransferTimer invalidate];
+        _updateTransferTimer = nil;
+    }
+//    NSLog(@"%@ application: %@ window: %@ view: %@", NSStringFromSelector(_cmd), _applicationActive?@"active":@"not active", _windowVisible?@"visible":@"hidden", _viewVisible?@"visible":@"hidden");
+}
+
+- (void)viewWillAppear:(BOOL)animated
 {
 	NSString *hostName;
-	
-	[NSTimer scheduledTimerWithTimeInterval:OFTEN_UPDATE_PERIOD target:self selector:@selector(updateTransfer) userInfo:nil repeats:NO];
 	
 #if HTTP_PROXY_ENABLED
     httpSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey: KEY_HTTP_ON];
@@ -111,8 +170,21 @@
     [self updateSocksProxy];
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    _viewVisible = YES;
+    if (_applicationActive && _windowVisible && !_updateTransferTimer) {
+        [self updateTransfer];
+    }
+//    NSLog(@"%@ application: %@ window: %@ view: %@", NSStringFromSelector(_cmd), _applicationActive?@"active":@"not active", _windowVisible?@"visible":@"hidden", _viewVisible?@"visible":@"hidden");
+}
+
 - (void)viewDidDisappear:(BOOL)animated
 {
+    _viewVisible = NO;
+    [_updateTransferTimer invalidate];
+    _updateTransferTimer = nil;
+//    NSLog(@"%@ application: %@ window: %@ view: %@", NSStringFromSelector(_cmd), _applicationActive?@"active":@"not active", _windowVisible?@"visible":@"hidden", _viewVisible?@"visible":@"hidden");
 }
 
 - (void)scheduleSocksProxyInfoTimer
