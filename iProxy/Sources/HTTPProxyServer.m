@@ -106,7 +106,6 @@ void polipoExit()
 
 FdEventHandlerPtr registerFdEventHelper(FdEventHandlerPtr event)
 {
-    if(event->poll_events
     return event;
 }
 
