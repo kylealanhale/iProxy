@@ -15,67 +15,103 @@ int daemonise = 0;
 AtomPtr configFile = NULL;
 AtomPtr pidFile = NULL;
 
-@interface PLPTimeEvent : NSObject
+@interface PLPEvent : NSObject
 {
-    TimeEventHandlerPtr _timeEventHandlerPtr;
-    int _seconds;
-    NSTimer *_timer;
+    void *_event;
 }
-@property (readonly, nonatomic) TimeEventHandlerPtr timeEventHandlerPtr;
 @end
 
-@implementation PLPTimeEvent
+@implementation PLPEvent
 
-@synthesize timeEventHandlerPtr = _timeEventHandlerPtr;
-
-+ (PLPTimeEvent *)timeEventForTimeEventHandlerPtr:(TimeEventHandlerPtr)ptr
++ (id)eventWithHandlerPtr:(void *)event
 {
-    return [_plpEvent objectForKey:[NSValue valueWithPointer:ptr]];
+    return [_plpEvent objectForKey:[NSValue valueWithPointer:event]];
 }
 
-- (id)initWithSeconds:(int)seconds handler:(void *)handler dataSize:(int)dataSize data:(void *)data
+- (id)initWithEvent:(void *)event
 {
     self = [self init];
     if (self) {
-        _timeEventHandlerPtr = malloc(sizeof(*_timeEventHandlerPtr) - 1 + dataSize);
-        _timeEventHandlerPtr->next = NULL;
-        _timeEventHandlerPtr->previous = NULL;
-        _timeEventHandlerPtr->handler = handler;
-        _seconds = seconds;
-        if(dataSize > 0) {
-            memcpy(_timeEventHandlerPtr->data, data, dataSize);
-        }
-        [_plpEvent setObject:self forKey:[NSValue valueWithPointer:_timeEventHandlerPtr]];
+        _event = event;
     }
     return self;
 }
 
 - (void)dealloc
 {
-    free(_timeEventHandlerPtr);
-    [_timer release];
+    free(_event);
     [super dealloc];
 }
 
-- (void)remove
+- (void)registerEvent
 {
-    [_plpEvent removeObjectForKey:[NSValue valueWithPointer:_timeEventHandlerPtr]];
+    [_plpEvent setObject:self forKey:[NSValue valueWithPointer:_event]];
+}
+
+- (void)unregisterEvent
+{
+    [_plpEvent removeObjectForKey:[NSValue valueWithPointer:_event]];
+}
+
+@end
+
+@interface PLPTimeEvent : PLPEvent
+{
+    int _seconds;
+    NSTimer *_timer;
+}
+@property (readonly, nonatomic) TimeEventHandlerPtr timeEventHandlerPtr;
+- (void)schedule;
+- (void)unschedule;
+@end
+
+@implementation PLPTimeEvent
+
+- (id)initWithSeconds:(int)seconds handler:(void *)handler dataSize:(int)dataSize data:(void *)data
+{
+    self = [self init];
+    if (self) {
+        _event = malloc(sizeof(TimeEventHandlerRec) - 1 + dataSize);
+        self.timeEventHandlerPtr->next = NULL;
+        self.timeEventHandlerPtr->previous = NULL;
+        self.timeEventHandlerPtr->handler = handler;
+        _seconds = seconds;
+        if(dataSize > 0) {
+            memcpy(self.timeEventHandlerPtr->data, data, dataSize);
+        }
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [self unschedule];
+    [super dealloc];
+}
+
+- (TimeEventHandlerPtr)timeEventHandlerPtr
+{
+    return _event;
 }
 
 - (void)schedule
 {
     _timer = [[NSTimer scheduledTimerWithTimeInterval:_seconds target:self selector:@selector(timerTriggered:) userInfo:nil repeats:NO] retain];
+    [self registerEvent];
 }
 
-- (void)cancel
+- (void)unschedule
 {
     [_timer invalidate];
+    [_timer release];
+    _timer = nil;
+    [self unregisterEvent];
 }
 
 - (void)timerTriggered:(id)unused
 {
-    _timeEventHandlerPtr->handler(_timeEventHandlerPtr);
-    [self remove];
+    self.timeEventHandlerPtr->handler(self.timeEventHandlerPtr);
+    [self unregisterEvent];
 }
 
 @end
@@ -83,20 +119,21 @@ AtomPtr pidFile = NULL;
 TimeEventHandlerPtr scheduleTimeEvent(int seconds, int (*handler)(TimeEventHandlerPtr), int dsize, void *data)
 {
     PLPTimeEvent *timeEvent;
+    TimeEventHandlerPtr result;
     
     timeEvent = [[PLPTimeEvent alloc] initWithSeconds:seconds handler:handler dataSize:dsize data:data];
     [timeEvent schedule];
-    [timeEvent autorelease];
-    return timeEvent.timeEventHandlerPtr;
+    result = timeEvent.timeEventHandlerPtr;
+    [timeEvent release];
+    return result;
 }
 
 void cancelTimeEvent(TimeEventHandlerPtr event)
 {
     PLPTimeEvent *timeEvent;
     
-    timeEvent = [PLPTimeEvent timeEventForTimeEventHandlerPtr:event];
-    [timeEvent cancel];
-    [timeEvent remove];
+    timeEvent = [PLPTimeEvent eventWithHandlerPtr:event];
+    [timeEvent unschedule];
 }
 
 void polipoExit()
@@ -104,9 +141,133 @@ void polipoExit()
     assert("test");
 }
 
+@interface PLPFDEvent : PLPEvent
+{
+    CFReadStreamRef _readStream;
+    CFWriteStreamRef _writeStream;
+}
+@property(readonly, nonatomic) FdEventHandlerPtr fdEvent;
+@end
+
+@implementation PLPFDEvent
+
+- (id)initWithFDEvent:(FdEventHandlerPtr)event
+{
+    self = [self init];
+    if (self) {
+        [self initWithEvent:event];
+    }
+    return self;
+}
+
+- (FdEventHandlerPtr)fdEvent
+{
+    return _event;
+}
+
+- (CFOptionFlags)streamEvent
+{
+    CFOptionFlags result = 0;
+    
+    if (self.fdEvent->poll_events & POLLIN) {
+        result |= kCFStreamEventHasBytesAvailable;
+    }
+    if (self.fdEvent->poll_events & POLLOUT) {
+        result |= kCFStreamEventCanAcceptBytes;
+    }
+    if (self.fdEvent->poll_events & POLLERR) {
+        result |= kCFStreamEventErrorOccurred;
+    }
+    if (self.fdEvent->poll_events & POLLHUP) {
+        result |= kCFStreamEventEndEncountered;
+    }
+    if (self.fdEvent->poll_events & POLLNVAL) {
+        result |= kCFStreamEventEndEncountered;
+    }
+    return result;
+}
+
+- (void)readStreamCallback
+{
+    
+}
+
+- (void)writeStreamCallback
+{
+    
+}
+
+static void PLPFDEventReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType type, void *clientCallBackInfo)
+{
+    [(id)clientCallBackInfo readStreamCallback];
+}
+
+static void PLPFDEventWriteStreamClientCallBack(CFWriteStreamRef stream, CFStreamEventType type, void *clientCallBackInfo)
+{
+    [(id)clientCallBackInfo writeStreamCallback];
+}
+
+- (void)registerEvent
+{
+    CFReadStreamRef *readStreamPtr = NULL;
+    CFWriteStreamRef *writeStreamPtr = NULL;
+    CFStreamClientContext context;
+    
+    context.version = 0;
+    context.info = self;
+    context.retain = NULL;
+    context.release = NULL;
+    context.copyDescription = NULL;
+    if (self.fdEvent->poll_events & POLLIN) {
+        readStreamPtr = &_readStream;
+    }
+    if (self.fdEvent->poll_events & POLLOUT) {
+        writeStreamPtr = &_writeStream;
+    }
+    CFStreamCreatePairWithSocket(NULL, self.fdEvent->fd, readStreamPtr, writeStreamPtr);
+    
+    if (_readStream) {
+        CFReadStreamSetClient(_readStream, [self streamEvent], PLPFDEventReadStreamClientCallBack, &context);
+    }
+    if (_writeStream) {
+        CFWriteStreamSetClient(_writeStream, [self streamEvent], PLPFDEventWriteStreamClientCallBack, &context);
+    }
+    
+    CFReadStreamScheduleWithRunLoop(_readStream, (CFRunLoopRef)[NSRunLoop currentRunLoop], (CFStringRef)[[NSRunLoop currentRunLoop] currentMode]);
+    CFWriteStreamScheduleWithRunLoop(_writeStream, (CFRunLoopRef)[NSRunLoop currentRunLoop], (CFStringRef)[[NSRunLoop currentRunLoop] currentMode]);
+    
+    CFReadStreamUnscheduleFromRunLoop(_readStream, (CFRunLoopRef)[NSRunLoop currentRunLoop], (CFStringRef)[[NSRunLoop currentRunLoop] currentMode]);
+    CFWriteStreamUnscheduleFromRunLoop(_writeStream, (CFRunLoopRef)[NSRunLoop currentRunLoop], (CFStringRef)[[NSRunLoop currentRunLoop] currentMode]);
+}
+
+- (void)unregisterEvent
+{
+    
+    [super unregisterEvent];
+}
+
+@end
+
 FdEventHandlerPtr registerFdEventHelper(FdEventHandlerPtr event)
 {
+    PLPFDEvent *fdEvent;
+    
+    fdEvent = [[PLPFDEvent alloc] initWithFDEvent:event];
+    [fdEvent registerEvent];
     return event;
+}
+
+void unregisterFdEventI(FdEventHandlerPtr event, int i)
+{
+    PLPFDEvent *fdEvent;
+    
+    fdEvent = [PLPFDEvent eventWithHandlerPtr:event];
+    [fdEvent unregisterEvent];
+}
+
+void unregisterFdEvent(FdEventHandlerPtr event)
+{
+    unregisterFdEventI(event, 0);
 }
 
 
