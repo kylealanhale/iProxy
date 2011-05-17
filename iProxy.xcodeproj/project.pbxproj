@@ -8,7 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		0200DA4F134248440049713F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0200DA4E134248440049713F /* Security.framework */; };
+		0209CEE9137C8CD600840FA1 /* HTTPProxyServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 02501CC61266680900CE5CA9 /* HTTPProxyServer.m */; };
 		020BC9CE124ADBD000E2E1F2 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 020BC9CD124ADBD000E2E1F2 /* MobileCoreServices.framework */; };
+		0224843F1381DFBC00B0BAFE /* HTTPProxyRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224843E1381DFBC00B0BAFE /* HTTPProxyRequest.m */; };
 		02326F16133B374000B90EB7 /* PMSSSHFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 02326F15133B374000B90EB7 /* PMSSSHFileController.m */; };
 		02326F25133C66CD00B90EB7 /* PMSPreferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02326F24133C66CD00B90EB7 /* PMSPreferences.xib */; };
 		02326F28133C676B00B90EB7 /* PMSPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 02326F27133C676A00B90EB7 /* PMSPreferences.m */; };
@@ -78,6 +80,8 @@
 		0200DA4E134248440049713F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		020BC9CD124ADBD000E2E1F2 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		0220C6B81328C9ED00962EF9 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
+		0224843D1381DFBC00B0BAFE /* HTTPProxyRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPProxyRequest.h; sourceTree = "<group>"; };
+		0224843E1381DFBC00B0BAFE /* HTTPProxyRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPProxyRequest.m; sourceTree = "<group>"; };
 		02326EF0133AC16E00B90EB7 /* SecurityFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityFoundation.framework; path = /System/Library/Frameworks/SecurityFoundation.framework; sourceTree = "<absolute>"; };
 		02326EF1133AC16E00B90EB7 /* SecurityInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityInterface.framework; path = /System/Library/Frameworks/SecurityInterface.framework; sourceTree = "<absolute>"; };
 		02326F14133B374000B90EB7 /* PMSSSHFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMSSSHFileController.h; sourceTree = "<group>"; };
@@ -401,6 +405,8 @@
 				02501CC3126667EF00CE5CA9 /* GenericServer.m */,
 				02501CC51266680900CE5CA9 /* HTTPProxyServer.h */,
 				02501CC61266680900CE5CA9 /* HTTPProxyServer.m */,
+				0224843D1381DFBC00B0BAFE /* HTTPProxyRequest.h */,
+				0224843E1381DFBC00B0BAFE /* HTTPProxyRequest.m */,
 				02501CC81266681800CE5CA9 /* SocksProxyServer.h */,
 				02501CC91266681800CE5CA9 /* SocksProxyServer.m */,
 			);
@@ -686,6 +692,7 @@
 				9D83D36711B9AF5C00A9922F /* PacFileResponse.m in Sources */,
 				9D83D36811B9AF5C00A9922F /* HTTPResponseHandler.m in Sources */,
 				9D83D36911B9AF5C00A9922F /* HTTPServer.m in Sources */,
+				0209CEE9137C8CD600840FA1 /* HTTPProxyServer.m in Sources */,
 				9DF66D6712482B170012D66D /* UIDeviceAdditions.m in Sources */,
 				9DF66DB0124830AF0012D66D /* UIViewAdditions.m in Sources */,
 				9DDA4C2E124E460D00BF30F3 /* InfoViewController.m in Sources */,
@@ -701,6 +708,7 @@
 				02E754651274E8C400D55958 /* socks.c in Sources */,
 				02E754661274E8C400D55958 /* util.c in Sources */,
 				02E754911274EC3000D55958 /* main.c in Sources */,
+				0224843F1381DFBC00B0BAFE /* HTTPProxyRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

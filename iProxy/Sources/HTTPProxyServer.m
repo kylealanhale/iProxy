@@ -19,6 +19,25 @@ void polipo_exit();
     return @"/http.pac";
 }
 
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        _waitingForCommand = [[NSMutableArray alloc] init];
+        _pendingData = [[NSMutableDictionary alloc] init];
+        _incomingHeaderRequest = [[NSMutableDictionary alloc] init];
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [_waitingForCommand release];
+    [_pendingData release];
+    [_incomingHeaderRequest release];
+    [super dealloc];
+}
+
 - (NSString *)serviceDomain
 {
 	return HTTP_PROXY_DOMAIN;
@@ -34,35 +53,112 @@ void polipo_exit();
     return [NSString stringWithFormat:@"function FindProxyForURL(url, host) { return \"PROXY %@:%d\"; }", ip, self.servicePort];
 }
 
-- (BOOL)_starting
+- (void)_monitorFileHandle:(NSFileHandle *)fileHandle withData:(NSData *)data
 {
-    [NSThread detachNewThreadSelector:@selector(proxyHttpRun) toTarget:self withObject:nil];
-    return YES;
-}
-
-- (void)_stopping
-{
-    polipo_exit();
-}
-
-- (void) proxyHttpRun
-{
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    CFHTTPMessageRef message;
     
-    NSString *configuration = [[NSBundle mainBundle] pathForResource:@"polipo" ofType:@"config"];
-	[self performSelectorOnMainThread:@selector(_started) withObject:nil waitUntilDone:YES];
-    char *args[5] = {
-        "test",
-        "-c",
-        (char*)[configuration UTF8String],
-        "proxyAddress=0.0.0.0",
-        (char*)[[NSString stringWithFormat:@"proxyPort=%d", HTTP_PROXY_PORT] UTF8String],
-    };
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_receiveIncomingHeaderNotification:) name:NSFileHandleDataAvailableNotification object:fileHandle];
+    message = CFHTTPMessageCreateEmpty(kCFAllocatorDefault, TRUE);
+    if (data) {
+        CFHTTPMessageAppendBytes(message, [data bytes], [data length]);
+    }
+    [_incomingHeaderRequest setObject:(id)message forKey:fileHandle];
+    CFRelease(message);
+}
 
-    polipo_main(5, args);
+- (void)didOpenConnection:(NSDictionary *)info
+{
+    if(info) {
+        [self _monitorFileHandle:[info objectForKey:@"handle"] withData:nil];
+        [[info objectForKey:@"handle"] waitForDataInBackgroundAndNotify];
+    }
+}
+
+- (void)didCloseConnection:(NSDictionary *)info
+{
+}
+
+- (void)_stopReceivingForFileHandle:(NSFileHandle *)incomingFileHandle close:(BOOL)closeFileHandle
+{
+	if (closeFileHandle) {
+		[incomingFileHandle closeFile];
+	}
 	
-    [self performSelectorOnMainThread:@selector(_stopped) withObject:nil waitUntilDone:NO];
-    [pool drain];
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleDataAvailableNotification object:incomingFileHandle];
+	[_incomingHeaderRequest removeObjectForKey:incomingFileHandle];
+}
+
+- (void)_processProxyRequest:(CFHTTPMessageRef)request fileHandle:(NSFileHandle *)fileHandle
+{
+    CFDataRef data;
+    CFStringRef stringContentLength;
+    int length;
+    
+    stringContentLength = CFHTTPMessageCopyHeaderFieldValue(request, (CFStringRef)@"Content-Length");
+    data = CFHTTPMessageCopyBody(request);
+    length = [(NSString *)stringContentLength intValue];
+    if (length <= [(NSData *)data length]) {
+        CFHTTPMessageRef requestForServer;
+        CFURLRef url;
+        CFStringRef method;
+        CFStringRef hostName;
+        
+        url = CFHTTPMessageCopyRequestURL(request);
+        hostName = CFURLCopyHostName(url);
+        method = CFHTTPMessageCopyRequestMethod(request);
+        requestForServer = CFHTTPMessageCreateRequest(NULL, method, url, kCFHTTPVersion1_1);
+        if (length < [(NSData *)data length]) {
+            NSData *otherData;
+            NSData *realData;
+            
+            realData = [[NSData alloc] initWithBytes:[(NSData *)data bytes] length:length];
+            otherData = [[NSData alloc] initWithBytes:[(NSData *)data bytes] + length length:[(NSData *)data length] - length];
+            [self _monitorFileHandle:fileHandle withData:otherData];
+            [otherData release];
+            CFHTTPMessageSetBody(requestForServer, (CFDataRef)realData);
+            [realData release];
+        } else {
+            [self _monitorFileHandle:fileHandle withData:nil];
+            if (data) {
+                CFHTTPMessageSetBody(requestForServer, data);
+            }
+        }
+        CFRelease(url);
+        CFRelease(method);
+        CFRelease(hostName);
+    }
+    CFRelease(data);
+    CFRelease(stringContentLength);
+}
+
+- (void)_receiveIncomingHeaderNotification:(NSNotification *)notification
+{
+	NSFileHandle *incomingFileHandle = [notification object];
+	NSData *data = [incomingFileHandle availableData];
+	
+	if ([data length] == 0) {
+		[self _stopReceivingForFileHandle:incomingFileHandle close:YES];
+		return;
+	}
+    
+    NSLog(@"%@", [[NSString alloc] initWithBytes:[data bytes] length:[data length] encoding:NSUTF8StringEncoding]);
+	CFHTTPMessageRef incomingRequest = (CFHTTPMessageRef)[_incomingHeaderRequest objectForKey:incomingFileHandle];
+	if (!incomingRequest) {
+		[self _stopReceivingForFileHandle:incomingFileHandle close:YES];
+        return;
+	}
+	
+	if (!CFHTTPMessageAppendBytes(incomingRequest, [data bytes], [data length])) {
+		[self _stopReceivingForFileHandle:incomingFileHandle close:YES];
+		return;
+	}
+    
+    NSLog(@"read %d", [data length]);
+	if(CFHTTPMessageIsHeaderComplete(incomingRequest)) {
+        [self _processProxyRequest:incomingRequest fileHandle:incomingFileHandle];
+	}
+    
+	[incomingFileHandle waitForDataInBackgroundAndNotify];
 }
 
 @end

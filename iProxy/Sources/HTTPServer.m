@@ -113,7 +113,7 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
 	NSData *data = [incomingFileHandle availableData];
 	
 	if ([data length] == 0) {
-		[self _stopReceivingForFileHandle:incomingFileHandle close:NO];
+		[self _stopReceivingForFileHandle:incomingFileHandle close:YES];
 		return;
 	}
 

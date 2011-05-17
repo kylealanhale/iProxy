@@ -19,9 +19,11 @@
 #import "HTTPServer.h"
 #import "PacFileResponse.h"
 #import "SocksProxyServer.h"
-//#import "HTTPProxyServer.h"
 #import "UIViewAdditions.h"
 #import "UIColorAdditions.h"
+//#if HTTP_PROXY_ENABLED
+#import "HTTPProxyServer.h"
+//#endif
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <QuartzCore/QuartzCore.h>
 
@@ -232,6 +234,7 @@
 {
     if (socksSwitch.on) {
         [(GenericServer *)[SocksProxyServer sharedServer] start];
+        [(GenericServer *)[HTTPProxyServer sharedServer] start];
 
         socksAddressLabel.alpha = 1.0;
         socksPacLabel.alpha = 1.0;

@@ -8,8 +8,11 @@
 
 #import "GenericServer.h"
 
-@interface HTTPProxyServer : GenericServer <NSNetServiceDelegate, ProxyServer>
+@interface HTTPProxyServer : SocketServer <NSNetServiceDelegate, ProxyServer>
 {
+    NSMutableArray *_waitingForCommand;
+    NSMutableDictionary *_pendingData;
+    NSMutableDictionary *_incomingHeaderRequest;
 }
 
 @end
