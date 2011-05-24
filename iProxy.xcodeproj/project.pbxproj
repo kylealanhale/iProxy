@@ -28,6 +28,7 @@
 		0275613E124AD4AD00B64593 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0275613D124AD4AD00B64593 /* MessageUI.framework */; };
 		02774268128B591700064370 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02774267128B591700064370 /* SystemConfiguration.framework */; };
 		0277431C128B857600064370 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0277431B128B857600064370 /* AudioToolbox.framework */; };
+		02CCDE201387033800B25E33 /* HTTPProxyRequestToServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 02CCDE1F1387033800B25E33 /* HTTPProxyRequestToServer.m */; };
 		02E7545F1274E8C400D55958 /* auth-pwd.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754551274E8C400D55958 /* auth-pwd.c */; };
 		02E754601274E8C400D55958 /* get-bind.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754561274E8C400D55958 /* get-bind.c */; };
 		02E754611274E8C400D55958 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 02E754571274E8C400D55958 /* init.c */; };
@@ -108,6 +109,8 @@
 		0275613D124AD4AD00B64593 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		02774267128B591700064370 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		0277431B128B857600064370 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		02CCDE1E1387033800B25E33 /* HTTPProxyRequestToServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPProxyRequestToServer.h; sourceTree = "<group>"; };
+		02CCDE1F1387033800B25E33 /* HTTPProxyRequestToServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPProxyRequestToServer.m; sourceTree = "<group>"; };
 		02E754551274E8C400D55958 /* auth-pwd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "auth-pwd.c"; sourceTree = "<group>"; };
 		02E754561274E8C400D55958 /* get-bind.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "get-bind.c"; sourceTree = "<group>"; };
 		02E754571274E8C400D55958 /* init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = init.c; sourceTree = "<group>"; };
@@ -407,6 +410,8 @@
 				02501CC61266680900CE5CA9 /* HTTPProxyServer.m */,
 				0224843D1381DFBC00B0BAFE /* HTTPProxyRequest.h */,
 				0224843E1381DFBC00B0BAFE /* HTTPProxyRequest.m */,
+				02CCDE1E1387033800B25E33 /* HTTPProxyRequestToServer.h */,
+				02CCDE1F1387033800B25E33 /* HTTPProxyRequestToServer.m */,
 				02501CC81266681800CE5CA9 /* SocksProxyServer.h */,
 				02501CC91266681800CE5CA9 /* SocksProxyServer.m */,
 			);
@@ -709,6 +714,7 @@
 				02E754661274E8C400D55958 /* util.c in Sources */,
 				02E754911274EC3000D55958 /* main.c in Sources */,
 				0224843F1381DFBC00B0BAFE /* HTTPProxyRequest.m in Sources */,
+				02CCDE201387033800B25E33 /* HTTPProxyRequestToServer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

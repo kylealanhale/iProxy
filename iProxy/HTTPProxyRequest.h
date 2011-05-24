@@ -9,15 +9,20 @@
 #import <Foundation/Foundation.h>
 
 @class HTTPProxyServer;
+@class HTTPProxyRequestToServer;
 
-@interface HTTPProxyRequest : NSObject
+@interface HTTPProxyRequest : NSObject<NSStreamDelegate>
 {
     NSFileHandle *_incomingFileHandle;
-    CFHTTPMessageRef _incomingMessage;
     HTTPProxyServer *_httpProxyServer;
     NSMutableData *_incomingData;
+    HTTPProxyRequestToServer *_incomingRequest;
+    
+    NSMutableArray *_requests;
 }
 
 - (id)initWithFileHandle:(NSFileHandle *)fileHandle httpProxyServer:(HTTPProxyServer *)server;
+- (void)sendDataToClient:(NSData *)data fromRequest:(HTTPProxyRequestToServer *)request;
+- (void)serverRequestClosed:(HTTPProxyRequestToServer *)serverRequest;
 
 @end

@@ -8,6 +8,7 @@
 
 #import "HTTPProxyServer.h"
 #import "SharedHeader.h"
+#import "HTTPProxyRequest.h"
 
 int polipo_main(int argc, char **argv);
 void polipo_exit();
@@ -23,8 +24,6 @@ void polipo_exit();
 {
     self = [super init];
     if (self) {
-        _waitingForCommand = [[NSMutableArray alloc] init];
-        _pendingData = [[NSMutableDictionary alloc] init];
         _incomingHeaderRequest = [[NSMutableDictionary alloc] init];
     }
     return self;
@@ -32,8 +31,6 @@ void polipo_exit();
 
 - (void)dealloc
 {
-    [_waitingForCommand release];
-    [_pendingData release];
     [_incomingHeaderRequest release];
     [super dealloc];
 }
@@ -69,8 +66,9 @@ void polipo_exit();
 - (void)didOpenConnection:(NSDictionary *)info
 {
     if(info) {
-        [self _monitorFileHandle:[info objectForKey:@"handle"] withData:nil];
-        [[info objectForKey:@"handle"] waitForDataInBackgroundAndNotify];
+        HTTPProxyRequest *request;
+        
+        request = [[HTTPProxyRequest alloc] initWithFileHandle:[info objectForKey:@"handle"] httpProxyServer:self];
     }
 }
 
@@ -159,6 +157,11 @@ void polipo_exit();
 	}
     
 	[incomingFileHandle waitForDataInBackgroundAndNotify];
+}
+
+- (void)closingRequest:(HTTPProxyRequest *)request fileHandle:(NSFileHandle *)fileHandle
+{
+    [_incomingHeaderRequest removeObjectForKey:fileHandle];
 }
 
 @end

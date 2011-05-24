@@ -8,6 +8,7 @@
 
 #import "HTTPProxyRequest.h"
 #import "HTTPProxyServer.h"
+#import "HTTPProxyRequestToServer.h"
 
 
 @implementation HTTPProxyRequest
@@ -18,6 +19,7 @@
     if (self) {
         _httpProxyServer = server;
         _incomingFileHandle = [fileHandle retain];
+        _requests = [[NSMutableArray alloc] init];
         [_incomingFileHandle waitForDataInBackgroundAndNotify];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_receiveIncomingHeaderNotification:) name:NSFileHandleDataAvailableNotification object:_incomingFileHandle];
     }
@@ -28,86 +30,86 @@
 - (void)dealloc
 {
     [_incomingFileHandle release];
-    CFRelease(_incomingMessage);
+    [_incomingData release];
+    [_incomingRequest release];
+    [_requests release];
     [super dealloc];
 }
 
 - (void)_closing
 {
-    [_httpProxyServer closingRequest:self];
+    [_httpProxyServer closingRequest:self fileHandle:_incomingFileHandle];
 }
 
-- (void)_createIncomingMessageWithData:(NSData *)data;
+- (void)_createIncomingRequestWithData:(NSData *)data;
 {
-    _incomingMessage = CFHTTPMessageCreateEmpty(kCFAllocatorDefault, TRUE);
-}
-
-- (void)_processIncomingMessage
-{
-    CFDataRef data;
-    CFStringRef stringContentLength;
-    int length;
-    
-    stringContentLength = CFHTTPMessageCopyHeaderFieldValue(_incomingMessage, (CFStringRef)@"Content-Length");
-    data = CFHTTPMessageCopyBody(_incomingMessage);
-    length = [(NSString *)stringContentLength intValue];
-    if (length <= [(NSData *)data length]) {
-        CFHTTPMessageRef requestForServer;
-        CFURLRef url;
-        CFStringRef method;
-        CFStringRef hostName;
-        
-        url = CFHTTPMessageCopyRequestURL(_incomingMessage);
-        hostName = CFURLCopyHostName(url);
-        method = CFHTTPMessageCopyRequestMethod(_incomingMessage);
-        requestForServer = CFHTTPMessageCreateRequest(NULL, method, url, kCFHTTPVersion1_1);
-        if (length < [(NSData *)data length]) {
-            NSData *otherData;
-            NSData *realData;
-            
-            realData = [[NSData alloc] initWithBytes:[(NSData *)data bytes] length:length];
-            otherData = [[NSData alloc] initWithBytes:[(NSData *)data bytes] + length length:[(NSData *)data length] - length];
-            [self _createIncomingMessageWithData:otherData];
-            CFHTTPMessageSetBody(requestForServer, (CFDataRef)realData);
-            [otherData release];
-            [realData release];
-        } else {
-            [self _createIncomingMessageWithData:nil];
-            if (data) {
-                CFHTTPMessageSetBody(requestForServer, data);
-            }
-        }
-        CFRelease(url);
-        CFRelease(method);
-        CFRelease(hostName);
+    _incomingData = [[NSMutableData alloc] initWithData:data];
+    _incomingRequest = [[HTTPProxyRequestToServer alloc] initWithHTTProxyRequest:self];
+    [_requests addObject:_incomingRequest];
+    if ([_requests count] > 0) {
+        [[_requests objectAtIndex:0] startReceivingData];
     }
-    CFRelease(data);
-    CFRelease(stringContentLength);
 }
 
 - (void)_receiveIncomingHeaderNotification:(NSNotification *)notification
 {
 	NSData *data = [_incomingFileHandle availableData];
+    NSUInteger dataUsed;
 	
 	if ([data length] == 0) {
         [self _closing];
 		return;
 	}
     
-	if (!_incomingMessage) {
-        [self _createIncomingMessageWithData:nil];
+	if (!_incomingRequest) {
+        [self _createIncomingRequestWithData:nil];
 	}
-	
-	if (!CFHTTPMessageAppendBytes(_incomingMessage, [data bytes], [data length])) {
-        [self _closing];
-		return;
-	}
-    
-	if(CFHTTPMessageIsHeaderComplete(_incomingMessage)) {
-        [self _processIncomingMessage];
-	}
+    [_incomingData appendData:data];
+    dataUsed = [_incomingRequest dataReceivedByClient:_incomingData];
+    [_incomingData replaceBytesInRange:NSMakeRange(0, dataUsed) withBytes:NULL length:0];
+    if (_incomingRequest.dataLeftToSend == 0) {
+        [_incomingRequest release];
+        _incomingRequest = NULL;
+    }
     
 	[_incomingFileHandle waitForDataInBackgroundAndNotify];
+}
+
+- (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode
+{
+    
+}
+
+- (void)sendDataToClient:(NSData *)data fromRequest:(HTTPProxyRequestToServer *)request
+{
+    NSAssert(request == [_requests objectAtIndex:0], @"wrong request");
+    [_incomingFileHandle writeData:data];
+    if (request.dataLeftToReceive == 0) {
+        [_requests removeObjectAtIndex:0];
+        if ([_requests count] > 0) {
+            [[_requests objectAtIndex:0] startReceivingData];
+        }
+    }
+}
+
+- (void)serverRequestClosed:(HTTPProxyRequestToServer *)serverRequest
+{
+    NSUInteger index;
+    
+    index = [_requests indexOfObject:serverRequest];
+    NSAssert(index != NSNotFound, @"unknown request");
+    if (serverRequest.receivedComplete) {
+        NSAssert(index == 0, @"should be the first request");
+        [_requests removeObjectAtIndex:0];
+    } else {
+        for (; index < [_requests count];) {
+            HTTPProxyRequestToServer *request;
+            
+            request = [_requests objectAtIndex:index];
+            [request closeRequest];
+            [_requests removeObjectAtIndex:index];
+        }
+    }
 }
 
 @end
