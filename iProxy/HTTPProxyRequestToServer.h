@@ -16,7 +16,8 @@
     NSString *_command;
     NSURL *_requestURL;
     NSString *_httpVersion;
-    NSMutableDictionary *_headers;
+    NSMutableDictionary *_headersFromClient;
+    NSMutableDictionary *_headersFromServer;
     NSUInteger _requestContentLength;
     NSUInteger _dataLeftToSend;
     NSUInteger _dataLeftToReceive;
@@ -24,6 +25,7 @@
     BOOL _valid;
     BOOL _receiveData;
     BOOL _receivedComplete;
+    NSMutableData *_dataFromServer;
     
     CFReadStreamRef _readStream;
     CFWriteStreamRef _writeStream;
@@ -34,7 +36,7 @@
 @property(nonatomic, readonly) NSString *command;
 @property(nonatomic, readonly) NSUInteger port;
 @property(nonatomic, readonly) NSURL *requestURL;
-@property(nonatomic, readwrite, retain) NSMutableDictionary *headers;
+@property(nonatomic, readwrite, retain) NSMutableDictionary *headersFromClient;
 @property(nonatomic, readonly) BOOL isValid;
 @property(nonatomic, readonly) BOOL isHeaderComplete;
 @property(nonatomic, readonly) NSUInteger dataLeftToReceive;

@@ -18,198 +18,12 @@
 @synthesize port = _port;
 @synthesize requestURL = _requestURL;
 @synthesize isValid = _isValid;
-@synthesize headers = _headers;
+@synthesize headersFromClient = _headersFromClient;
 @synthesize command = _command;
 @synthesize dataLeftToSend = _dataLeftToSend;
 @synthesize isHeaderComplete = _isHeaderComplete;
 @synthesize dataLeftToReceive = _dataLeftToReceive;
 @synthesize receivedComplete = _receivedComplete;
-
-- (id)initWithHTTProxyRequest:(HTTPProxyRequest *)request;
-{
-    self = [self init];
-    if (self) {
-        _headers = [[NSMutableDictionary alloc] init];
-        _isValid = YES;
-        _isHeaderComplete = NO;
-        _request = request;
-    }
-    return self;
-}
-
-- (void)dealloc
-{
-    NSLog(@"%@ dealloc", [self class]);
-    [_command release];
-    [_headers release];
-    [super dealloc];
-}
-
-- (void)_parseCommand:(NSString *)command
-{
-    NSArray *list;
-    NSString *contentLengthString;
-    
-    list = [command componentsSeparatedByString:@" "];
-    if ([list count] == 3) {
-        _command = [[list objectAtIndex:0] retain];
-        _requestURL = [[NSURL alloc] initWithString:[list objectAtIndex:1]];
-        _httpVersion = [[list objectAtIndex:2] retain];
-    } else {
-        _isValid = NO;
-    }
-    contentLengthString = [_headers objectForKey:@"Content-Length"];
-    _dataLeftToSend = _requestContentLength = [contentLengthString intValue];
-    if (!contentLengthString && [_command isEqualToString:@"CONNECT"]) {
-        _dataLeftToSend = -1;
-    }
-    _port = [[_requestURL port] integerValue];
-    if (!_port) {
-        if ([[_requestURL scheme] isEqualToString:@"http"]) {
-            _port = 80;
-        } else if ([[_requestURL scheme] isEqualToString:@"https"]) {
-            _port = 443;
-        }
-    }
-}
-
-- (void)_parseCommand:(NSString *)string command:(NSString **)command url:(NSURL **)url httpVersion:(NSString **)httpVersion
-{
-    NSArray *list;
-    NSString *contentLengthString;
-    
-    list = [string componentsSeparatedByString:@" "];
-    if ([list count] == 3) {
-        *command = [[list objectAtIndex:0] retain];
-        *url = [[NSURL alloc] initWithString:[list objectAtIndex:1]];
-        *httpVersion = [[list objectAtIndex:2] retain];
-    } else {
-        _isValid = NO;
-    }
-    contentLengthString = [_headers objectForKey:@"Content-Length"];
-    _dataLeftToSend = _requestContentLength = [contentLengthString intValue];
-    if (!contentLengthString && [*command isEqualToString:@"CONNECT"]) {
-        _dataLeftToSend = -1;
-    }
-    _port = [[_requestURL port] integerValue];
-    if (!_port) {
-        if ([[_requestURL scheme] isEqualToString:@"http"]) {
-            _port = 80;
-        } else if ([[_requestURL scheme] isEqualToString:@"https"]) {
-            _port = 443;
-        }
-    }
-}
-
-- (void)_sendHeadersToServer
-{
-    const char *cString;
-    
-    if (![_command isEqualToString:@"CONNECT"]) {
-        NSMutableData *request;
-        
-        request = [[NSMutableData alloc] init];
-        cString = [_command UTF8String];
-        [request appendBytes:cString length:strlen(cString)];
-        [request appendBytes:" " length:1];
-        cString = [[_requestURL relativePath] UTF8String];
-        if (cString[0] == 0) {
-            cString = "/";
-        }
-        [request appendBytes:cString length:strlen(cString)];
-        [request appendBytes:" " length:1];
-        cString = [_httpVersion UTF8String];
-        [request appendBytes:cString length:strlen(cString)];
-        [request appendBytes:"\r\n" length:2];
-        for (NSString *key in _headers) {
-            cString = [key UTF8String];
-            [request appendBytes:cString length:strlen(cString)];
-            [request appendBytes:": " length:2];
-            cString = [[_headers objectForKey:key] UTF8String];
-            [request appendBytes:cString length:strlen(cString)];
-            [request appendBytes:"\r\n" length:2];
-        }
-        [request appendBytes:"\r\n" length:2];
-        CFWriteStreamWrite(_writeStream, [request bytes], [request length]);
-    }
-}
-
-- (void)_processRequest
-{
-    NSLog(@"url %@:%d", [_requestURL host], _port);
-    CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)[_requestURL host], _port, &_readStream, &_writeStream);
-    
-    NSInputStream *inputStream = (NSInputStream *)_readStream;
-    NSOutputStream *outputStream = (NSOutputStream *)_writeStream;
-    [inputStream setDelegate:self];
-    [outputStream setDelegate:self];
-    [inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-    [outputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-    
-    [inputStream open];
-    [outputStream open];
-    [self _sendHeadersToServer];
-}
-
-- (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)eventCode
-{
-    if (1) {
-        NSLog(@"%@ streamStatus %d", ((NSStream *)_readStream == stream)?@"read":@"write", [stream streamStatus]);
-        switch (eventCode) {
-            case NSStreamEventNone:
-                NSLog(@"NSStreamEventNone");
-                break;
-            case NSStreamEventOpenCompleted:
-                NSLog(@"NSStreamEventOpenCompleted");
-                break;
-            case NSStreamEventHasBytesAvailable:
-                NSLog(@"NSStreamEventHasBytesAvailable");
-                break;
-            case NSStreamEventHasSpaceAvailable:
-                NSLog(@"NSStreamEventHasSpaceAvailable");
-                break;
-            case NSStreamEventErrorOccurred:
-                NSLog(@"NSStreamEventErrorOccurred");
-                NSLog(@"%@", [stream streamError]);
-                break;
-            case NSStreamEventEndEncountered:
-                NSLog(@"NSStreamEventEndEncountered");
-                break;
-                
-            default:
-                break;
-        }
-    }
-    if ((NSStream *)_readStream == stream) {
-        uint8_t buffer[1024];
-        NSUInteger available = 0;
-        
-        switch (eventCode) {
-            case NSStreamEventOpenCompleted:
-                break;
-            case NSStreamEventHasBytesAvailable:
-                available = [(NSInputStream *)stream read:buffer maxLength:sizeof(buffer)];
-                if (available) {
-                    NSData * data;
-                    
-                    data = [[NSData alloc] initWithBytesNoCopy:buffer length:available freeWhenDone:NO];
-                    [_request sendDataToClient:data fromRequest:self];
-                    [data release];
-                }
-                NSLog(@"available %d", available);
-                break;
-            case NSStreamEventErrorOccurred:
-            case NSStreamEventEndEncountered:
-                if ([stream streamStatus] == NSStreamStatusClosed) {
-                    [_request serverRequestClosed:self];
-                }
-                break;
-            default:
-                break;
-        }
-    } else if ((NSStream *)_writeStream == stream) {
-    }
-}
 
 + (NSUInteger)_processDataForHeader:(NSData *)data headers:(NSMutableDictionary *)headers headerComplete:(BOOL *)headerComplete command:(NSString **)command url:(NSURL **)url httpVersion:(NSString **)httpVersion
 {
@@ -286,52 +100,205 @@
     return begin;
 }
 
-- (NSUInteger)_processDataForHeader:(NSData *)data
+- (id)initWithHTTProxyRequest:(HTTPProxyRequest *)request;
 {
-    const char *bytes;
-    NSUInteger length;
-    NSUInteger cursor;
-    NSUInteger column = 0;
-    NSUInteger begin = 0;
-    
-    bytes = [data bytes];
-    length = [data length];
-    cursor = 0;
-    while (cursor < length - 1 && !_isHeaderComplete) {
-        if (bytes[cursor] == ':' && column == begin) {
-            column = cursor;
-        }
-        if (bytes[cursor] == '\r' && bytes[cursor + 1] == '\n') {
-            if (!self.command) {
-                NSString *string;
-                
-                NSAssert(begin == 0, @"Should be at the beginning");
-                NSAssert(cursor > 0, @"Should not be empty");
-                string = [[NSString alloc] initWithBytes:bytes length:cursor encoding:NSUTF8StringEncoding];
-                [self _parseCommand:string];
-                [string release];
-            } else if (cursor == begin) {
-                _isHeaderComplete = YES;
-            } else {
-                NSString *key;
-                NSString *value;
-                
-                key = [[NSString alloc] initWithBytes:bytes + begin length:column - begin encoding:NSUTF8StringEncoding];
-                if (bytes[column + 1] == ' ') {
-                    column++;
-                }
-                value = [[NSString alloc] initWithBytes:bytes + column + 1 length:cursor - column - 1 encoding:NSUTF8StringEncoding];
-                [self.headers setValue:value forKey:key];
-                [key release];
-                [value release];
-            }
-            begin = cursor + 2;
-            cursor++;
-            column = begin;
-        }
-        cursor++;
+    self = [self init];
+    if (self) {
+        _headersFromClient = [[NSMutableDictionary alloc] init];
+        _headersFromServer = [[NSMutableDictionary alloc] init];
+        _isValid = YES;
+        _isHeaderComplete = NO;
+        _request = request;
+        _dataFromServer = [[NSMutableData alloc] init];
     }
-    return begin;
+    return self;
+}
+
+- (void)dealloc
+{
+    NSLog(@"%@ dealloc", [self class]);
+    [_dataFromServer release];
+    [_command release];
+    [_headersFromClient release];
+    [_headersFromServer release];
+    [super dealloc];
+}
+
+- (void)_parseCommand:(NSString *)command
+{
+    NSArray *list;
+    NSString *contentLengthString;
+    
+    list = [command componentsSeparatedByString:@" "];
+    if ([list count] == 3) {
+        _command = [[list objectAtIndex:0] retain];
+        _requestURL = [[NSURL alloc] initWithString:[list objectAtIndex:1]];
+        _httpVersion = [[list objectAtIndex:2] retain];
+    } else {
+        _isValid = NO;
+    }
+    contentLengthString = [_headersFromClient objectForKey:@"Content-Length"];
+    _dataLeftToSend = _requestContentLength = [contentLengthString intValue];
+    if (!contentLengthString && [_command isEqualToString:@"CONNECT"]) {
+        _dataLeftToSend = -1;
+    }
+    _port = [[_requestURL port] integerValue];
+    if (!_port) {
+        if ([[_requestURL scheme] isEqualToString:@"http"]) {
+            _port = 80;
+        } else if ([[_requestURL scheme] isEqualToString:@"https"]) {
+            _port = 443;
+        }
+    }
+}
+
+- (void)_parseCommand:(NSString *)string command:(NSString **)command url:(NSURL **)url httpVersion:(NSString **)httpVersion
+{
+    NSArray *list;
+    NSString *contentLengthString;
+    
+    list = [string componentsSeparatedByString:@" "];
+    if ([list count] == 3) {
+        *command = [[list objectAtIndex:0] retain];
+        *url = [[NSURL alloc] initWithString:[list objectAtIndex:1]];
+        *httpVersion = [[list objectAtIndex:2] retain];
+    } else {
+        _isValid = NO;
+    }
+    contentLengthString = [_headersFromClient objectForKey:@"Content-Length"];
+    _dataLeftToSend = _requestContentLength = [contentLengthString intValue];
+    if (!contentLengthString && [*command isEqualToString:@"CONNECT"]) {
+        _dataLeftToSend = -1;
+    }
+    _port = [[_requestURL port] integerValue];
+    if (!_port) {
+        if ([[_requestURL scheme] isEqualToString:@"http"]) {
+            _port = 80;
+        } else if ([[_requestURL scheme] isEqualToString:@"https"]) {
+            _port = 443;
+        }
+    }
+}
+
+- (void)_sendHeadersToServer
+{
+    const char *cString;
+    
+    if (![_command isEqualToString:@"CONNECT"]) {
+        NSMutableData *request;
+        
+        request = [[NSMutableData alloc] init];
+        cString = [_command UTF8String];
+        [request appendBytes:cString length:strlen(cString)];
+        [request appendBytes:" " length:1];
+        cString = [[_requestURL relativePath] UTF8String];
+        if (cString[0] == 0) {
+            cString = "/";
+        }
+        [request appendBytes:cString length:strlen(cString)];
+        [request appendBytes:" " length:1];
+        cString = [_httpVersion UTF8String];
+        [request appendBytes:cString length:strlen(cString)];
+        [request appendBytes:"\r\n" length:2];
+        for (NSString *key in _headersFromClient) {
+            cString = [key UTF8String];
+            [request appendBytes:cString length:strlen(cString)];
+            [request appendBytes:": " length:2];
+            cString = [[_headersFromClient objectForKey:key] UTF8String];
+            [request appendBytes:cString length:strlen(cString)];
+            [request appendBytes:"\r\n" length:2];
+        }
+        [request appendBytes:"\r\n" length:2];
+        CFWriteStreamWrite(_writeStream, [request bytes], [request length]);
+    }
+}
+
+- (void)_processRequest
+{
+    NSLog(@"url %@:%d", [_requestURL host], _port);
+    CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)[_requestURL host], _port, &_readStream, &_writeStream);
+    
+    NSInputStream *inputStream = (NSInputStream *)_readStream;
+    NSOutputStream *outputStream = (NSOutputStream *)_writeStream;
+    [inputStream setDelegate:self];
+    [outputStream setDelegate:self];
+    [inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    [outputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    
+    [inputStream open];
+    [outputStream open];
+    [self _sendHeadersToServer];
+}
+
+- (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)eventCode
+{
+    if (1) {
+        NSLog(@"%@ streamStatus %d", ((NSStream *)_readStream == stream)?@"read":@"write", [stream streamStatus]);
+        switch (eventCode) {
+            case NSStreamEventNone:
+                NSLog(@"NSStreamEventNone");
+                break;
+            case NSStreamEventOpenCompleted:
+                NSLog(@"NSStreamEventOpenCompleted");
+                break;
+            case NSStreamEventHasBytesAvailable:
+                NSLog(@"NSStreamEventHasBytesAvailable");
+                break;
+            case NSStreamEventHasSpaceAvailable:
+                NSLog(@"NSStreamEventHasSpaceAvailable");
+                break;
+            case NSStreamEventErrorOccurred:
+                NSLog(@"NSStreamEventErrorOccurred");
+                NSLog(@"%@", [stream streamError]);
+                break;
+            case NSStreamEventEndEncountered:
+                NSLog(@"NSStreamEventEndEncountered");
+                break;
+                
+            default:
+                break;
+        }
+    }
+    if ((NSStream *)_readStream == stream) {
+        uint8_t buffer[1024];
+        NSUInteger available = 0;
+        
+        switch (eventCode) {
+            case NSStreamEventOpenCompleted:
+                break;
+            case NSStreamEventHasBytesAvailable:
+                available = [(NSInputStream *)stream read:buffer maxLength:sizeof(buffer)];
+                if (available) {
+                    NSData * data;
+                    
+                    if (![_command isEqualToString:@"CONNECT"]) {
+                        BOOL headerComplete;
+                        NSUInteger dataParsed;
+                        
+                        [_dataFromServer appendBytes:buffer length:available];
+                        dataParsed = [[self class] _processDataForHeader:_dataFromServer headers:_headersFromServer headerComplete:&headerComplete command:NULL url:NULL httpVersion:NULL];
+                        [_dataFromServer replaceBytesInRange:NSMakeRange(0, dataParsed) withBytes:NULL length:0];
+                        if (headerComplete) {
+                            _dataLeftToReceive = [[_headersFromServer objectForKey:@"Content-Length"] integerValue] - [_dataFromServer length];
+                        }
+                    }
+                    data = [[NSData alloc] initWithBytesNoCopy:buffer length:available freeWhenDone:NO];
+                    [_request sendDataToClient:data fromRequest:self];
+                    [data release];
+                }
+                NSLog(@"available %d", available);
+                break;
+            case NSStreamEventErrorOccurred:
+            case NSStreamEventEndEncountered:
+                if ([stream streamStatus] == NSStreamStatusClosed) {
+                    [_request serverRequestClosed:self];
+                }
+                break;
+            default:
+                break;
+        }
+    } else if ((NSStream *)_writeStream == stream) {
+    }
 }
 
 - (NSUInteger)_sendDataToServer:(NSData *)data
@@ -355,11 +322,11 @@
     NSUInteger result;
     
     if (!self.isHeaderComplete) {
-        result = [[self class] _processDataForHeader:data headers:_headers headerComplete:&_isHeaderComplete command:&_command url:&_requestURL httpVersion:&_httpVersion];
+        result = [[self class] _processDataForHeader:data headers:_headersFromClient headerComplete:&_isHeaderComplete command:&_command url:&_requestURL httpVersion:&_httpVersion];
         if (_isHeaderComplete) {
             NSString *contentLengthString;
             
-            contentLengthString = [_headers objectForKey:@"Content-Length"];
+            contentLengthString = [_headersFromClient objectForKey:@"Content-Length"];
             _dataLeftToSend = _requestContentLength = [contentLengthString intValue];
             if (!contentLengthString && [_command isEqualToString:@"CONNECT"]) {
                 _dataLeftToSend = -1;
