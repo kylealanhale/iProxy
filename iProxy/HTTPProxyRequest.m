@@ -84,8 +84,7 @@
 {
     NSAssert(request == [_requests objectAtIndex:0], @"wrong request");
     [_incomingFileHandle writeData:data];
-    NSLog(@"write to client %d, left to receive %d", [data length], request.dataLeftToReceive);
-    if (request.dataLeftToReceive == 0) {
+    if (request.receivedComplete) {
         [_requests removeObjectAtIndex:0];
         if ([_requests count] > 0) {
             [[_requests objectAtIndex:0] startReceivingData];

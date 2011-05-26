@@ -227,9 +227,13 @@
                             _chunkEncoding = [[_headersFromServer objectForKey:@"Transfer-Encoding"] isEqualToString:@"chunked"];
                             if (contentLengthString) {
                                 _dataLeftToReceive = [contentLengthString integerValue] - [_dataFromServer length];
+                            } else if (_chunkEncoding) {
+                                
                             } else {
                                 _dataLeftToReceive = -1;
                             }
+                            [_dataFromServer release];
+                            _dataFromServer = nil;
                         }
                     } else if (_serverHeadersReceived && _dataLeftToReceive > 0) {
                         _dataLeftToReceive -= available;
@@ -237,6 +241,7 @@
                     data = [[NSData alloc] initWithBytesNoCopy:buffer length:available freeWhenDone:NO];
                     [_request sendDataToClient:data fromRequest:self];
                     [data release];
+                    _receivedComplete = _dataLeftToReceive == 0;
                 }
                 break;
             case NSStreamEventErrorOccurred:
