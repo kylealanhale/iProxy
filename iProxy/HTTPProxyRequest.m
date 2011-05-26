@@ -84,6 +84,7 @@
 {
     NSAssert(request == [_requests objectAtIndex:0], @"wrong request");
     [_incomingFileHandle writeData:data];
+    NSLog(@"write to client %d, left to receive %d", [data length], request.dataLeftToReceive);
     if (request.dataLeftToReceive == 0) {
         [_requests removeObjectAtIndex:0];
         if ([_requests count] > 0) {
@@ -106,8 +107,10 @@
             HTTPProxyRequestToServer *request;
             
             request = [_requests objectAtIndex:index];
+            [request retain];
             [request closeRequest];
             [_requests removeObjectAtIndex:index];
+            [request autorelease];
         }
     }
 }

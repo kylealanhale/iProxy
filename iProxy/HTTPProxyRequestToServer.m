@@ -22,7 +22,6 @@
 @synthesize command = _command;
 @synthesize dataLeftToSend = _dataLeftToSend;
 @synthesize isHeaderComplete = _isHeaderComplete;
-@synthesize dataLeftToReceive = _dataLeftToReceive;
 @synthesize receivedComplete = _receivedComplete;
 
 + (NSUInteger)_processDataForHeader:(NSData *)data headers:(NSMutableDictionary *)headers headerComplete:(BOOL *)headerComplete command:(NSString **)command url:(NSURL **)url httpVersion:(NSString **)httpVersion
@@ -116,68 +115,11 @@
 
 - (void)dealloc
 {
-    NSLog(@"%@ dealloc", [self class]);
     [_dataFromServer release];
     [_command release];
     [_headersFromClient release];
     [_headersFromServer release];
     [super dealloc];
-}
-
-- (void)_parseCommand:(NSString *)command
-{
-    NSArray *list;
-    NSString *contentLengthString;
-    
-    list = [command componentsSeparatedByString:@" "];
-    if ([list count] == 3) {
-        _command = [[list objectAtIndex:0] retain];
-        _requestURL = [[NSURL alloc] initWithString:[list objectAtIndex:1]];
-        _httpVersion = [[list objectAtIndex:2] retain];
-    } else {
-        _isValid = NO;
-    }
-    contentLengthString = [_headersFromClient objectForKey:@"Content-Length"];
-    _dataLeftToSend = _requestContentLength = [contentLengthString intValue];
-    if (!contentLengthString && [_command isEqualToString:@"CONNECT"]) {
-        _dataLeftToSend = -1;
-    }
-    _port = [[_requestURL port] integerValue];
-    if (!_port) {
-        if ([[_requestURL scheme] isEqualToString:@"http"]) {
-            _port = 80;
-        } else if ([[_requestURL scheme] isEqualToString:@"https"]) {
-            _port = 443;
-        }
-    }
-}
-
-- (void)_parseCommand:(NSString *)string command:(NSString **)command url:(NSURL **)url httpVersion:(NSString **)httpVersion
-{
-    NSArray *list;
-    NSString *contentLengthString;
-    
-    list = [string componentsSeparatedByString:@" "];
-    if ([list count] == 3) {
-        *command = [[list objectAtIndex:0] retain];
-        *url = [[NSURL alloc] initWithString:[list objectAtIndex:1]];
-        *httpVersion = [[list objectAtIndex:2] retain];
-    } else {
-        _isValid = NO;
-    }
-    contentLengthString = [_headersFromClient objectForKey:@"Content-Length"];
-    _dataLeftToSend = _requestContentLength = [contentLengthString intValue];
-    if (!contentLengthString && [*command isEqualToString:@"CONNECT"]) {
-        _dataLeftToSend = -1;
-    }
-    _port = [[_requestURL port] integerValue];
-    if (!_port) {
-        if ([[_requestURL scheme] isEqualToString:@"http"]) {
-            _port = 80;
-        } else if ([[_requestURL scheme] isEqualToString:@"https"]) {
-            _port = 443;
-        }
-    }
 }
 
 - (void)_sendHeadersToServer
@@ -268,29 +210,38 @@
                 break;
             case NSStreamEventHasBytesAvailable:
                 available = [(NSInputStream *)stream read:buffer maxLength:sizeof(buffer)];
+                NSLog(@"available %d", available);
                 if (available) {
                     NSData * data;
                     
-                    if (![_command isEqualToString:@"CONNECT"]) {
-                        BOOL headerComplete;
+                    if (![_command isEqualToString:@"CONNECT"] && !_serverHeadersReceived) {
                         NSUInteger dataParsed;
                         
                         [_dataFromServer appendBytes:buffer length:available];
-                        dataParsed = [[self class] _processDataForHeader:_dataFromServer headers:_headersFromServer headerComplete:&headerComplete command:NULL url:NULL httpVersion:NULL];
+                        dataParsed = [[self class] _processDataForHeader:_dataFromServer headers:_headersFromServer headerComplete:&_serverHeadersReceived command:NULL url:NULL httpVersion:NULL];
                         [_dataFromServer replaceBytesInRange:NSMakeRange(0, dataParsed) withBytes:NULL length:0];
-                        if (headerComplete) {
-                            _dataLeftToReceive = [[_headersFromServer objectForKey:@"Content-Length"] integerValue] - [_dataFromServer length];
+                        if (_serverHeadersReceived) {
+                            NSString *contentLengthString;
+                            
+                            contentLengthString = [_headersFromServer objectForKey:@"Content-Length"];
+                            _chunkEncoding = [[_headersFromServer objectForKey:@"Transfer-Encoding"] isEqualToString:@"chunked"];
+                            if (contentLengthString) {
+                                _dataLeftToReceive = [contentLengthString integerValue] - [_dataFromServer length];
+                            } else {
+                                _dataLeftToReceive = -1;
+                            }
                         }
+                    } else if (_serverHeadersReceived && _dataLeftToReceive > 0) {
+                        _dataLeftToReceive -= available;
                     }
                     data = [[NSData alloc] initWithBytesNoCopy:buffer length:available freeWhenDone:NO];
                     [_request sendDataToClient:data fromRequest:self];
                     [data release];
                 }
-                NSLog(@"available %d", available);
                 break;
             case NSStreamEventErrorOccurred:
             case NSStreamEventEndEncountered:
-                if ([stream streamStatus] == NSStreamStatusClosed) {
+                if ([stream streamStatus] == NSStreamStatusClosed || [stream streamStatus] == NSStreamStatusAtEnd) {
                     [_request serverRequestClosed:self];
                 }
                 break;
@@ -321,8 +272,11 @@
 {
     NSUInteger result;
     
-    if (!self.isHeaderComplete) {
+    if (!_isHeaderComplete) {
         result = [[self class] _processDataForHeader:data headers:_headersFromClient headerComplete:&_isHeaderComplete command:&_command url:&_requestURL httpVersion:&_httpVersion];
+        [_command retain];
+        [_requestURL retain];
+        [_httpVersion retain];
         if (_isHeaderComplete) {
             NSString *contentLengthString;
             

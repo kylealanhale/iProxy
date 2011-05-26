@@ -18,28 +18,29 @@
     NSString *_httpVersion;
     NSMutableDictionary *_headersFromClient;
     NSMutableDictionary *_headersFromServer;
-    NSUInteger _requestContentLength;
-    NSUInteger _dataLeftToSend;
-    NSUInteger _dataLeftToReceive;
+    NSInteger _requestContentLength;
+    NSInteger _dataLeftToSend;
+    NSInteger _dataLeftToReceive;
     NSUInteger _port;
     BOOL _valid;
     BOOL _receiveData;
     BOOL _receivedComplete;
+    BOOL _serverHeadersReceived;
+    BOOL _chunkEncoding;
     NSMutableData *_dataFromServer;
     
     CFReadStreamRef _readStream;
     CFWriteStreamRef _writeStream;
 }
 
-@property(nonatomic, readonly) NSUInteger requestContentLength;
-@property(nonatomic, readonly) NSUInteger dataLeftToSend;
 @property(nonatomic, readonly) NSString *command;
-@property(nonatomic, readonly) NSUInteger port;
 @property(nonatomic, readonly) NSURL *requestURL;
+@property(nonatomic, readonly) NSUInteger port;
+@property(nonatomic, readonly) NSInteger requestContentLength;
+@property(nonatomic, readonly) NSInteger dataLeftToSend;
 @property(nonatomic, readwrite, retain) NSMutableDictionary *headersFromClient;
 @property(nonatomic, readonly) BOOL isValid;
 @property(nonatomic, readonly) BOOL isHeaderComplete;
-@property(nonatomic, readonly) NSUInteger dataLeftToReceive;
 @property(nonatomic, readonly) BOOL receivedComplete;
 
 - (id)initWithHTTProxyRequest:(HTTPProxyRequest *)request;
