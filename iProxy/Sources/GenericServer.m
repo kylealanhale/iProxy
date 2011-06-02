@@ -234,31 +234,32 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
     }
     CFRelease(addressData);
     
-    
-	struct sockaddr_in6 addr6;
-    memset(&addr6, 0, sizeof(addr6));
+    if (_sockets[1]) {
+        struct sockaddr_in6 addr6;
+        memset(&addr6, 0, sizeof(addr6));
 
-	// Put the local port and address into the native address.
-	addr6.sin6_family = AF_INET6;
-	addr6.sin6_port = htons((UInt16)self.servicePort);
-	addr6.sin6_len = sizeof(addr6);
-	memcpy(&(addr6.sin6_addr), &in6addr_any, sizeof(addr6.sin6_addr));
-	
-    // Wrap the native address structure for CFSocketCreate.
-    addressData = CFDataCreateWithBytesNoCopy(NULL, (const UInt8*)&addr6, sizeof(addr6), kCFAllocatorNull);
-    
-    // Set the local binding which causes the socket to start listening.
-	if (CFSocketSetAddress(_sockets[1], addressData) != kCFSocketSuccess) {
-	    CFRelease(addressData);
-        if (_sockets[1]) {
-            CFSocketInvalidate(_sockets[1]);
-            CFRelease(_sockets[1]);
-            _sockets[1] = nil;
+        // Put the local port and address into the native address.
+        addr6.sin6_family = AF_INET6;
+        addr6.sin6_port = htons((UInt16)self.servicePort);
+        addr6.sin6_len = sizeof(addr6);
+        memcpy(&(addr6.sin6_addr), &in6addr_any, sizeof(addr6.sin6_addr));
+        
+        // Wrap the native address structure for CFSocketCreate.
+        addressData = CFDataCreateWithBytesNoCopy(NULL, (const UInt8*)&addr6, sizeof(addr6), kCFAllocatorNull);
+        
+        // Set the local binding which causes the socket to start listening.
+        if (CFSocketSetAddress(_sockets[1], addressData) != kCFSocketSuccess) {
+            CFRelease(addressData);
+            if (_sockets[1]) {
+                CFSocketInvalidate(_sockets[1]);
+                CFRelease(_sockets[1]);
+                _sockets[1] = nil;
+            }
+            [self _setLastErrorWithMessage:@"Unable to bind socket to address6."];
+            return NO;
         }
-        [self _setLastErrorWithMessage:@"Unable to bind socket to address6."];
-        return NO;
+        CFRelease(addressData);
     }
-	CFRelease(addressData);
    
     return YES;
 }
