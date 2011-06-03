@@ -187,24 +187,28 @@ void polipoExit()
     return result;
 }
 
-- (void)readStreamCallback
+- (void)readStreamCallbackWithEvent:(CFStreamEventType)type
 {
-    
+    if (((FdEventHandlerPtr)_event)->handler) {
+        ((FdEventHandlerPtr)_event)->handler(0, _event);
+    }
 }
 
-- (void)writeStreamCallback
+- (void)writeStreamCallbackWithEvent:(CFStreamEventType)type
 {
-    
+    if (((FdEventHandlerPtr)_event)->handler) {
+        ((FdEventHandlerPtr)_event)->handler(0, _event);
+    }
 }
 
 static void PLPFDEventReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType type, void *clientCallBackInfo)
 {
-    [(id)clientCallBackInfo readStreamCallback];
+    [(id)clientCallBackInfo readStreamCallbackWithEvent:type];
 }
 
 static void PLPFDEventWriteStreamClientCallBack(CFWriteStreamRef stream, CFStreamEventType type, void *clientCallBackInfo)
 {
-    [(id)clientCallBackInfo writeStreamCallback];
+    [(id)clientCallBackInfo writeStreamCallbackWithEvent:type];
 }
 
 - (void)registerEvent
@@ -212,6 +216,8 @@ static void PLPFDEventWriteStreamClientCallBack(CFWriteStreamRef stream, CFStrea
     CFReadStreamRef *readStreamPtr = NULL;
     CFWriteStreamRef *writeStreamPtr = NULL;
     CFStreamClientContext context;
+    CFStringRef currentMode;
+    CFRunLoopRef runloop;
     
     context.version = 0;
     context.info = self;
@@ -226,23 +232,26 @@ static void PLPFDEventWriteStreamClientCallBack(CFWriteStreamRef stream, CFStrea
     }
     CFStreamCreatePairWithSocket(NULL, self.fdEvent->fd, readStreamPtr, writeStreamPtr);
     
+    runloop = CFRunLoopGetCurrent();
+    currentMode = CFRunLoopCopyCurrentMode(runloop);
     if (_readStream) {
         CFReadStreamSetClient(_readStream, [self streamEvent], PLPFDEventReadStreamClientCallBack, &context);
+        CFReadStreamScheduleWithRunLoop(_readStream, runloop, currentMode);
+        CFReadStreamOpen(_readStream);
     }
     if (_writeStream) {
         CFWriteStreamSetClient(_writeStream, [self streamEvent], PLPFDEventWriteStreamClientCallBack, &context);
+        CFWriteStreamScheduleWithRunLoop(_writeStream, runloop, currentMode);
+        CFWriteStreamOpen(_writeStream);
     }
     
-    CFReadStreamScheduleWithRunLoop(_readStream, (CFRunLoopRef)[NSRunLoop currentRunLoop], (CFStringRef)[[NSRunLoop currentRunLoop] currentMode]);
-    CFWriteStreamScheduleWithRunLoop(_writeStream, (CFRunLoopRef)[NSRunLoop currentRunLoop], (CFStringRef)[[NSRunLoop currentRunLoop] currentMode]);
-    
-    CFReadStreamUnscheduleFromRunLoop(_readStream, (CFRunLoopRef)[NSRunLoop currentRunLoop], (CFStringRef)[[NSRunLoop currentRunLoop] currentMode]);
-    CFWriteStreamUnscheduleFromRunLoop(_writeStream, (CFRunLoopRef)[NSRunLoop currentRunLoop], (CFStringRef)[[NSRunLoop currentRunLoop] currentMode]);
+    CFRelease(currentMode);
 }
 
 - (void)unregisterEvent
 {
-    
+    //    CFReadStreamUnscheduleFromRunLoop(_readStream, runloop, currentMode);
+    //    CFWriteStreamUnscheduleFromRunLoop(_writeStream, runloop, currentMode);
     [super unregisterEvent];
 }
 
