@@ -13,7 +13,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "GenericServer.h"
+#import "SocketServer.h"
 
 @class HTTPResponseHandler;
 
