@@ -11,6 +11,7 @@
 		0209CEE9137C8CD600840FA1 /* HTTPProxyServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 02501CC61266680900CE5CA9 /* HTTPProxyServer.m */; };
 		020BC9CE124ADBD000E2E1F2 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 020BC9CD124ADBD000E2E1F2 /* MobileCoreServices.framework */; };
 		0224843F1381DFBC00B0BAFE /* HTTPProxyRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224843E1381DFBC00B0BAFE /* HTTPProxyRequest.m */; };
+		022933A6139881A200108283 /* SocketServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 022933A5139881A200108283 /* SocketServer.m */; };
 		02326F16133B374000B90EB7 /* PMSSSHFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 02326F15133B374000B90EB7 /* PMSSSHFileController.m */; };
 		02326F25133C66CD00B90EB7 /* PMSPreferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02326F24133C66CD00B90EB7 /* PMSPreferences.xib */; };
 		02326F28133C676B00B90EB7 /* PMSPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 02326F27133C676A00B90EB7 /* PMSPreferences.m */; };
@@ -83,6 +84,8 @@
 		0220C6B81328C9ED00962EF9 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0224843D1381DFBC00B0BAFE /* HTTPProxyRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPProxyRequest.h; sourceTree = "<group>"; };
 		0224843E1381DFBC00B0BAFE /* HTTPProxyRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPProxyRequest.m; sourceTree = "<group>"; };
+		022933A4139881A200108283 /* SocketServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SocketServer.h; path = Sources/SocketServer.h; sourceTree = "<group>"; };
+		022933A5139881A200108283 /* SocketServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SocketServer.m; path = Sources/SocketServer.m; sourceTree = "<group>"; };
 		02326EF0133AC16E00B90EB7 /* SecurityFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityFoundation.framework; path = /System/Library/Frameworks/SecurityFoundation.framework; sourceTree = "<absolute>"; };
 		02326EF1133AC16E00B90EB7 /* SecurityInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityInterface.framework; path = /System/Library/Frameworks/SecurityInterface.framework; sourceTree = "<absolute>"; };
 		02326F14133B374000B90EB7 /* PMSSSHFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMSSSHFileController.h; sourceTree = "<group>"; };
@@ -406,6 +409,8 @@
 				9D83D36511B9AF5C00A9922F /* HTTPServer.m */,
 				02501CC2126667EF00CE5CA9 /* GenericServer.h */,
 				02501CC3126667EF00CE5CA9 /* GenericServer.m */,
+				022933A4139881A200108283 /* SocketServer.h */,
+				022933A5139881A200108283 /* SocketServer.m */,
 				02501CC51266680900CE5CA9 /* HTTPProxyServer.h */,
 				02501CC61266680900CE5CA9 /* HTTPProxyServer.m */,
 				0224843D1381DFBC00B0BAFE /* HTTPProxyRequest.h */,
@@ -715,6 +720,7 @@
 				02E754911274EC3000D55958 /* main.c in Sources */,
 				0224843F1381DFBC00B0BAFE /* HTTPProxyRequest.m in Sources */,
 				02CCDE201387033800B25E33 /* HTTPProxyRequestToServer.m in Sources */,
+				022933A6139881A200108283 /* SocketServer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
