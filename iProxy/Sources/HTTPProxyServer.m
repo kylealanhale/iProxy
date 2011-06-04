@@ -307,6 +307,9 @@ void unregisterFdEvent(FdEventHandlerPtr event)
         preinitForbidden();
         preinitSocks();
         
+//        parseConfigLine("parentProxy=\"Jet-iPhone.local.:1080\"", "command line", 0, 0);
+//        parseConfigLine("socksProxyType=\"socks5\"", "command line", 0, 0);
+        
         initChunks();
         initLog();
         initObject();
@@ -317,9 +320,6 @@ void unregisterFdEvent(FdEventHandlerPtr event)
         initDiskcache();
         initForbidden();
         initSocks();
-
-//        _listener = create_listener(proxyAddress->string, 
-//                                   proxyPort, httpAccept, NULL);
     }
     return self;
 }
