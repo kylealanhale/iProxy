@@ -295,6 +295,25 @@ NSString *parseDevice(NSString *line)
     }
 }
 
+- (void)testDeviceForProxy:(NSMutableDictionary *)proxy
+{
+    NSUInteger index;
+    
+    index = [proxyServiceList indexOfObject:proxy];
+    if (index != NSNotFound) {
+        NSString *device;
+        
+        device = [self _getDeviceNameForIP:[proxy objectForKey:PROXY_HOST_NAME_KEY]];
+        if (device) {
+            [self willChangeValueForKey:@"proxyServiceList"];
+            [proxy setObject:device forKey:PROXY_DEVICE_KEY];
+            [self didChangeValueForKey:@"proxyServiceList"];
+        } else {
+            [self performSelector:@selector(testDeviceForProxy:) withObject:proxy afterDelay:2.0];
+        }
+    }
+}
+
 - (void)netServiceDidResolveAddress:(NSNetService *)sender
 {
 	NSUInteger index = [self indexForDomain:[sender domain] name:[sender name] type:[sender type]];
@@ -311,10 +330,14 @@ NSString *parseDevice(NSString *line)
             device = [self _getDeviceNameForIP:[sender hostName]];
             if (device) {
                 [proxy setObject:device forKey:PROXY_DEVICE_KEY];
+            } else {
+                [self performSelector:@selector(testDeviceForProxy:) withObject:proxy afterDelay:2.0];
             }
         }
         [self didChangeValueForKey:@"proxyServiceList"];
-        [self _changeResolvingServiceWithOffset:-1];
+        if ([proxy objectForKey:PROXY_DEVICE_KEY]) {
+            [self _changeResolvingServiceWithOffset:-1];
+        }
     }
 }
 
