@@ -125,6 +125,7 @@ TimeEventHandlerPtr scheduleTimeEvent(int seconds, int (*handler)(TimeEventHandl
     [timeEvent schedule];
     result = timeEvent.timeEventHandlerPtr;
     [timeEvent release];
+    printf("schedule time event %p\n", result);
     return result;
 }
 
@@ -155,9 +156,19 @@ void polipoExit()
 {
     self = [self init];
     if (self) {
+        ConnectRequestPtr request = (ConnectRequestPtr)&event->data;
+        
+        printf("init event %p %p %s:%d\n", event, self, __FILE__, __LINE__);
+        printf("\trequest %p addr %p\n", request, request->addr);
         [self initWithEvent:event];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    printf("dealloc %p\n", self);
+    [super dealloc];
 }
 
 - (FdEventHandlerPtr)fdEvent
@@ -190,24 +201,38 @@ void polipoExit()
 - (void)readStreamCallbackWithEvent:(CFStreamEventType)type
 {
     if (((FdEventHandlerPtr)_event)->handler) {
-        ((FdEventHandlerPtr)_event)->handler(0, _event);
+        int done;
+        
+        printf("read event %p read stream %p type %d\n", _event, _readStream, (int)type);
+        done = ((FdEventHandlerPtr)_event)->handler(0, _event);
+        if (done) {
+            [self unregisterEvent];
+        }
     }
 }
 
 - (void)writeStreamCallbackWithEvent:(CFStreamEventType)type
 {
     if (((FdEventHandlerPtr)_event)->handler) {
-        ((FdEventHandlerPtr)_event)->handler(0, _event);
+        int done;
+        
+        printf("write event %p write stream %p type %d\n", _event, _writeStream, (int)type);
+        done = ((FdEventHandlerPtr)_event)->handler(0, _event);
+        if (done) {
+            [self unregisterEvent];
+        }
     }
 }
 
 static void PLPFDEventReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType type, void *clientCallBackInfo)
 {
+    printf("read callback stream %p\n", stream);
     [(id)clientCallBackInfo readStreamCallbackWithEvent:type];
 }
 
 static void PLPFDEventWriteStreamClientCallBack(CFWriteStreamRef stream, CFStreamEventType type, void *clientCallBackInfo)
 {
+    printf("write callback stream %p\n", stream);
     [(id)clientCallBackInfo writeStreamCallbackWithEvent:type];
 }
 
@@ -232,8 +257,10 @@ static void PLPFDEventWriteStreamClientCallBack(CFWriteStreamRef stream, CFStrea
     }
     CFStreamCreatePairWithSocket(NULL, self.fdEvent->fd, readStreamPtr, writeStreamPtr);
     
+    printf("listen read stream %p write stream %p event %p\n", _readStream, _writeStream, _event);
     runloop = CFRunLoopGetCurrent();
     currentMode = CFRunLoopCopyCurrentMode(runloop);
+    currentMode = kCFRunLoopCommonModes;
     if (_readStream) {
         CFReadStreamSetClient(_readStream, [self streamEvent], PLPFDEventReadStreamClientCallBack, &context);
         CFReadStreamScheduleWithRunLoop(_readStream, runloop, currentMode);
@@ -250,17 +277,28 @@ static void PLPFDEventWriteStreamClientCallBack(CFWriteStreamRef stream, CFStrea
 
 - (void)unregisterEvent
 {
-    //    CFReadStreamUnscheduleFromRunLoop(_readStream, runloop, currentMode);
-    //    CFWriteStreamUnscheduleFromRunLoop(_writeStream, runloop, currentMode);
+    CFRunLoopRef runloop;
+    
+    printf("unregister event %p\n", _event);
+    runloop = CFRunLoopGetCurrent();
+    if (_readStream) {
+        CFReadStreamUnscheduleFromRunLoop(_readStream, runloop, kCFRunLoopCommonModes);
+    }
+    if (_writeStream) {
+        CFWriteStreamUnscheduleFromRunLoop(_writeStream, runloop, kCFRunLoopCommonModes);
+    }
     [super unregisterEvent];
 }
 
 @end
 
+static int registerFdEventHelper_count = 0;
+
 FdEventHandlerPtr registerFdEventHelper(FdEventHandlerPtr event)
 {
     PLPFDEvent *fdEvent;
     
+    printf("registerFdEventHelper(%d) %p\n", registerFdEventHelper_count++, event);
     fdEvent = [[PLPFDEvent alloc] initWithFDEvent:event];
     [fdEvent registerEvent];
     return event;
@@ -289,6 +327,7 @@ void unregisterFdEvent(FdEventHandlerPtr event)
 
 - (id)init
 {
+    NSLog(@"http proxy port: %d", HTTP_PROXY_PORT);
     self = [super init];
     if (self) {
         initAtoms();
