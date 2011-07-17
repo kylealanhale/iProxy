@@ -50,6 +50,7 @@ AtomPtr pidFile = NULL;
 
 - (void)unregisterEvent
 {
+    [[self retain] autorelease];
     [_plpEvent removeObjectForKey:[NSValue valueWithPointer:_event]];
 }
 
@@ -85,7 +86,6 @@ AtomPtr pidFile = NULL;
 
 - (void)dealloc
 {
-    [self unschedule];
     [super dealloc];
 }
 
@@ -125,7 +125,7 @@ TimeEventHandlerPtr scheduleTimeEvent(int seconds, int (*handler)(TimeEventHandl
     [timeEvent schedule];
     result = timeEvent.timeEventHandlerPtr;
     [timeEvent release];
-    printf("schedule time event %p\n", result);
+    printf("scheduleTimeEvent event %p (%p)\n", result, timeEvent);
     return result;
 }
 
@@ -133,6 +133,7 @@ void cancelTimeEvent(TimeEventHandlerPtr event)
 {
     PLPTimeEvent *timeEvent;
     
+    printf("cancelTimeEvent event %p\n", event);
     timeEvent = [PLPTimeEvent eventWithHandlerPtr:event];
     [timeEvent unschedule];
 }
@@ -273,6 +274,7 @@ static void PLPFDEventWriteStreamClientCallBack(CFWriteStreamRef stream, CFStrea
     }
     
     CFRelease(currentMode);
+    [super registerEvent];
 }
 
 - (void)unregisterEvent
@@ -301,6 +303,7 @@ FdEventHandlerPtr registerFdEventHelper(FdEventHandlerPtr event)
     printf("registerFdEventHelper(%d) %p\n", registerFdEventHelper_count++, event);
     fdEvent = [[PLPFDEvent alloc] initWithFDEvent:event];
     [fdEvent registerEvent];
+    [fdEvent autorelease];
     return event;
 }
 
@@ -330,6 +333,7 @@ void unregisterFdEvent(FdEventHandlerPtr event)
     NSLog(@"http proxy port: %d", HTTP_PROXY_PORT);
     self = [super init];
     if (self) {
+        _plpEvent = [[NSMutableDictionary alloc] init];
         initAtoms();
         CONFIG_VARIABLE(daemonise, CONFIG_BOOLEAN, "Run as a daemon");
         CONFIG_VARIABLE(pidFile, CONFIG_ATOM, "File with pid of running daemon.");
