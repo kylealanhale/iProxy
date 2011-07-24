@@ -116,6 +116,8 @@ AtomPtr pidFile = NULL;
 
 @end
 
+static int scheduleTimeEvent_count = 0;
+
 TimeEventHandlerPtr scheduleTimeEvent(int seconds, int (*handler)(TimeEventHandlerPtr), int dsize, void *data)
 {
     PLPTimeEvent *timeEvent;
@@ -125,7 +127,7 @@ TimeEventHandlerPtr scheduleTimeEvent(int seconds, int (*handler)(TimeEventHandl
     [timeEvent schedule];
     result = timeEvent.timeEventHandlerPtr;
     [timeEvent release];
-    printf("scheduleTimeEvent event %p (%p)\n", result, timeEvent);
+    printf("scheduleTimeEvent event(%d) %p (%p)\n", scheduleTimeEvent_count++, result, timeEvent);
     return result;
 }
 
@@ -204,7 +206,7 @@ void polipoExit()
     if (((FdEventHandlerPtr)_event)->handler) {
         int done;
         
-        printf("read event %p read stream %p type %d\n", _event, _readStream, (int)type);
+        printf("read event %p read stream %p type %d socket %d\n", _event, _readStream, (int)type, self.fdEvent->fd);
         done = ((FdEventHandlerPtr)_event)->handler(0, _event);
         if (done) {
             [self unregisterEvent];
@@ -217,7 +219,7 @@ void polipoExit()
     if (((FdEventHandlerPtr)_event)->handler) {
         int done;
         
-        printf("write event %p write stream %p type %d\n", _event, _writeStream, (int)type);
+        printf("write event %p write stream %p type %d socket %d\n", _event, _writeStream, (int)type, self.fdEvent->fd);
         done = ((FdEventHandlerPtr)_event)->handler(0, _event);
         if (done) {
             [self unregisterEvent];
@@ -258,7 +260,7 @@ static void PLPFDEventWriteStreamClientCallBack(CFWriteStreamRef stream, CFStrea
     }
     CFStreamCreatePairWithSocket(NULL, self.fdEvent->fd, readStreamPtr, writeStreamPtr);
     
-    printf("listen read stream %p write stream %p event %p\n", _readStream, _writeStream, _event);
+    printf("listen socket %d read stream %p write stream %p event %p\n", self.fdEvent->fd, _readStream, _writeStream, _event);
     runloop = CFRunLoopGetCurrent();
     currentMode = CFRunLoopCopyCurrentMode(runloop);
     currentMode = kCFRunLoopCommonModes;
@@ -266,11 +268,13 @@ static void PLPFDEventWriteStreamClientCallBack(CFWriteStreamRef stream, CFStrea
         CFReadStreamSetClient(_readStream, [self streamEvent], PLPFDEventReadStreamClientCallBack, &context);
         CFReadStreamScheduleWithRunLoop(_readStream, runloop, currentMode);
         CFReadStreamOpen(_readStream);
+        printf("\tcurrent read status %d %d\n", (int)CFReadStreamGetStatus(_readStream), CFReadStreamHasBytesAvailable(_readStream));
     }
     if (_writeStream) {
         CFWriteStreamSetClient(_writeStream, [self streamEvent], PLPFDEventWriteStreamClientCallBack, &context);
         CFWriteStreamScheduleWithRunLoop(_writeStream, runloop, currentMode);
         CFWriteStreamOpen(_writeStream);
+        printf("\tcurrent write status %d\n", (int)CFWriteStreamGetStatus(_writeStream));
     }
     
     CFRelease(currentMode);
@@ -281,13 +285,19 @@ static void PLPFDEventWriteStreamClientCallBack(CFWriteStreamRef stream, CFStrea
 {
     CFRunLoopRef runloop;
     
-    printf("unregister event %p\n", _event);
+    printf("unregister event %p socket %d\n", _event, self.fdEvent->fd);
     runloop = CFRunLoopGetCurrent();
     if (_readStream) {
+        printf("\tcurrent read status %d %d\n", (int)CFReadStreamGetStatus(_readStream), CFReadStreamHasBytesAvailable(_readStream));
         CFReadStreamUnscheduleFromRunLoop(_readStream, runloop, kCFRunLoopCommonModes);
+        CFRelease(_readStream);
+        _readStream = NULL;
     }
     if (_writeStream) {
+        printf("\tcurrent write status %d\n", (int)CFWriteStreamGetStatus(_writeStream));
         CFWriteStreamUnscheduleFromRunLoop(_writeStream, runloop, kCFRunLoopCommonModes);
+        CFRelease(_writeStream);
+        _writeStream = NULL;
     }
     [super unregisterEvent];
 }
