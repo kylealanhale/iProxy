@@ -8,6 +8,7 @@
 
 #import "HTTPProxyServer.h"
 #import "SharedHeader.h"
+#import "HTTPProxySocketWrapper.h"
 #include "polipo.h"
 
 static NSMutableDictionary *_plpEvent = nil;
@@ -145,15 +146,13 @@ void polipoExit()
     assert("test");
 }
 
-@interface PLPFDEvent : PLPEvent
+@interface PLPWrapperEvent : PLPEvent
 {
-    CFReadStreamRef _readStream;
-    CFWriteStreamRef _writeStream;
 }
 @property(readonly, nonatomic) FdEventHandlerPtr fdEvent;
 @end
 
-@implementation PLPFDEvent
+@implementation PLPWrapperEvent
 
 - (id)initWithFDEvent:(FdEventHandlerPtr)event
 {
@@ -179,126 +178,41 @@ void polipoExit()
     return _event;
 }
 
-- (CFOptionFlags)streamEvent
-{
-    CFOptionFlags result = 0;
-    
-    if (self.fdEvent->poll_events & POLLIN) {
-        result |= kCFStreamEventHasBytesAvailable;
-    }
-    if (self.fdEvent->poll_events & POLLOUT) {
-        result |= kCFStreamEventCanAcceptBytes;
-    }
-    if (self.fdEvent->poll_events & POLLERR) {
-        result |= kCFStreamEventErrorOccurred;
-    }
-    if (self.fdEvent->poll_events & POLLHUP) {
-        result |= kCFStreamEventEndEncountered;
-    }
-    if (self.fdEvent->poll_events & POLLNVAL) {
-        result |= kCFStreamEventEndEncountered;
-    }
-    return result;
-}
-
-- (void)readStreamCallbackWithEvent:(CFStreamEventType)type
+- (void)streamNotification:(NSNotification *)notification
 {
     if (((FdEventHandlerPtr)_event)->handler) {
         int done;
         
-        printf("read event %p read stream %p type %d socket %d\n", _event, _readStream, (int)type, self.fdEvent->fd);
         done = ((FdEventHandlerPtr)_event)->handler(0, _event);
         if (done) {
             [self unregisterEvent];
         }
     }
-}
-
-- (void)writeStreamCallbackWithEvent:(CFStreamEventType)type
-{
-    if (((FdEventHandlerPtr)_event)->handler) {
-        int done;
-        
-        printf("write event %p write stream %p type %d socket %d\n", _event, _writeStream, (int)type, self.fdEvent->fd);
-        done = ((FdEventHandlerPtr)_event)->handler(0, _event);
-        if (done) {
-            [self unregisterEvent];
-        }
-    }
-}
-
-static void PLPFDEventReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType type, void *clientCallBackInfo)
-{
-    printf("read callback stream %p\n", stream);
-    [(id)clientCallBackInfo readStreamCallbackWithEvent:type];
-}
-
-static void PLPFDEventWriteStreamClientCallBack(CFWriteStreamRef stream, CFStreamEventType type, void *clientCallBackInfo)
-{
-    printf("write callback stream %p\n", stream);
-    [(id)clientCallBackInfo writeStreamCallbackWithEvent:type];
 }
 
 - (void)registerEvent
 {
-    CFReadStreamRef *readStreamPtr = NULL;
-    CFWriteStreamRef *writeStreamPtr = NULL;
-    CFStreamClientContext context;
-    CFStringRef currentMode;
-    CFRunLoopRef runloop;
+    HTTPProxySocketWrapper *wrapper;
     
-    context.version = 0;
-    context.info = self;
-    context.retain = NULL;
-    context.release = NULL;
-    context.copyDescription = NULL;
+    wrapper = [HTTPProxySocketWrapper httpProxySocketWrapperForNativeSocket:self.fdEvent->fd];
+    if (!wrapper) {
+        wrapper = [HTTPProxySocketWrapper createHTTPProxySocketWrapperForNativeSocket:self.fdEvent->fd];
+    }
     if (self.fdEvent->poll_events & POLLIN) {
-        readStreamPtr = &_readStream;
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(streamNotification:) name:HTTPProxySocketWrapperReadStreamNotification object:wrapper];
     }
     if (self.fdEvent->poll_events & POLLOUT) {
-        writeStreamPtr = &_writeStream;
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(streamNotification:) name:HTTPProxySocketWrapperWriteStreamNotification object:wrapper];
     }
-    CFStreamCreatePairWithSocket(NULL, self.fdEvent->fd, readStreamPtr, writeStreamPtr);
-    
-    printf("listen socket %d read stream %p write stream %p event %p\n", self.fdEvent->fd, _readStream, _writeStream, _event);
-    runloop = CFRunLoopGetCurrent();
-    currentMode = CFRunLoopCopyCurrentMode(runloop);
-    currentMode = kCFRunLoopCommonModes;
-    if (_readStream) {
-        CFReadStreamSetClient(_readStream, [self streamEvent], PLPFDEventReadStreamClientCallBack, &context);
-        CFReadStreamScheduleWithRunLoop(_readStream, runloop, currentMode);
-        CFReadStreamOpen(_readStream);
-        printf("\tcurrent read status %d %d\n", (int)CFReadStreamGetStatus(_readStream), CFReadStreamHasBytesAvailable(_readStream));
-    }
-    if (_writeStream) {
-        CFWriteStreamSetClient(_writeStream, [self streamEvent], PLPFDEventWriteStreamClientCallBack, &context);
-        CFWriteStreamScheduleWithRunLoop(_writeStream, runloop, currentMode);
-        CFWriteStreamOpen(_writeStream);
-        printf("\tcurrent write status %d\n", (int)CFWriteStreamGetStatus(_writeStream));
-    }
-    
-    CFRelease(currentMode);
     [super registerEvent];
 }
 
 - (void)unregisterEvent
 {
-    CFRunLoopRef runloop;
+    HTTPProxySocketWrapper *wrapper;
     
-    printf("unregister event %p socket %d\n", _event, self.fdEvent->fd);
-    runloop = CFRunLoopGetCurrent();
-    if (_readStream) {
-        printf("\tcurrent read status %d %d\n", (int)CFReadStreamGetStatus(_readStream), CFReadStreamHasBytesAvailable(_readStream));
-        CFReadStreamUnscheduleFromRunLoop(_readStream, runloop, kCFRunLoopCommonModes);
-        CFRelease(_readStream);
-        _readStream = NULL;
-    }
-    if (_writeStream) {
-        printf("\tcurrent write status %d\n", (int)CFWriteStreamGetStatus(_writeStream));
-        CFWriteStreamUnscheduleFromRunLoop(_writeStream, runloop, kCFRunLoopCommonModes);
-        CFRelease(_writeStream);
-        _writeStream = NULL;
-    }
+    wrapper = [HTTPProxySocketWrapper httpProxySocketWrapperForNativeSocket:self.fdEvent->fd];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:nil object:wrapper];
     [super unregisterEvent];
 }
 
@@ -308,10 +222,10 @@ static int registerFdEventHelper_count = 0;
 
 FdEventHandlerPtr registerFdEventHelper(FdEventHandlerPtr event)
 {
-    PLPFDEvent *fdEvent;
+    PLPWrapperEvent *fdEvent;
     
     printf("registerFdEventHelper(%d) %p\n", registerFdEventHelper_count++, event);
-    fdEvent = [[PLPFDEvent alloc] initWithFDEvent:event];
+    fdEvent = [[PLPWrapperEvent alloc] initWithFDEvent:event];
     [fdEvent registerEvent];
     [fdEvent autorelease];
     return event;
@@ -319,9 +233,9 @@ FdEventHandlerPtr registerFdEventHelper(FdEventHandlerPtr event)
 
 void unregisterFdEventI(FdEventHandlerPtr event, int i)
 {
-    PLPFDEvent *fdEvent;
+    PLPWrapperEvent *fdEvent;
     
-    fdEvent = [PLPFDEvent eventWithHandlerPtr:event];
+    fdEvent = [PLPWrapperEvent eventWithHandlerPtr:event];
     [fdEvent unregisterEvent];
 }
 
@@ -394,7 +308,10 @@ void unregisterFdEvent(FdEventHandlerPtr event)
 
 - (void)didOpenConnection:(NSDictionary *)info
 {
-    httpAccept([[info objectForKey:@"handle"] fileDescriptor], NULL, NULL);
+    int nativeSocket;
+    
+    nativeSocket = [[info objectForKey:@"handle"] fileDescriptor];
+    httpAccept(nativeSocket, NULL, NULL);
 }
 
 - (void)didCloseConnection:(NSDictionary *)info
