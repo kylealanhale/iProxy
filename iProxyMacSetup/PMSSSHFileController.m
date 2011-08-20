@@ -161,9 +161,11 @@
 
 - (void)setupProxy:(NSString *)proxy port:(NSUInteger)port
 {
-    [self _addProxy:proxy port:port];
-    [self _writeSSHConfig];
-    _proxyEnabled = YES;
+    if (proxy != NULL && port != 0) {
+        [self _addProxy:proxy port:port];
+        [self _writeSSHConfig];
+        _proxyEnabled = YES;
+    }
 }
 
 - (void)cleanupProxy
