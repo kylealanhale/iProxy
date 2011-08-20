@@ -165,6 +165,8 @@
         [self _addProxy:proxy port:port];
         [self _writeSSHConfig];
         _proxyEnabled = YES;
+    } else {
+        NSLog(@"****** problem the proxy %@ and the port %d, I can't configure ssh using the proxy", proxy, port)
     }
 }
 
