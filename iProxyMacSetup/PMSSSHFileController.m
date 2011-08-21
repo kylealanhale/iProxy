@@ -161,9 +161,13 @@
 
 - (void)setupProxy:(NSString *)proxy port:(NSUInteger)port
 {
-    [self _addProxy:proxy port:port];
-    [self _writeSSHConfig];
-    _proxyEnabled = YES;
+    if (proxy != NULL && port != 0) {
+        [self _addProxy:proxy port:port];
+        [self _writeSSHConfig];
+        _proxyEnabled = YES;
+    } else {
+        NSLog(@"****** problem the proxy %@ and the port %d, I can't configure ssh using the proxy", proxy, port)
+    }
 }
 
 - (void)cleanupProxy
