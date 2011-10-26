@@ -155,8 +155,8 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleConnectionAcceptedNotification object:nil];
     
     for (NSMutableSet *connections in [_connectionPerIP allValues]) {
-        for (NSFileHandle *handle in connections) {
-            [handle closeFile];
+        for (NSNumber *nativeSocket in connections) {
+            close([nativeSocket intValue]);
         }
     }
     [_connectionPerIP removeAllObjects];
@@ -198,6 +198,11 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
     [self _stopped];
 }
 
+- (BOOL)useFileHandle
+{
+    return YES;
+}
+
 - (void)socketCallbackWithSocket:(CFSocketRef)sock type:(CFSocketCallBackType)type address:(CFDataRef)address data:(const void *)data
 {
 	assert((sock == _sockets[0]) || (sock == _sockets[1]));
@@ -205,23 +210,30 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
 	// Only care about accept callbacks.
     if (type == kCFSocketAcceptCallBack) {
     	int description;
-        NSFileHandle *handle;
-        NSDictionary *info;
+        NSMutableDictionary *info;
+        NSNumber *nativeSocket;
         
 		assert((data != NULL) && (*((CFSocketNativeHandle*)data) != -1));
 		
         description = *(CFSocketNativeHandle*)data;
-        handle = [[NSFileHandle alloc] initWithFileDescriptor:description];
-        info = [[NSDictionary alloc] initWithObjectsAndKeys:handle, @"handle", address, @"address", [NSString addressFromData:(NSData *)address], @"ip", nil];
+        nativeSocket = [[NSNumber alloc] initWithInt:description];
+        info = [[NSMutableDictionary alloc] initWithObjectsAndKeys:nativeSocket, @"nativesocket", address, @"address", [NSString addressFromData:(NSData *)address], @"ip", nil];
+        if ([self useFileHandle]) {
+            NSFileHandle *handle;
+            
+            handle = [[NSFileHandle alloc] initWithFileDescriptor:description];
+            [info setObject:handle forKey:@"handle"];
+            [handle release];
+        }
         [self newReceiveIncomingConnectionWithInfo:info];
+        [nativeSocket release];
         [info release];
-        [handle release];
 	}
 }
 
 - (void)newReceiveIncomingConnectionWithInfo:(NSDictionary *)info
 {
-    NSMutableArray *connections;
+    NSMutableSet *connections;
     
     [self willChangeValueForKey:@"connectionCount"];
     _connectionCount++;
@@ -233,7 +245,7 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
         [connections autorelease];
         [self didChangeValueForKey:@"computerCount"];
     }
-    [connections addObject:[info objectForKey:@"handle"]];
+    [connections addObject:[info objectForKey:@"nativesocket"]];
     [self didOpenConnection:info];
     [self didChangeValueForKey:@"connectionCount"];
 }
@@ -249,9 +261,9 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
     
     [self willChangeValueForKey:@"connectionCount"];
     _connectionCount--;
-	[[info objectForKey:@"handle"] closeFile];
+    close([[info objectForKey:@"nativesocket"] intValue]);
     connections = [_connectionPerIP objectForKey:[info objectForKey:@"ip"]];
-    [connections removeObject:[info objectForKey:@"handle"]];
+    [connections removeObject:[info objectForKey:@"nativesocket"]];
     if (connections && [connections count] == 0) {
         [self willChangeValueForKey:@"computerCount"];
         [_connectionPerIP removeObjectForKey:[info objectForKey:@"ip"]];

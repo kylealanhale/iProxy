@@ -51,6 +51,7 @@ AtomPtr pidFile = NULL;
 
 - (void)unregisterEvent
 {
+    printf("unregister event %p\n", _event);
     [[self retain] autorelease];
     [_plpEvent removeObjectForKey:[NSValue valueWithPointer:_event]];
 }
@@ -184,6 +185,7 @@ void polipoExit()
         int done;
         
         done = ((FdEventHandlerPtr)_event)->handler(0, _event);
+        printf("event %p done %d\n", _event, done);
         if (done) {
             [self unregisterEvent];
         }
@@ -235,6 +237,7 @@ void unregisterFdEventI(FdEventHandlerPtr event, int i)
 {
     PLPWrapperEvent *fdEvent;
     
+    printf("unregister event %p i %d\n", event, i);
     fdEvent = [PLPWrapperEvent eventWithHandlerPtr:event];
     [fdEvent unregisterEvent];
 }
@@ -306,12 +309,47 @@ void unregisterFdEvent(FdEventHandlerPtr event)
     return [NSString stringWithFormat:@"function FindProxyForURL(url, host) { return \"PROXY %@:%d\"; }", ip, self.servicePort];
 }
 
+void zob(CFSocketRef s, CFSocketCallBackType type, CFDataRef address, const void *data, void *info);
+void zob(CFSocketRef s, CFSocketCallBackType type, CFDataRef address, const void *data, void *info)
+{
+    NSLog(@"type %d", (int)type);
+}
+
+
+- (BOOL)useFileHandle
+{
+    return NO;
+}
+
+- (void)notif:(NSNotification *)notification
+{
+    NSLog(@"%@ %@", [notification name], [notification userInfo]);
+}
+
 - (void)didOpenConnection:(NSDictionary *)info
 {
     int nativeSocket;
+    NSFileHandle *handle;
     
-    nativeSocket = [[info objectForKey:@"handle"] fileDescriptor];
-    httpAccept(nativeSocket, NULL, NULL);
+    nativeSocket = [[info objectForKey:@"nativesocket"] intValue];
+    handle = [info objectForKey:@"handle"];
+    
+    printf("new native socket %d\n", nativeSocket);
+//    [HTTPProxySocketWrapper createHTTPProxySocketWrapperForNativeSocket:nativeSocket];
+    if (NO) {
+        CFSocketRef test;
+        CFSocketContext context = { 0, zob, NULL, NULL, NULL };
+        test = CFSocketCreateWithNative(NULL, nativeSocket, kCFSocketReadCallBack | kCFSocketAcceptCallBack | kCFSocketDataCallBack | kCFSocketConnectCallBack | kCFSocketWriteCallBack, zob, &context);
+    }
+    if (NO) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notif:) name:NSFileHandleReadToEndOfFileCompletionNotification object:handle];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notif:) name:NSFileHandleReadCompletionNotification object:handle];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notif:) name:NSFileHandleConnectionAcceptedNotification object:handle];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notif:) name:NSFileHandleDataAvailableNotification object:handle];
+    }
+    if (YES) {
+        httpAccept(nativeSocket, NULL, NULL);
+    }
 }
 
 - (void)didCloseConnection:(NSDictionary *)info

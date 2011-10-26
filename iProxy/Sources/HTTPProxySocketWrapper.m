@@ -126,13 +126,21 @@ NSMutableDictionary *wrappers = NULL;
     return self;
 }
 
+- (void)dealloc
+{
+    NSLog(@"dealloc wrapper for native socket %d", _nativeSocket);
+    [super dealloc];
+}
+
 - (void)readStreamCallbackWithType:(CFStreamEventType)type
 {
+    printf("read from %d type %d\n", _nativeSocket, (int)type);
     [[NSNotificationCenter defaultCenter] postNotificationName:HTTPProxySocketWrapperReadStreamNotification object:self];
 }
 
 - (void)writeStreamCallbackWithType:(CFStreamEventType)type
 {
+    printf("write from %d type %d\n", _nativeSocket, (int)type);
     [[NSNotificationCenter defaultCenter] postNotificationName:HTTPProxySocketWrapperWriteStreamNotification object:self];
 }
 
@@ -151,15 +159,19 @@ NSMutableDictionary *wrappers = NULL;
     CFStreamClientContext streamContext = { 0, self, NULL, NULL, NULL };
     CFRunLoopRef runloop;
     
+    printf("open socket stream for socket %d\n", _nativeSocket);
     runloop = CFRunLoopGetCurrent();
     CFStreamCreatePairWithSocket(NULL, _nativeSocket, &_readStream, &_writeStream);
     
-    CFReadStreamSetClient(_readStream, kCFStreamEventOpenCompleted | kCFStreamEventHasBytesAvailable | kCFStreamEventCanAcceptBytes | kCFStreamEventErrorOccurred | kCFStreamEventEndEncountered, readStreamCallback, &streamContext);
+    CFReadStreamSetClient(_readStream, kCFStreamEventHasBytesAvailable | kCFStreamEventCanAcceptBytes | kCFStreamEventErrorOccurred | kCFStreamEventEndEncountered, readStreamCallback, &streamContext);
     CFReadStreamScheduleWithRunLoop(_readStream, runloop, kCFRunLoopCommonModes);
     
-    CFWriteStreamSetClient(_writeStream, kCFStreamEventOpenCompleted | kCFStreamEventHasBytesAvailable | kCFStreamEventCanAcceptBytes | kCFStreamEventErrorOccurred | kCFStreamEventEndEncountered, writeStreamCallback, &streamContext);
+    CFWriteStreamSetClient(_writeStream, kCFStreamEventHasBytesAvailable | kCFStreamEventCanAcceptBytes | kCFStreamEventErrorOccurred | kCFStreamEventEndEncountered, writeStreamCallback, &streamContext);
     CFWriteStreamScheduleWithRunLoop(_writeStream, runloop, kCFRunLoopCommonModes);
     
+    CFReadStreamSetProperty(_readStream, kCFStreamNetworkServiceType, kCFStreamNetworkServiceTypeBackground);
+    CFWriteStreamSetProperty(_writeStream, kCFStreamNetworkServiceType, kCFStreamNetworkServiceTypeBackground);
+  
     CFReadStreamOpen(_readStream);
     CFWriteStreamOpen(_writeStream);
 }
