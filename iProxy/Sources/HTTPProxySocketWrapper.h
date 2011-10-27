@@ -28,5 +28,7 @@
 - (void)writeStreamCallbackWithType:(CFStreamEventType)type;
 - (CFIndex)writeData:(void *)bytes length:(CFIndex)length;
 - (CFIndex)readData:(void *)bytes length:(CFIndex)length;
+- (void)sendReadEvent;
+- (void)sendWriteEvent;
 
 @end

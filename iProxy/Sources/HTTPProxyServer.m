@@ -199,6 +199,10 @@ void polipoExit()
     wrapper = [HTTPProxySocketWrapper httpProxySocketWrapperForNativeSocket:self.fdEvent->fd];
     if (!wrapper) {
         wrapper = [HTTPProxySocketWrapper createHTTPProxySocketWrapperForNativeSocket:self.fdEvent->fd];
+    } else if (self.fdEvent->poll_events & POLLIN) {
+        [wrapper sendReadEvent];
+    } else if (self.fdEvent->poll_events & POLLOUT) {
+        [wrapper sendWriteEvent];
     }
     if (self.fdEvent->poll_events & POLLIN) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(streamNotification:) name:HTTPProxySocketWrapperReadStreamNotification object:wrapper];
@@ -216,6 +220,7 @@ void polipoExit()
     wrapper = [HTTPProxySocketWrapper httpProxySocketWrapperForNativeSocket:self.fdEvent->fd];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:nil object:wrapper];
     [super unregisterEvent];
+    printf("\tunregister event socket %d\n", self.fdEvent->fd);
 }
 
 @end

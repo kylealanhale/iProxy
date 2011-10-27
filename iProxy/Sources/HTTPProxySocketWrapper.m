@@ -186,4 +186,37 @@ NSMutableDictionary *wrappers = NULL;
     CFRelease(_writeStream);
 }
 
+- (void)_sendReadEvent:(id)noused
+{
+    printf("** send read event\n");
+    [[NSNotificationCenter defaultCenter] postNotificationName:HTTPProxySocketWrapperReadStreamNotification object:self];
+}
+
+- (void)sendReadEvent
+{
+    if (CFReadStreamHasBytesAvailable(_readStream)
+        || CFReadStreamGetStatus(_readStream) == kCFStreamStatusNotOpen
+        || CFReadStreamGetStatus(_readStream) == kCFStreamStatusAtEnd
+        || CFReadStreamGetStatus(_readStream) == kCFStreamStatusClosed
+        || CFReadStreamGetStatus(_readStream) == kCFStreamStatusError) {
+        [self performSelector:@selector(_sendReadEvent:) withObject:nil afterDelay:0];
+    }
+}
+
+- (void)_sendWriteEvent:(id)noused
+{
+    printf("** send write event\n");
+    [[NSNotificationCenter defaultCenter] postNotificationName:HTTPProxySocketWrapperReadStreamNotification object:self];
+}
+
+- (void)sendWriteEvent
+{
+    if (CFWriteStreamCanAcceptBytes(_writeStream)
+        || CFWriteStreamGetStatus(_writeStream) == kCFStreamStatusNotOpen
+        || CFWriteStreamGetStatus(_writeStream) == kCFStreamStatusAtEnd
+        || CFWriteStreamGetStatus(_writeStream) == kCFStreamStatusClosed
+        || CFWriteStreamGetStatus(_writeStream) == kCFStreamStatusError) {
+        [self performSelector:@selector(_sendWriteEvent:) withObject:nil afterDelay:0];
+    }
+}
 @end
