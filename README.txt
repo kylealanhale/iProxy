@@ -1,3 +1,5 @@
+***** I won't update this project anymore. I don't have enough time, and tethering is free now in my country *****
+
 Easy way to get an internet connection on your computer without jailbreaking. It's also easy to configure :
 + make a wifi on your computer
 + join the wifi from your iphone
