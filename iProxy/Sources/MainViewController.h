@@ -29,6 +29,7 @@
     IBOutlet UILabel *socksConnectionCountLabel;
     IBOutlet UILabel *socksIPCountLabel;
     NSTimer *socksProxyInfoTimer;
+    NSTimer *labelTimer;
 
     IBOutlet UIView *connectView;
     IBOutlet UIView *runningView;
