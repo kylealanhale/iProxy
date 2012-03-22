@@ -18,8 +18,6 @@
 #import <AVFoundation/AVFoundation.h>
 #import <SystemConfiguration/SCNetworkReachability.h>
 
-#define HTTP_PROXY_ENABLED 0
-
 @class MainViewController;
 
 @interface AppDelegate : NSObject <UIApplicationDelegate, AVAudioSessionDelegate>

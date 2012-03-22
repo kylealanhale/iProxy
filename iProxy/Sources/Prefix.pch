@@ -9,3 +9,5 @@
 #define HAVE_UINT32_T
 #define HAVE_SOCKLEN_T
 #define USE_THREAD 1
+
+#define HTTP_PROXY_ENABLED 1

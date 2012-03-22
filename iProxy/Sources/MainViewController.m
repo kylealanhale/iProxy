@@ -19,7 +19,9 @@
 #import "HTTPServer.h"
 #import "PacFileResponse.h"
 #import "SocksProxyServer.h"
-//#import "HTTPProxyServer.h"
+#if HTTP_PROXY_ENABLED
+#import "HTTPProxyServer.h"
+#endif
 #import "UIViewAdditions.h"
 #import "UIColorAdditions.h"
 #import <MobileCoreServices/MobileCoreServices.h>

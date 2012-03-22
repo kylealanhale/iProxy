@@ -48,6 +48,32 @@
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
 		3A18D6B4119DC7E300C56A7A /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A18D6B3119DC7E300C56A7A /* CFNetwork.framework */; };
+		54437C34151B9702009EBC8F /* HTTPProxyServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 02501CC61266680900CE5CA9 /* HTTPProxyServer.m */; };
+		54437C36151B9753009EBC8F /* atom.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7B81237A598008538A1 /* atom.c */; };
+		54437C37151B9757009EBC8F /* auth.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7BA1237A598008538A1 /* auth.c */; };
+		54437C38151B975A009EBC8F /* chunk.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7BC1237A598008538A1 /* chunk.c */; };
+		54437C39151B975E009EBC8F /* client.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7BE1237A598008538A1 /* client.c */; };
+		54437C3A151B9761009EBC8F /* config.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7C01237A598008538A1 /* config.c */; };
+		54437C3B151B9765009EBC8F /* diskcache.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7C21237A598008538A1 /* diskcache.c */; };
+		54437C3C151B9769009EBC8F /* dns.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7C41237A598008538A1 /* dns.c */; };
+		54437C3D151B976C009EBC8F /* event.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7C61237A598008538A1 /* event.c */; };
+		54437C3E151B9770009EBC8F /* forbidden.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7C81237A598008538A1 /* forbidden.c */; };
+		54437C3F151B9774009EBC8F /* fts_compat.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7CA1237A598008538A1 /* fts_compat.c */; };
+		54437C40151B9779009EBC8F /* ftsimport.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7CC1237A598008538A1 /* ftsimport.c */; };
+		54437C41151B977D009EBC8F /* http_parse.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7CE1237A598008538A1 /* http_parse.c */; };
+		54437C42151B9782009EBC8F /* http.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7D01237A598008538A1 /* http.c */; };
+		54437C43151B9785009EBC8F /* io.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7D21237A598008538A1 /* io.c */; };
+		54437C44151B9789009EBC8F /* local.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7D41237A598008538A1 /* local.c */; };
+		54437C45151B978D009EBC8F /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7D61237A598008538A1 /* log.c */; };
+		54437C46151B9790009EBC8F /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7D81237A598008538A1 /* main.c */; };
+		54437C47151B9796009EBC8F /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7D91237A598008538A1 /* md5.c */; };
+		54437C48151B979F009EBC8F /* mingw.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7DD1237A598008538A1 /* mingw.c */; };
+		54437C49151B97A3009EBC8F /* object.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7DF1237A598008538A1 /* object.c */; };
+		54437C4A151B97A6009EBC8F /* parse_time.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7E11237A598008538A1 /* parse_time.c */; };
+		54437C4B151B97AA009EBC8F /* server.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7E41237A598008538A1 /* server.c */; };
+		54437C4C151B97AD009EBC8F /* socks.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7E61237A598008538A1 /* socks.c */; };
+		54437C4D151B97B1009EBC8F /* tunnel.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7E81237A598008538A1 /* tunnel.c */; };
+		54437C4E151B97B5009EBC8F /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7EA1237A598008538A1 /* util.c */; };
 		9D06AE961237D37400470CEC /* polipo.config in Resources */ = {isa = PBXBuildFile; fileRef = 9D06AE951237D37400470CEC /* polipo.config */; };
 		9D211196110637FB009C3C7C /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = 9D211195110637FB009C3C7C /* iTunesArtwork */; };
 		9D2224E51105E6A6003F4E04 /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9D2224E41105E6A6003F4E04 /* Entitlements.plist */; };
@@ -580,6 +606,9 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0430;
+			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iProxy" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
@@ -722,6 +751,32 @@
 				02E754661274E8C400D55958 /* util.c in Sources */,
 				02E754911274EC3000D55958 /* main.c in Sources */,
 				022933A6139881A200108283 /* SocketServer.m in Sources */,
+				54437C34151B9702009EBC8F /* HTTPProxyServer.m in Sources */,
+				54437C36151B9753009EBC8F /* atom.c in Sources */,
+				54437C37151B9757009EBC8F /* auth.c in Sources */,
+				54437C38151B975A009EBC8F /* chunk.c in Sources */,
+				54437C39151B975E009EBC8F /* client.c in Sources */,
+				54437C3A151B9761009EBC8F /* config.c in Sources */,
+				54437C3B151B9765009EBC8F /* diskcache.c in Sources */,
+				54437C3C151B9769009EBC8F /* dns.c in Sources */,
+				54437C3D151B976C009EBC8F /* event.c in Sources */,
+				54437C3E151B9770009EBC8F /* forbidden.c in Sources */,
+				54437C3F151B9774009EBC8F /* fts_compat.c in Sources */,
+				54437C40151B9779009EBC8F /* ftsimport.c in Sources */,
+				54437C41151B977D009EBC8F /* http_parse.c in Sources */,
+				54437C42151B9782009EBC8F /* http.c in Sources */,
+				54437C43151B9785009EBC8F /* io.c in Sources */,
+				54437C44151B9789009EBC8F /* local.c in Sources */,
+				54437C45151B978D009EBC8F /* log.c in Sources */,
+				54437C46151B9790009EBC8F /* main.c in Sources */,
+				54437C47151B9796009EBC8F /* md5.c in Sources */,
+				54437C48151B979F009EBC8F /* mingw.c in Sources */,
+				54437C49151B97A3009EBC8F /* object.c in Sources */,
+				54437C4A151B97A6009EBC8F /* parse_time.c in Sources */,
+				54437C4B151B97AA009EBC8F /* server.c in Sources */,
+				54437C4C151B97AD009EBC8F /* socks.c in Sources */,
+				54437C4D151B97B1009EBC8F /* tunnel.c in Sources */,
+				54437C4E151B97B5009EBC8F /* util.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -778,13 +833,12 @@
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "iProxyMacSetup/Resources/iProxyMacSetup-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
 				PRODUCT_NAME = iProxyMacSetup;
 				SDKROOT = "";
 				VALID_ARCHS = "i386 x86_64";
@@ -798,8 +852,8 @@
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "iProxyMacSetup/Resources/iProxyMacSetup-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				ONLY_ACTIVE_ARCH = YES;
@@ -809,7 +863,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = iProxyMacSetup;
 				SDKROOT = "";
 				ZERO_LINK = NO;
@@ -821,8 +874,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "iProxyMacSetup/Resources/iProxyMacSetup-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				ONLY_ACTIVE_ARCH = YES;
@@ -832,7 +885,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = iProxyMacSetup;
 				SDKROOT = "";
 			};
@@ -845,11 +897,11 @@
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Sources/Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -857,9 +909,8 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = srelay;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				VALID_ARCHS = i386;
 			};
 			name = Debug;
@@ -871,10 +922,10 @@
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Sources/Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -882,9 +933,8 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = srelay;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				VALID_ARCHS = i386;
 				ZERO_LINK = NO;
 			};
@@ -895,10 +945,10 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Sources/Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -906,9 +956,8 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = srelay;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				VALID_ARCHS = i386;
 			};
 			name = "Ad-hoc";
@@ -925,6 +974,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iProxy/Sources/Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = iProxy/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1.3;
 				OTHER_LDFLAGS = "";
@@ -947,6 +997,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iProxy/Sources/Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = iProxy/Resources/Info.plist;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = iProxy;
@@ -965,7 +1016,6 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
-				PREBINDING = NO;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -982,6 +1032,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iProxy/Sources/Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = iProxy/Resources/Info.plist;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = iProxy;
@@ -999,7 +1050,6 @@
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				PREBINDING = NO;
 			};
 			name = Debug;
 		};
@@ -1012,7 +1062,6 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
-				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
