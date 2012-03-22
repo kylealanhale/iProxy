@@ -60,7 +60,9 @@
     if (self) {
         servers = [[NSMutableDictionary alloc] init];
         [servers setObject:[SocksProxyServer sharedServer] forKey:[SocksProxyServer pacFilePath]];
-//        [servers setObject:[HTTPProxyServer sharedServer] forKey:[HTTPProxyServer pacFilePath]];
+#if HTTP_PROXY_ENABLED
+        [servers setObject:[HTTPProxyServer sharedServer] forKey:[HTTPProxyServer pacFilePath]];
+#endif
     }
     return self;
 }
