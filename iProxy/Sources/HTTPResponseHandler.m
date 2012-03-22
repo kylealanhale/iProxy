@@ -211,7 +211,7 @@ static NSMutableArray *registeredHandlers = nil;
 	fileHandle:(NSFileHandle *)requestFileHandle
 	server:(HTTPServer *)aServer
 {
-	self = [super init];
+	self = [self init];
 	if (self != nil)
 	{
 		request = (CFHTTPMessageRef)[(id)aRequest retain];
