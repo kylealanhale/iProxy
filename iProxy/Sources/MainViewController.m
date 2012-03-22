@@ -26,7 +26,7 @@
 #import "UIColorAdditions.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <QuartzCore/QuartzCore.h>
-
+#import "UIDevice_Extended.h"
 #define OFTEN_UPDATE_PERIOD             0.5
 #define NOT_SO_OFTEN_UPDATE_PERIOD      2.0
 
@@ -155,8 +155,8 @@
         nil];
     [self.view.layer insertSublayer:gradient atIndex:0];
     
-    hostName = [[NSProcessInfo processInfo] hostName];
-    
+    //hostName = [[NSProcessInfo processInfo] hostName];
+    hostName = [UIDevice localWiFiIPAddress];
 #if HTTP_PROXY_ENABLED
     httpAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, [[HTTPProxyServer sharedServer] servicePort]];
     httpPacLabel.text = [NSString stringWithFormat:@"http://%@:%d%@", hostName, [HTTPServer sharedHTTPServer].servicePort, [HTTPProxyServer pacFilePath]];

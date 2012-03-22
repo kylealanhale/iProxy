@@ -11,3 +11,8 @@
 #define USE_THREAD 1
 
 #define HTTP_PROXY_ENABLED 1
+#ifdef DEBUG
+#define DLog NSLog
+#else
+#define DLog(X, ...) ;;;
+#endif
