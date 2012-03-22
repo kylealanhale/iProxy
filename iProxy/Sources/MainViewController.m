@@ -33,7 +33,7 @@
 // defaults keys
 #define KEY_SOCKS_ON    @"socks.on"
 #define KEY_HTTP_ON     @"http.on"
-
+extern int fdEventNum;
 @interface MainViewController()
 - (void)updateHTTPProxy;
 - (void)updateSocksProxy;
@@ -144,7 +144,9 @@
 #endif
     
     socksAddressLabel.text = [NSString stringWithFormat:@"%@:%d", hostName, [[SocksProxyServer sharedServer] servicePort]];
-    socksPacLabel.text = [NSString stringWithFormat:@"http://%@:%d%@", hostName, [HTTPServer sharedHTTPServer].servicePort, [SocksProxyServer pacFilePath]];  
+    socksPacLabel.text = [NSString stringWithFormat:@"http://%@:%d%@", hostName, [HTTPServer sharedHTTPServer].servicePort, [SocksProxyServer pacFilePath]]; 
+    
+    proxyEventCountLabel.text = [NSString stringWithFormat:@"%d", fdEventNum];
 }
 - (void)scheduleLabelTimer
 {
