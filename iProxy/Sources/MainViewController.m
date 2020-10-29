@@ -45,12 +45,23 @@ extern int fdEventNum;
 @synthesize httpSwitch;
 @synthesize httpAddressLabel;
 @synthesize httpPacLabel;
+@synthesize httpPacButton;
+@synthesize proxyEventCountLabel;
+
 @synthesize socksSwitch;
 @synthesize socksAddressLabel;
 @synthesize socksPacLabel;
+@synthesize socksPacButton;
+@synthesize socksIPCountLabel;
+@synthesize socksConnectionCountLabel;
+
+@synthesize _bandwidthUpload;
+@synthesize _bandwidthDownload;
+@synthesize _totalUpload;
+@synthesize _totalDownload;
+
 @synthesize connectView;
 @synthesize runningView;
-@synthesize socksConnectionCountLabel;
 
 - (void)updateTransfer
 {

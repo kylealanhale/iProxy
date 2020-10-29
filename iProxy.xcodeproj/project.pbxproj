@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,9 +17,6 @@
 		02501CCA1266681800CE5CA9 /* SocksProxyServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 02501CC91266681800CE5CA9 /* SocksProxyServer.m */; };
 		02501D61126674DB00CE5CA9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 02501D60126674DB00CE5CA9 /* InfoPlist.strings */; };
 		02501D63126674E200CE5CA9 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02501D62126674E200CE5CA9 /* MainMenu.xib */; };
-		02501D651266753500CE5CA9 /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02501D641266753500CE5CA9 /* MainViewController.xib */; };
-		02501D671266753A00CE5CA9 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02501D661266753A00CE5CA9 /* MainWindow.xib */; };
-		02501D691266753F00CE5CA9 /* InfoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02501D681266753F00CE5CA9 /* InfoViewController.xib */; };
 		0267229D12444EA000A2EACF /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0267229C12444EA000A2EACF /* Cocoa.framework */; };
 		0267243E1245646C00A2EACF /* PMSUIController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0267243D1245646C00A2EACF /* PMSUIController.m */; };
 		0274FA9012444D8F00173784 /* PMSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0274FA8F12444D8F00173784 /* PMSAppDelegate.m */; };
@@ -75,6 +72,7 @@
 		54437C4D151B97B1009EBC8F /* tunnel.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7E81237A598008538A1 /* tunnel.c */; };
 		54437C4E151B97B5009EBC8F /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D71D7EA1237A598008538A1 /* util.c */; };
 		5487D670151BAC6C006A92F3 /* UIDevice_Extended.m in Sources */ = {isa = PBXBuildFile; fileRef = 5487D66F151BAC6C006A92F3 /* UIDevice_Extended.m */; };
+		70E7515924F2F2AC002FD79B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 70E7515824F2F2AC002FD79B /* Main.storyboard */; };
 		9D06AE961237D37400470CEC /* polipo.config in Resources */ = {isa = PBXBuildFile; fileRef = 9D06AE951237D37400470CEC /* polipo.config */; };
 		9D211196110637FB009C3C7C /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = 9D211195110637FB009C3C7C /* iTunesArtwork */; };
 		9D2224E51105E6A6003F4E04 /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9D2224E41105E6A6003F4E04 /* Entitlements.plist */; };
@@ -155,6 +153,7 @@
 		3A18D6B3119DC7E300C56A7A /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		5487D66E151BAC6C006A92F3 /* UIDevice_Extended.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIDevice_Extended.h; sourceTree = "<group>"; };
 		5487D66F151BAC6C006A92F3 /* UIDevice_Extended.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIDevice_Extended.m; sourceTree = "<group>"; };
+		70E7515824F2F2AC002FD79B /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		9D06AE951237D37400470CEC /* polipo.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = polipo.config; path = Resources/polipo.config; sourceTree = "<group>"; };
 		9D211195110637FB009C3C7C /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; name = iTunesArtwork; path = Resources/iTunesArtwork; sourceTree = "<group>"; };
 		9D2224E41105E6A6003F4E04 /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Entitlements.plist; path = Resources/Entitlements.plist; sourceTree = "<group>"; };
@@ -397,6 +396,7 @@
 				9D2224E41105E6A6003F4E04 /* Entitlements.plist */,
 				9D06AE951237D37400470CEC /* polipo.config */,
 				9D3438121242149300629728 /* silence.wav */,
+				70E7515824F2F2AC002FD79B /* Main.storyboard */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -615,7 +615,7 @@
 				LastUpgradeCheck = 0430;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iProxy" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 10.0";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -650,12 +650,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				02501D651266753500CE5CA9 /* MainViewController.xib in Resources */,
-				02501D671266753A00CE5CA9 /* MainWindow.xib in Resources */,
 				9D5B3C5F1103D4E2003C8FCF /* Icon.png in Resources */,
 				9D2224E51105E6A6003F4E04 /* Entitlements.plist in Resources */,
 				9D211196110637FB009C3C7C /* iTunesArtwork in Resources */,
 				9D94CB80110E727700F8C260 /* Default.png in Resources */,
+				70E7515924F2F2AC002FD79B /* Main.storyboard in Resources */,
 				9D06AE961237D37400470CEC /* polipo.config in Resources */,
 				9D3438131242149300629728 /* silence.wav in Resources */,
 				9D3ECC621244F6BA002B5F7E /* Icon@2x.png in Resources */,
@@ -664,7 +663,6 @@
 				9D3ECC681244F6D9002B5F7E /* Icon-Small-50.png in Resources */,
 				9D3ECC6A1244F6E3002B5F7E /* Icon-Small@2x.png in Resources */,
 				9DF66E8B12483BE30012D66D /* Icon-72-transparent.png in Resources */,
-				02501D691266753F00CE5CA9 /* InfoViewController.xib in Resources */,
 				9DDA4C7B124E4E2300BF30F3 /* Default@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -837,7 +835,10 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = 3BDZU7MY3A;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -845,7 +846,9 @@
 				INFOPLIST_FILE = "iProxyMacSetup/Resources/iProxyMacSetup-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kylealanhale.iProxyMacSetup;
 				PRODUCT_NAME = iProxyMacSetup;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = "";
 				VALID_ARCHS = "i386 x86_64";
 			};
@@ -856,8 +859,11 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 3BDZU7MY3A;
 				GCC_MODEL_TUNING = G5;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "iProxyMacSetup/Resources/iProxyMacSetup-Info.plist";
@@ -869,7 +875,9 @@
 					"-framework",
 					AppKit,
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.kylealanhale.iProxyMacSetup;
 				PRODUCT_NAME = iProxyMacSetup;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = "";
 				ZERO_LINK = NO;
 			};
@@ -880,6 +888,9 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3BDZU7MY3A;
 				GCC_MODEL_TUNING = G5;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "iProxyMacSetup/Resources/iProxyMacSetup-Info.plist";
@@ -891,7 +902,9 @@
 					"-framework",
 					AppKit,
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.kylealanhale.iProxyMacSetup;
 				PRODUCT_NAME = iProxyMacSetup;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = "";
 			};
 			name = "Ad-hoc";
@@ -975,6 +988,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = 3BDZU7MY3A;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -982,8 +996,9 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = iProxy/Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.kylealanhale.iProxy;
 				PRODUCT_NAME = iProxy;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
@@ -1000,12 +1015,15 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
+				DEVELOPMENT_TEAM = 3BDZU7MY3A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iProxy/Sources/Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = iProxy/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.kylealanhale.iProxy;
 				PRODUCT_NAME = iProxy;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
@@ -1035,12 +1053,15 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
+				DEVELOPMENT_TEAM = 3BDZU7MY3A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iProxy/Sources/Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = iProxy/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.kylealanhale.iProxy;
 				PRODUCT_NAME = iProxy;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";

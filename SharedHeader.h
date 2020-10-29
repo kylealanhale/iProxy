@@ -13,5 +13,5 @@
 #define HTTP_PROXY_PORT     8888
 #define HTTP_PROXY_DOMAIN   @"_iproxyhttpproxy._tcp."
 
-#define SOCKS_PROXY_PORT    1080
+#define SOCKS_PROXY_PORT    1081
 #define SOCKS_PROXY_DOMAIN  @"_iproxysocksproxy._tcp."

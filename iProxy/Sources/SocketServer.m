@@ -54,7 +54,7 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
     CFSocketContext socketCtxt = {0, self, (const void*(*)(const void*))&CFRetain, (void(*)(const void*))&CFRelease, (CFStringRef(*)(const void *))&CFCopyDescription };
     _sockets[0] = CFSocketCreate(kCFAllocatorDefault, PF_INET, SOCK_STREAM, IPPROTO_TCP, kCFSocketAcceptCallBack, (CFSocketCallBack)&socketCallback, &socketCtxt);
     if (!_sockets[0]) {
-        [self _setLastErrorWithMessage:@"Unable to create socket."];
+        [self _setLastErrorWithMessage:@"Unable to create IPV4 socket."];
         return;
     }
     
@@ -62,13 +62,13 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
         CFSocketInvalidate(_sockets[0]);
     	CFRelease(_sockets[0]);
         _sockets[0] = nil;
-        [self _setLastErrorWithMessage:@"Unable to set socket options."];
+        [self _setLastErrorWithMessage:@"Unable to set IPV4 socket options."];
         return;
     }
     
     _sockets[1] = CFSocketCreate(kCFAllocatorDefault, PF_INET6, SOCK_STREAM, IPPROTO_TCP, kCFSocketAcceptCallBack, (CFSocketCallBack)&socketCallback, &socketCtxt);
     if (!_sockets[1]) {
-        [self _setLastErrorWithMessage:@"Unable to create socket."];
+        [self _setLastErrorWithMessage:@"Unable to create IPV6 socket."];
         return;
     }
     
@@ -76,7 +76,7 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
         CFSocketInvalidate(_sockets[1]);
     	CFRelease(_sockets[1]);
         _sockets[1] = nil;
-        [self _setLastErrorWithMessage:@"Unable to set socket options."];
+        [self _setLastErrorWithMessage:@"Unable to set IPV6 socket options."];
         return;
     }
 }
@@ -108,14 +108,15 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
     addr4.sin_addr.s_addr = htonl(INADDR_ANY);
     addressData = CFDataCreateWithBytesNoCopy(NULL, (const UInt8*)&addr4, sizeof(addr4), kCFAllocatorNull);
     
-    if (CFSocketSetAddress(_sockets[0], addressData) != kCFSocketSuccess) {
+    CFIndex result = CFSocketSetAddress(_sockets[0], addressData);
+    if (result != kCFSocketSuccess) {
 	    CFRelease(addressData);
         if (_sockets[0]) {
             CFSocketInvalidate(_sockets[0]);
             CFRelease(_sockets[0]);
             _sockets[0] = nil;
         }
-        [self _setLastErrorWithMessage:@"Unable to bind socket to address."];
+        [self _setLastErrorWithMessage:@"Unable to bind IPV4 socket to address."];
         return NO;
     }
     CFRelease(addressData);
@@ -141,7 +142,7 @@ static void socketCallback(CFSocketRef sock, CFSocketCallBackType type, CFDataRe
                 CFRelease(_sockets[1]);
                 _sockets[1] = nil;
             }
-            [self _setLastErrorWithMessage:@"Unable to bind socket to address6."];
+            [self _setLastErrorWithMessage:@"Unable to bind IPV6 socket to address6."];
             return NO;
         }
         CFRelease(addressData);

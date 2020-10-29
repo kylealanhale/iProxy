@@ -17,30 +17,11 @@
 
 @interface MainViewController : UIViewController <UIActionSheetDelegate, MFMailComposeViewControllerDelegate, NSNetServiceDelegate> {
 
-    IBOutlet UISwitch *httpSwitch;
-    IBOutlet UILabel *httpAddressLabel;
-    IBOutlet UILabel *httpPacLabel;
-    IBOutlet UIButton *httpPacButton;
-
-    IBOutlet UISwitch *socksSwitch;
-    IBOutlet UILabel *socksAddressLabel;
-    IBOutlet UILabel *socksPacLabel;
-    IBOutlet UIButton *socksPacButton;
-    IBOutlet UILabel *socksConnectionCountLabel;
-    IBOutlet UILabel *socksIPCountLabel;
     NSTimer *socksProxyInfoTimer;
-    IBOutlet UILabel *proxyEventCountLabel;
     NSTimer *labelTimer;
-
-    IBOutlet UIView *connectView;
-    IBOutlet UIView *runningView;
 	
 	NSString *emailBody;
 	NSString *emailURL;
-	IBOutlet UILabel *_totalUpload;
-	IBOutlet UILabel *_totalDownload;
-	IBOutlet UILabel *_bandwidthUpload;
-	IBOutlet UILabel *_bandwidthDownload;
     
     BOOL _applicationActive;
     BOOL _windowVisible;
@@ -55,15 +36,26 @@
 - (IBAction) showInfo;
 - (IBAction) resetTransfer:(id)sender;
 
-@property (nonatomic, retain) UISwitch *httpSwitch;
-@property (nonatomic, retain) UILabel *httpAddressLabel;
-@property (nonatomic, retain) UILabel *httpPacLabel;
-@property (nonatomic, retain) UISwitch *socksSwitch;
-@property (nonatomic, retain) UILabel *socksAddressLabel;
-@property (nonatomic, retain) UILabel *socksPacLabel;
-@property (nonatomic, retain) UILabel *socksConnectionCountLabel;
-@property (nonatomic, retain) UIView *connectView;
-@property (nonatomic, retain) UIView *runningView;
+@property (nonatomic, strong) IBOutlet UISwitch *httpSwitch;
+@property (nonatomic, strong) IBOutlet UILabel *httpAddressLabel;
+@property (nonatomic, strong) IBOutlet UILabel *httpPacLabel;
+@property (nonatomic, strong) IBOutlet UIButton *httpPacButton;
+@property (nonatomic, strong) IBOutlet UILabel *proxyEventCountLabel;
+
+@property (nonatomic, strong) IBOutlet UISwitch *socksSwitch;
+@property (nonatomic, strong) IBOutlet UILabel *socksAddressLabel;
+@property (nonatomic, strong) IBOutlet UILabel *socksPacLabel;
+@property (nonatomic, strong) IBOutlet UIButton *socksPacButton;
+@property (nonatomic, strong) IBOutlet UILabel *socksIPCountLabel;
+@property (nonatomic, strong) IBOutlet UILabel *socksConnectionCountLabel;
+
+@property (nonatomic, strong) IBOutlet UILabel *_bandwidthUpload;
+@property (nonatomic, strong) IBOutlet UILabel *_bandwidthDownload;
+@property (nonatomic, strong) IBOutlet UILabel *_totalUpload;
+@property (nonatomic, strong) IBOutlet UILabel *_totalDownload;
+
+@property (nonatomic, strong) IBOutlet UIView *connectView;
+@property (nonatomic, strong) IBOutlet UIView *runningView;
 
 @end
 

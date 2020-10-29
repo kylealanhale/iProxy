@@ -20,7 +20,7 @@
 		<string>Icon-Small@2x.png</string>
 	</array>
 	<key>CFBundleIdentifier</key>
-	<string>com.symfi.iproxy</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -33,13 +33,13 @@
 	<string>2.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSMainNibFile</key>
-	<string>MainWindow</string>
 	<key>UIApplicationExitsOnSuspend</key>
 	<false/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
 	</array>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
 </dict>
 </plist>

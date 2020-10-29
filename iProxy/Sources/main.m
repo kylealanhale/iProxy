@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, Torsten Curdt
+ * Copyright 2020, Kyle Alan Hale
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 #import <UIKit/UIKit.h>
 
+#import "AppDelegate.h"
+
 int main(int argc, char *argv[]) {
-    
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-    int retVal = UIApplicationMain(argc, argv, nil, nil);
-    [pool release];
-    return retVal;
+    @autoreleasepool {
+        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
+    }
 }

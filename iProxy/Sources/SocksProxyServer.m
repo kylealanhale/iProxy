@@ -45,9 +45,9 @@ static void my_log_tmp_transfer_callback(SOCK_INFO *si, LOGINFO *li, ssize_t dow
 {
 	self = [super init];
     if (self) {
-        msg_out_callback = NULL;
-        log_end_transfer_callback = my_log_end_transfer_callback;
-        log_tmp_transfer_callback = my_log_tmp_transfer_callback;
+        //msg_out_callback = NULL;
+        //log_end_transfer_callback = my_log_end_transfer_callback;
+        //log_tmp_transfer_callback = my_log_tmp_transfer_callback;
         _totalUpload = [[[NSUserDefaults standardUserDefaults] objectForKey:TOTAL_UPLOAD_KEY] unsignedLongLongValue];
         _totalDownload = [[[NSUserDefaults standardUserDefaults] objectForKey:TOTAL_DOWNLOAD_KEY] unsignedLongLongValue];
     }
